@@ -1,0 +1,10 @@
+<div th:fragment="formErrorsFragment" th:if="${#fields.hasAnyErrors()}" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- 전체 폼에 오류가 있을 경우에만 이 div를 표시합니다. -->
+    <div class="alert alert-danger" role="alert">
+        <!-- 폼 전체 오류 목록을 출력합니다. -->
+        <div th:each="err : ${#fields.allErrors()}" th:text="${err}">
+            입력 값에 오류가 있습니다. (Placeholder)
+        </div>
+    </div>
+</div>
+

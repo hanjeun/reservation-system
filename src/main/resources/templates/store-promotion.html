@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='가게 홍보', currentPage='store-promotion'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            body {
+                background: #F5F5F5;
+            }
+
+            .content-wrapper {
+                padding: 0;
+                background: #F5F5F5;
+            }
+
+            /* Hero Section */
+            .hero-section {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 80px 40px;
+                text-align: center;
+                color: white;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+                font-weight: 400;
+                margin-bottom: 12px;
+                opacity: 0.9;
+            }
+
+            .hero-title {
+                font-size: 48px;
+                font-weight: 700;
+                margin: 0 0 16px 0;
+            }
+
+            .hero-description {
+                font-size: 16px;
+                opacity: 0.9;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            /* Container */
+            .promotions-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 40px 40px 80px;
+            }
+
+            /* My Stores Section (사업자/관리자용) */
+            .my-stores-section {
+                margin-bottom: 60px;
+            }
+
+            .section-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 24px;
+            }
+
+            .stores-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 24px;
+            }
+
+            .store-card {
+                background: white;
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                transition: all 0.3s;
+            }
+
+            .store-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            }
+
+            .store-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 16px;
+            }
+
+            .store-card-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .store-card-category {
+                display: inline-block;
+                padding: 4px 10px;
+                background: #f0f4ff;
+                color: #667eea;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .store-card-info {
+                font-size: 14px;
+                color: #666;
+                line-height: 1.6;
+                margin-bottom: 16px;
+            }
+
+            .store-card-actions {
+                display: flex;
+                gap: 8px;
+            }
+
+            .btn-promote {
+                flex: 1;
+                padding: 12px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-promote:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-view-store {
+                padding: 12px 20px;
+                background: white;
+                color: #667eea;
+                border: 2px solid #667eea;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-view-store:hover {
+                background: #f0f4ff;
+            }
+
+            /* Navigation Tabs */
+            .nav-tabs-container {
+                background: white;
+                padding: 24px 0;
+                margin-bottom: 32px;
+                border-radius: 12px;
+            }
+
+            .nav-tabs-custom {
+                display: flex;
+                gap: 8px;
+                justify-content: center;
+            }
+
+            .nav-tab {
+                padding: 12px 24px;
+                border: 2px solid transparent;
+                border-radius: 8px;
+                background: transparent;
+                color: #666;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .nav-tab:hover {
+                background: #f8f9fa;
+                color: #667eea;
+            }
+
+            .nav-tab.active {
+                background: #667eea;
+                color: white;
+                border-color: #667eea;
+            }
+
+            /* Promotions Grid */
+            .promotions-section {
+                margin-bottom: 40px;
+            }
+
+            .promotions-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 24px;
+            }
+
+            /* Promotion Card */
+            .promotion-card {
+                background: white;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+
+            .promotion-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            }
+
+            .promotion-card-image {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 48px;
+            }
+
+            .promotion-card-content {
+                padding: 20px;
+            }
+
+            .promotion-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+            }
+
+            .promotion-card-category {
+                display: inline-block;
+                padding: 6px 12px;
+                background: #f0f4ff;
+                color: #667eea;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+            .promotion-card-date {
+                font-size: 12px;
+                color: #999;
+            }
+
+            .promotion-card-title {
+                font-size: 18px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 12px;
+                line-height: 1.4;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .promotion-card-content-text {
+                font-size: 14px;
+                color: #666;
+                line-height: 1.6;
+                margin-bottom: 16px;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .promotion-card-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 12px;
+                border-top: 1px solid #f0f0f0;
+            }
+
+            .promotion-card-author {
+                font-size: 13px;
+                color: #666;
+            }
+
+            .promotion-card-views {
+                font-size: 13px;
+                color: #999;
+            }
+
+            /* Empty State */
+            .empty-state {
+                text-align: center;
+                padding: 80px 40px;
+            }
+
+            .empty-state-icon {
+                font-size: 64px;
+                margin-bottom: 20px;
+                opacity: 0.3;
+            }
+
+            .empty-state-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #666;
+                margin-bottom: 8px;
+            }
+
+            .empty-state-text {
+                font-size: 15px;
+                color: #999;
+            }
+
+            /* Modal */
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.6);
+                z-index: 1000;
+                overflow-y: auto;
+            }
+
+            .modal.active {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 700px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+
+            .modal-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #333;
+                margin: 0;
+            }
+
+            .modal-close {
+                background: #f0f0f0;
+                border: none;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+                line-height: 1;
+            }
+
+            .modal-close:hover {
+                background: #e0e0e0;
+                color: #333;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #333;
+                font-size: 14px;
+            }
+
+            .form-label .required {
+                color: #e74c3c;
+                margin-left: 4px;
+            }
+
+            .form-control, .form-select {
+                width: 100%;
+                padding: 14px 16px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                font-size: 15px;
+                transition: all 0.3s;
+            }
+
+            .form-control:focus, .form-select:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            .form-textarea {
+                min-height: 200px;
+                resize: vertical;
+                font-family: inherit;
+            }
+
+            .form-help-text {
+                font-size: 13px;
+                color: #999;
+                margin-top: 6px;
+            }
+
+            .btn-submit {
+                width: 100%;
+                padding: 16px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 17px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            @media (max-width: 768px) {
+                .hero-section {
+                    padding: 60px 20px;
+                }
+
+                .hero-title {
+                    font-size: 36px;
+                }
+
+                .promotions-container {
+                    padding: 24px 20px 60px;
+                }
+
+                .promotions-grid, .stores-grid {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+
+                .modal-content {
+                    padding: 24px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-subtitle">당신의 가게를 알리세요</div>
+        <h1 class="hero-title">🎯 가게 홍보</h1>
+        <p class="hero-description">매력적인 홍보로 더 많은 고객을 만나보세요</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="promotions-container">
+        <!-- My Stores Section (사업자/관리자만 보임) -->
+        <div class="my-stores-section" id="myStoresSection" style="display: none;">
+            <h2 class="section-title">📍 내 가게 목록</h2>
+            <div class="stores-grid" id="myStoresGrid">
+                <!-- 가게 카드들이 여기에 로드됩니다 -->
+            </div>
+            <div class="empty-state" id="emptyStoresState" style="display: none;">
+                <div class="empty-state-icon">🏪</div>
+                <h3 class="empty-state-title">등록된 가게가 없습니다</h3>
+                <p class="empty-state-text">먼저 가게를 등록해주세요</p>
+            </div>
+        </div>
+
+        <!-- All Promotions Section -->
+        <div class="promotions-section">
+            <div class="nav-tabs-container">
+                <div class="nav-tabs-custom">
+                    <button class="nav-tab active" data-sort="latest">최신순</button>
+                    <button class="nav-tab" data-sort="popular">인기순</button>
+                    <button class="nav-tab" data-sort="views">조회순</button>
+                </div>
+            </div>
+
+            <h2 class="section-title">📢 홍보 게시글</h2>
+            <div class="promotions-grid" id="promotionsGrid">
+                <!-- 홍보 카드들이 여기에 로드됩니다 -->
+            </div>
+
+            <div class="empty-state" id="emptyPromotionsState" style="display: none;">
+                <div class="empty-state-icon">📢</div>
+                <h3 class="empty-state-title">아직 홍보글이 없습니다</h3>
+                <p class="empty-state-text">첫 번째 홍보를 등록해보세요</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promotion Modal -->
+    <div class="modal" id="promotionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">홍보 작성</h2>
+                <button class="modal-close" id="closeModalBtn">×</button>
+            </div>
+
+            <form id="promotionForm">
+                <input type="hidden" id="selectedStoreId">
+
+                <div class="form-group">
+                    <label class="form-label">가게</label>
+                    <input type="text" class="form-control" id="selectedStoreName" readonly style="background: #f8f9fa;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        제목
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="promotionTitle"
+                           placeholder="매력적인 제목을 입력하세요" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        카테고리
+                        <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="promotionCategory" required>
+                        <option value="">카테고리를 선택하세요</option>
+                        <option value="RESTAURANT">음식점</option>
+                        <option value="CAFE">카페</option>
+                        <option value="BEAUTY">뷰티/미용</option>
+                        <option value="ACTIVITY">액티비티</option>
+                        <option value="ETC">기타</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        상세 설명
+                        <span class="required">*</span>
+                    </label>
+                    <textarea class="form-control form-textarea" id="promotionContent"
+                              placeholder="가게의 특별한 점, 할인 정보, 이벤트 등을 자세히 작성해주세요" required></textarea>
+                    <div class="form-help-text">최소 20자 이상 작성해주세요</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">이미지 URL</label>
+                    <input type="url" class="form-control" id="promotionImage"
+                           placeholder="https://example.com/image.jpg">
+                    <div class="form-help-text">이미지 URL을 입력하거나 비워두세요</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">태그</label>
+                    <input type="text" class="form-control" id="promotionTags"
+                           placeholder="#맛집 #할인 #이벤트">
+                    <div class="form-help-text">띄어쓰기로 태그를 구분해주세요</div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    홍보 등록하기
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+
+
+        let currentSort = 'latest';
+        let currentPage = 0;
+        let currentUser = null;
+
+        // 페이지 로드
+        document.addEventListener('DOMContentLoaded', async function() {
+
+
+            try {
+                // 사용자 정보 가져오기
+
+                currentUser = await window.UserState.getUser().catch(() => null);
+
+
+                // 역할에 따라 페이지 제목 변경
+                const heroTitle = document.querySelector('.hero-title');
+                const heroSubtitle = document.querySelector('.hero-subtitle');
+                const heroDescription = document.querySelector('.hero-description');
+
+                if (currentUser && window.hasBusinessOrAdminRole(currentUser.role)) {
+                    // 사업자/관리자: "홍보하기"
+
+                    if (heroTitle) heroTitle.textContent = '🎯 가게 홍보';
+                    if (heroSubtitle) heroSubtitle.textContent = '당신의 가게를 알리세요';
+                    if (heroDescription) heroDescription.textContent = '매력적인 홍보로 더 많은 고객을 만나보세요';
+
+                    document.getElementById('myStoresSection').style.display = 'block';
+                    loadMyStores();
+                } else {
+                    // 일반 사용자: "추천 가게"
+
+                    if (heroTitle) heroTitle.textContent = '⭐ 추천 가게';
+                    if (heroSubtitle) heroSubtitle.textContent = '특별한 가게를 만나보세요';
+                    if (heroDescription) heroDescription.textContent = '엄선된 가게들의 특별한 이야기를 확인해보세요';
+                }
+
+                // 모든 홍보글 로드
+
+                await loadPromotions();
+            } catch (error) {
+                console.error('❌ 초기화 에러:', error);
+            }
+
+            // 정렬 탭 이벤트
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSort = this.dataset.sort;
+                    currentPage = 0;
+                    loadPromotions();
+                });
+            });
+
+            // 모달 닫기 이벤트
+            const closeBtn = document.getElementById('closeModalBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closePromotionModal);
+            }
+
+            const modal = document.getElementById('promotionModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closePromotionModal();
+                    }
+                });
+            }
+
+            // 폼 제출
+            const form = document.getElementById('promotionForm');
+            if (form) {
+                form.addEventListener('submit', handleSubmit);
+            }
+        });
+
+        // 내 가게 목록 로드
+        async function loadMyStores() {
+
+            try {
+                const url = '/api/promotions/my-stores';
+
+
+                const response = await window.fetchWithAuth(url);
+
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const stores = await response.json();
+
+                displayMyStores(stores);
+            } catch (error) {
+                console.error('❌ 가게 목록 로드 실패:', error);
+                // 에러가 나도 페이지는 계속 작동
+            }
+        }
+
+        // 내 가게 표시
+        function displayMyStores(stores) {
+            const grid = document.getElementById('myStoresGrid');
+            const emptyState = document.getElementById('emptyStoresState');
+
+            if (!stores || stores.length === 0) {
+
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+
+            emptyState.style.display = 'none';
+
+            const categoryNames = {
+                'RESTAURANT': '음식점',
+                'CAFE': '카페',
+                'BEAUTY': '뷰티',
+                'ACTIVITY': '액티비티',
+                'ETC': '기타'
+            };
+
+            grid.innerHTML = stores.map(store => `
+                <div class="store-card">
+                    <div class="store-card-header">
+                        <div>
+                            <h3 class="store-card-title">${escapeHtml(store.name)}</h3>
+                            <span class="store-card-category">${categoryNames[store.category] || store.category}</span>
+                        </div>
+                    </div>
+                    <div class="store-card-info">
+                        📍 ${escapeHtml(store.address || '주소 미등록')}<br>
+                        📞 ${escapeHtml(store.phone || '전화번호 미등록')}
+                    </div>
+                    <div class="store-card-actions">
+                        <button class="btn-promote" onclick="openPromotionModal(${store.id}, '${escapeHtml(store.name).replace(/'/g, "\\'")}')">
+                            홍보 작성
+                        </button>
+                        <button class="btn-view-store" onclick="viewStore(${store.id})">
+                            상세보기
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 가게 상세보기
+        function viewStore(storeId) {
+
+            window.location.href = `/store/${storeId}`;
+        }
+
+        // 홍보글 목록 로드
+        async function loadPromotions() {
+
+            try {
+                const url = `/api/promotions?page=${currentPage}&size=12&sortBy=${currentSort}`;
+
+
+                const response = await fetch(url);
+
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+
+
+
+                displayPromotions(data.content || []);
+            } catch (error) {
+                console.error('❌ 홍보글 로드 실패:', error);
+                // 에러 메시지 표시
+                const grid = document.getElementById('promotionsGrid');
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #e74c3c;">
+                        <h3>❌ 오류 발생</h3>
+                        <p>${error.message}</p>
+                        <button onclick="loadPromotions()" style="padding: 10px 20px; margin-top: 20px; cursor: pointer;">
+                            다시 시도
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // 홍보글 표시
+        function displayPromotions(promotions) {
+
+            const grid = document.getElementById('promotionsGrid');
+            const emptyState = document.getElementById('emptyPromotionsState');
+
+            if (!promotions || promotions.length === 0) {
+
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+
+            emptyState.style.display = 'none';
+
+            const categoryNames = {
+                'RESTAURANT': '음식점',
+                'CAFE': '카페',
+                'BEAUTY': '뷰티',
+                'ACTIVITY': '액티비티',
+                'ETC': '기타'
+            };
+
+            try {
+                grid.innerHTML = promotions.map(promo => {
+
+                    const contentPreview = promo.content && promo.content.length > 100
+                        ? promo.content.substring(0, 100) + '...'
+                        : (promo.content || '내용 없음');
+
+                    return `
+                        <div class="promotion-card" onclick="viewPromotion(${promo.id})">
+                            <div class="promotion-card-image">
+                                ${promo.imageUrl
+                                    ? `<img src="${promo.imageUrl}" alt="${escapeHtml(promo.title)}" style="width: 100%; height: 100%; object-fit: cover;">`
+                                    : '🏪'}
+                            </div>
+                            <div class="promotion-card-content">
+                                <div class="promotion-card-header">
+                                    <span class="promotion-card-category">${categoryNames[promo.category] || promo.category}</span>
+                                    <span class="promotion-card-date">${formatDate(promo.createdAt)}</span>
+                                </div>
+                                <h3 class="promotion-card-title">${escapeHtml(promo.title)}</h3>
+                                <p class="promotion-card-content-text">${escapeHtml(contentPreview)}</p>
+                                <div class="promotion-card-footer">
+                                    <span class="promotion-card-author">${escapeHtml(promo.storeName || '가게')}</span>
+                                    <span class="promotion-card-views">👁️ ${promo.viewCount || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+
+            } catch (error) {
+
+            }
+        }
+
+        // 홍보글 상세 보기
+        function viewPromotion(promotionId) {
+
+            alert('상세 페이지 (구현 예정): ' + promotionId);
+        }
+
+        // 모달 열기
+        function openPromotionModal(storeId, storeName) {
+
+            document.getElementById('selectedStoreId').value = storeId;
+            document.getElementById('selectedStoreName').value = storeName;
+            document.getElementById('promotionModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 모달 닫기
+        function closePromotionModal() {
+
+            document.getElementById('promotionModal').classList.remove('active');
+            document.getElementById('promotionForm').reset();
+            document.body.style.overflow = 'auto';
+        }
+
+        // 폼 제출 처리
+        async function handleSubmit(e) {
+            e.preventDefault();
+
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '등록 중...';
+
+            try {
+                const data = {
+                    storeId: parseInt(document.getElementById('selectedStoreId').value),
+                    title: document.getElementById('promotionTitle').value.trim(),
+                    category: document.getElementById('promotionCategory').value,
+                    content: document.getElementById('promotionContent').value.trim(),
+                    imageUrl: document.getElementById('promotionImage').value.trim() || null,
+                    tags: document.getElementById('promotionTags').value.trim() || null
+                };
+
+
+
+                // 유효성 검사
+                if (data.content.length < 20) {
+                    alert('상세 설명은 최소 20자 이상 입력해주세요');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    return;
+                }
+
+                const response = await window.fetchWithAuth('/api/promotions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+
+
+                if (response.ok) {
+                    alert('✅ 홍보가 성공적으로 등록되었습니다!');
+                    closePromotionModal();
+                    await loadPromotions();
+                } else {
+                    const error = await response.json();
+                    throw new Error(error.message || '홍보 등록에 실패했습니다');
+                }
+            } catch (error) {
+                console.error('❌ 홍보 등록 실패:', error);
+                alert('❌ ' + error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // 유틸리티 함수
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+                if (days === 0) return '오늘';
+                if (days === 1) return '어제';
+                if (days < 7) return `${days}일 전`;
+                return date.toLocaleDateString('ko-KR');
+            } catch (e) {
+                console.error('날짜 포맷 에러:', e);
+                return dateString;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+
+    </script>
+</th:block>
+</body>
+</html>

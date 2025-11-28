@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<header class="header-custom" th:fragment="header(currentPage)">
+    <a class="header-logo" th:href="@{/main}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <path d="M15 38V22H25V38M5 17L20 5L35 17V35C35 35.88 34.65 36.72 34.02 37.35C33.39 37.98 32.55 38 31.67 38H8.33C7.45 38 6.61 37.98 5.98 37.35C5.35 36.72 5 35.88 5 35V17Z"
+                  stroke="#1E1E1E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </a>
+
+    <nav class="header-nav">
+        <a class="nav-pill" th:classappend="${currentPage=='store-register'} ? 'active'" th:href="@{/store/register}" id="menuStoreRegister" style="display:none;">가게등록</a>
+        <a class="nav-pill" th:classappend="${currentPage=='store-promotion'} ? 'active'" th:href="@{/store/promotion}" id="menuStorePromotion">홍보하기</a>
+        <a class="nav-pill" th:classappend="${currentPage=='community'} ? 'active'" th:href="@{/community}">커뮤니티</a>
+        <a class="nav-pill" th:classappend="${currentPage=='notice'} ? 'active'" th:href="@{/customer-service/notice}">공지사항</a>
+        <a class="nav-pill" th:classappend="${currentPage=='inquiry'} ? 'active'" th:href="@{/customer-service/inquiry}">문의하기</a>
+        <a class="nav-pill" th:classappend="${currentPage=='policy'} ? 'active'" th:href="@{/customer-service/policy}">정책</a>
+        <a class="nav-pill" th:classappend="${currentPage=='admin'} ? 'active'" th:href="@{/customer-service/admin/inquiry}" id="menuAdmin" style="display:none;">문의관리</a>
+    </nav>
+
+    <div class="header-auth" id="authButtons" style="visibility: hidden;">
+        <div id="loggedOut" style="display: none; align-items: center; gap: 12px;">
+            <a class="btn-login" th:href="@{/user/login}">로그인</a>
+            <a class="btn-signup" th:href="@{/user/signup}">가입하기</a>
+        </div>
+        <div id="loggedIn" style="display: none; align-items: center; gap: 12px;">
+            <a class="btn-login" th:href="@{/user/mypage}">마이페이지</a>
+            <button type="button" class="btn-signup" onclick="handleLogout()">로그아웃</button>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 인증 상태 확인 - UserState 사용
+        (async function checkAuth() {
+            try {
+                // UserState를 통해 사용자 정보 가져오기 (캐싱됨)
+                const user = await window.UserState.getUser();
+
+                document.getElementById('loggedOut').style.display = 'none';
+                document.getElementById('loggedIn').style.display = 'flex';
+                document.getElementById('authButtons').style.visibility = 'visible';
+
+                // 권한에 따른 메뉴 표시 및 텍스트 변경
+                const menuStorePromotion = document.getElementById('menuStorePromotion');
+                if (window.hasBusinessOrAdminRole(user.role)) {
+                    menuStorePromotion.textContent = '홍보하기';
+                    document.getElementById('menuStoreRegister').style.display = 'block';
+                } else {
+                    menuStorePromotion.textContent = '추천가게';
+                }
+
+                // 관리자 메뉴는 관리자만 표시
+                if (user.role === window.RoleEnum.ADMIN) {
+                    document.getElementById('menuAdmin').style.display = 'block';
+                }
+            } catch (error) {
+                // 로그아웃 상태 표시 (조용히 처리, 리다이렉트 없음)
+                document.getElementById('loggedOut').style.display = 'flex';
+                document.getElementById('loggedIn').style.display = 'none';
+                document.getElementById('authButtons').style.visibility = 'visible';
+            }
+        })();
+
+        function handleLogout() {
+            // UserState 초기화
+            window.UserState.clearUser();
+
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(() => window.location.href = '/main')
+            .catch(() => window.location.href = '/main');
+        }
+    </script>
+</header>
+</body>
+</html>

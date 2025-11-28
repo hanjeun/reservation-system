@@ -1,0 +1,177 @@
+/* ========================================
+   Footer 스타일 - 전면 재설계
+   ======================================== */
+
+/* Footer 컨테이너 - 페이지 하단에 고정 */
+.footer-custom {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #FFFFFF;
+    margin-top: auto; /* flexbox로 인해 자동으로 하단에 위치 */
+    padding: 60px 40px 40px;
+    flex-shrink: 0; /* footer가 줄어들지 않도록 */
+}
+
+/* Footer 내용 래퍼 */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+}
+
+/* Footer 각 섹션 */
+.footer-section {
+    min-width: 0; /* grid 아이템 오버플로우 방지 */
+}
+
+.footer-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+}
+
+.footer-section p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 8px;
+}
+
+.footer-section a {
+    display: block;
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    padding: 4px 0;
+    position: relative;
+}
+
+.footer-section a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #FFFFFF;
+    transition: width 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: #FFFFFF;
+    padding-left: 8px;
+}
+
+.footer-section a:hover::before {
+    width: 30px;
+}
+
+/* Footer 하단 영역 */
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+/* 소셜 미디어 링크 */
+.footer-social {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.footer-social a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.footer-social a:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.footer-social a svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 태블릿 사이즈 */
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+    }
+
+    .footer-custom {
+        padding: 50px 30px 30px;
+    }
+}
+
+/* 모바일 사이즈 */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-bottom: 30px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 20px;
+        gap: 16px;
+    }
+
+    .footer-custom {
+        padding: 40px 24px 24px;
+    }
+
+    .footer-section h3 {
+        font-size: 16px;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+}
+
+/* 작은 모바일 */
+@media (max-width: 480px) {
+    .footer-custom {
+        padding: 32px 20px 20px;
+    }
+
+    .footer-content {
+        gap: 24px;
+    }
+}

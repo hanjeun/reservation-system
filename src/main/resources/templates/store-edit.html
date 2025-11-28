@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='가게 수정', currentPage='store-edit'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .edit-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+                padding: 40px 20px;
+            }
+
+            .edit-container {
+                max-width: 900px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 24px;
+                padding: 48px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+
+            .edit-title {
+                font-size: 32px;
+                font-weight: 700;
+                color: #667eea;
+                margin-bottom: 32px;
+                text-align: center;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 16px;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin-bottom: 8px;
+            }
+
+            .form-input,
+            .form-textarea,
+            .form-select {
+                width: 100%;
+                padding: 14px 16px;
+                border: 1px solid #D9D9D9;
+                border-radius: 8px;
+                font-size: 16px;
+                color: #1E1E1E;
+                transition: all 0.3s;
+            }
+
+            /* 파일 입력 숨기기 */
+            input[type="file"] {
+                display: none;
+            }
+
+            /* 커스텀 파일 업로드 버튼 */
+            .custom-file-upload {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .custom-file-upload:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            }
+
+            .custom-file-upload svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .file-name-display {
+                margin-top: 8px;
+                font-size: 14px;
+                color: #666;
+            }
+
+            .form-input:focus,
+            .form-textarea:focus,
+            .form-select:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            .form-textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+
+            .image-preview-container {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+                margin-top: 12px;
+            }
+
+            .image-preview {
+                position: relative;
+                width: 150px;
+                height: 150px;
+                border-radius: 8px;
+                overflow: hidden;
+                border: 2px solid #e0e0e0;
+            }
+
+            .image-preview img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .remove-image-btn {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: rgba(229, 62, 62, 0.9);
+                color: white;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .remove-image-btn:hover {
+                background: rgba(197, 48, 48, 1);
+            }
+
+            .btn-container {
+                display: flex;
+                gap: 16px;
+                margin-top: 32px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 16px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-primary {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #5568d3;
+            }
+
+            .btn-secondary {
+                background: #e0e0e0;
+                color: #333;
+            }
+
+            .btn-secondary:hover {
+                background: #d0d0d0;
+            }
+
+            .loading {
+                text-align: center;
+                padding: 80px 20px;
+                color: #999;
+            }
+
+            .loading-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+                animation: spin 2s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="edit-wrapper" layout:fragment="content">
+    <div class="edit-container">
+        <h1 class="edit-title">가게 정보 수정</h1>
+
+        <div id="loadingState" class="loading">
+            <div class="loading-icon">⏳</div>
+            <div>가게 정보를 불러오는 중...</div>
+        </div>
+
+        <form id="editForm" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">가게 이름 *</label>
+                <input type="text" class="form-input" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">설명 *</label>
+                <textarea class="form-textarea" id="description" name="description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">주소 *</label>
+                <input type="text" class="form-input" id="address" name="address" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">전화번호 *</label>
+                <input type="tel" class="form-input" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">카테고리 *</label>
+                <select class="form-select" id="category" name="category" required>
+                    <option value="">카테고리를 선택하세요</option>
+                    <option value="한식">한식</option>
+                    <option value="중식">중식</option>
+                    <option value="일식">일식</option>
+                    <option value="양식">양식</option>
+                    <option value="분식">분식</option>
+                    <option value="카페">카페</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">키워드 (쉼표로 구분)</label>
+                <input type="text" class="form-input" id="keywords" name="keywords" 
+                       placeholder="예: 분위기좋은, 데이트, 조용한">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">메인 이미지</label>
+                <label for="mainImage" class="custom-file-upload">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    이미지 선택
+                </label>
+                <input type="file" class="form-input" id="mainImage" name="mainImage" accept="image/*">
+                <div id="mainImageName" class="file-name-display"></div>
+                <div id="mainImagePreview" class="image-preview-container"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">상세 이미지 (여러 장 선택 가능)</label>
+                <label for="detailImages" class="custom-file-upload">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    이미지 선택 (여러 장)
+                </label>
+                <input type="file" class="form-input" id="detailImages" name="detailImages"
+                       accept="image/*" multiple>
+                <div id="detailImagesName" class="file-name-display"></div>
+                <div id="detailImagesPreview" class="image-preview-container"></div>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">취소</button>
+                <button type="submit" class="btn btn-primary">수정하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        const storeId = window.location.pathname.split('/').pop();
+        let currentStore = null;
+
+        // 페이지 로드 시 가게 정보 불러오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStoreData();
+        });
+
+        // 가게 정보 불러오기
+        function loadStoreData() {
+            window.fetchWithAuth(`/api/stores/${storeId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('가게 정보를 불러올 수 없습니다');
+                    return response.json();
+                })
+                .then(data => {
+                    currentStore = data;
+                    populateForm(data);
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('editForm').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('가게 정보 로드 실패:', error);
+                    alert('가게 정보를 불러오는데 실패했습니다.');
+                    goBack();
+                });
+        }
+
+        // 폼에 기존 데이터 채우기
+        function populateForm(store) {
+            document.getElementById('name').value = store.name || '';
+            document.getElementById('description').value = store.description || '';
+            document.getElementById('address').value = store.address || '';
+            document.getElementById('phone').value = store.phone || '';
+            document.getElementById('category').value = store.category || '';
+            document.getElementById('keywords').value = store.keywords ? store.keywords.join(', ') : '';
+
+            // 메인 이미지 미리보기
+            if (store.mainImageUrl) {
+                const mainPreview = document.getElementById('mainImagePreview');
+                mainPreview.innerHTML = `
+                    <div class="image-preview">
+                        <img src="${store.mainImageUrl}" alt="메인 이미지">
+                        <button type="button" class="remove-image-btn" onclick="removeMainImage()">×</button>
+                    </div>
+                `;
+            }
+
+            // 상세 이미지 미리보기
+            if (store.detailImages && store.detailImages.length > 0) {
+                const detailPreview = document.getElementById('detailImagesPreview');
+                detailPreview.innerHTML = store.detailImages.map((url, index) => `
+                    <div class="image-preview" data-url="${url}">
+                        <img src="${url}" alt="상세 이미지 ${index + 1}">
+                        <button type="button" class="remove-image-btn" onclick="removeDetailImage('${url}')">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 메인 이미지 제거
+        function removeMainImage() {
+            document.getElementById('mainImage').value = '';
+            document.getElementById('mainImagePreview').innerHTML = '';
+        }
+
+        // 상세 이미지 제거
+        function removeDetailImage(url) {
+            const preview = document.querySelector(`[data-url="${url}"]`);
+            if (preview) {
+                preview.remove();
+            }
+        }
+
+        // 메인 이미지 선택 시 미리보기
+        document.getElementById('mainImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // 파일명 표시
+                document.getElementById('mainImageName').textContent = `선택됨: ${file.name}`;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('mainImagePreview').innerHTML = `
+                        <div class="image-preview">
+                            <img src="${e.target.result}" alt="새 메인 이미지">
+                            <button type="button" class="remove-image-btn" onclick="removeMainImage()">×</button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 상세 이미지 선택 시 미리보기
+        document.getElementById('detailImages').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                // 파일명 표시
+                const fileNames = Array.from(files).map(f => f.name).join(', ');
+                document.getElementById('detailImagesName').textContent = `선택됨: ${files.length}개 파일`;
+            }
+
+            const preview = document.getElementById('detailImagesPreview');
+            preview.innerHTML = ''; // 기존 미리보기 제거
+
+            Array.from(e.target.files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'image-preview';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="상세 이미지 ${index + 1}">
+                        <button type="button" class="remove-image-btn" onclick="this.parentElement.remove()">×</button>
+                    `;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // 폼 제출
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('address', document.getElementById('address').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('category', document.getElementById('category').value);
+
+            // 키워드 처리
+            const keywords = document.getElementById('keywords').value
+                .split(',')
+                .map(k => k.trim())
+                .filter(k => k.length > 0);
+            keywords.forEach(keyword => formData.append('keywords', keyword));
+
+            // 메인 이미지
+            const mainImageFile = document.getElementById('mainImage').files[0];
+            if (mainImageFile) {
+                formData.append('mainImage', mainImageFile);
+            }
+
+            // 상세 이미지
+            const detailImageFiles = document.getElementById('detailImages').files;
+            Array.from(detailImageFiles).forEach(file => {
+                formData.append('detailImages', file);
+            });
+
+            console.log('수정 요청 데이터:', {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                keywords: keywords
+            });
+
+            window.fetchWithAuth(`/api/stores/${storeId}`, {
+                method: 'PUT',
+                body: formData
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/user/login';
+                    throw new Error('인증 필요');
+                }
+                if (!response.ok) {
+                    throw new Error('가게 수정에 실패했습니다');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('수정 성공:', data);
+                alert('가게 정보가 성공적으로 수정되었습니다!');
+                window.location.href = '/user/mypage';
+            })
+            .catch(error => {
+                console.error('가게 수정 실패:', error);
+                if (error.message !== '인증 필요') {
+                    alert('가게 수정에 실패했습니다: ' + error.message);
+                }
+            });
+        });
+
+        function goBack() {
+            window.location.href = '/user/mypage';
+        }
+    </script>
+</th:block>
+</body>
+</html>

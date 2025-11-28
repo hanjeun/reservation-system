@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='마이페이지', currentPage='mypage'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .mypage-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: calc(100vh - 200px);
+                padding: 40px 20px;
+            }
+
+            .mypage-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .mypage-header {
+                background-color: white;
+                border-radius: 24px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                padding: 48px;
+                margin-bottom: 32px;
+            }
+
+            .mypage-title {
+                font-weight: 700;
+                font-size: 32px;
+                color: #667eea;
+                margin: 0 0 32px 0;
+                text-align: center;
+            }
+
+            .user-info-section {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 24px;
+            }
+
+            .info-card {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 24px;
+                border-radius: 16px;
+                color: white;
+            }
+
+            .info-label {
+                font-size: 14px;
+                opacity: 0.9;
+                margin-bottom: 8px;
+            }
+
+            .info-value {
+                font-size: 20px;
+                font-weight: 600;
+                word-break: break-all;
+            }
+
+            .tabs-container {
+                background-color: white;
+                border-radius: 24px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+
+            .tabs {
+                display: flex;
+                border-bottom: 2px solid #f0f0f0;
+            }
+
+            .tab {
+                flex: 1;
+                padding: 20px;
+                text-align: center;
+                font-size: 18px;
+                font-weight: 600;
+                color: #666;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: none;
+                background: none;
+            }
+
+            .tab:hover {
+                background-color: #f5f5f5;
+            }
+
+            .tab.active {
+                color: #667eea;
+                background-color: #f0f4ff;
+                border-bottom: 3px solid #667eea;
+            }
+
+            .tab-content {
+                display: none;
+                padding: 48px;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            .stores-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 24px;
+            }
+
+            .store-card {
+                background: white;
+                border: 2px solid #e0e0e0;
+                border-radius: 16px;
+                padding: 20px;
+                transition: all 0.3s;
+            }
+
+            .store-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+                border-color: #667eea;
+            }
+
+            .store-image {
+                width: 100%;
+                height: 200px;
+                background: linear-gradient(135deg, #E3E3E3 0%, #F5F5F5 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 16px;
+                overflow: hidden;
+                font-size: 48px;
+            }
+
+            .store-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .store-name {
+                font-size: 18px;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin-bottom: 8px;
+            }
+
+            .store-category {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 12px;
+            }
+
+            .store-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 16px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 10px;
+                border-radius: 8px;
+                border: none;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-edit {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-edit:hover {
+                background: #5568d3;
+            }
+
+            .btn-delete {
+                background: #e53e3e;
+                color: white;
+            }
+
+            .btn-delete:hover {
+                background: #c53030;
+            }
+
+            .reservations-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 24px;
+            }
+
+            .reservation-card {
+                background: white;
+                border: 2px solid #e0e0e0;
+                border-radius: 16px;
+                padding: 24px;
+                transition: all 0.3s;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                min-height: 300px;
+                position: relative;
+                /* 한글 깨짐 방지 */
+                word-break: keep-all;
+                overflow-wrap: break-word;
+            }
+
+            .reservation-card:hover {
+                border-color: #667eea;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                transform: translateY(-4px);
+            }
+
+            .reservation-info {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                flex: 1;
+                overflow: visible;
+                min-height: 0;
+            }
+
+            .reservation-store {
+                font-size: 18px;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin-bottom: 4px;
+                word-break: keep-all;
+                overflow-wrap: break-word;
+            }
+
+            .reservation-detail {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: #666;
+                word-break: keep-all;
+                overflow-wrap: break-word;
+                min-height: 1.5em;
+            }
+
+            .reservation-detail-icon {
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .reservation-status {
+                display: inline-block;
+                padding: 6px 12px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                margin-top: 8px;
+                word-break: keep-all;
+                flex-shrink: 0;
+            }
+
+            .status-pending {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            .status-confirmed {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-cancelled {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            .status-rejected {
+                background: #f5c6cb;
+                color: #721c24;
+            }
+
+            .btn-approve {
+                background: #28a745;
+                color: white;
+            }
+
+            .btn-approve:hover {
+                background: #218838;
+            }
+
+            .btn-reject {
+                background: #ffc107;
+                color: #000;
+            }
+
+            .btn-reject:hover {
+                background: #e0a800;
+            }
+
+            .reservation-actions {
+                display: flex;
+                gap: 8px;
+                margin-top: auto;
+            }
+
+            .btn-reservation {
+                flex: 1;
+                padding: 10px;
+                border-radius: 8px;
+                border: none;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                white-space: nowrap;
+            }
+
+            .btn-edit-reservation {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-edit-reservation:hover {
+                background: #5568d3;
+            }
+
+            .btn-cancel-reservation {
+                background: #e53e3e;
+                color: white;
+            }
+
+            .btn-cancel-reservation:hover {
+                background: #c53030;
+            }
+
+            .btn-cancel-reservation:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+            }
+
+            .btn-delete-reservation {
+                background: #6c757d;
+                color: white;
+            }
+
+            .btn-delete-reservation:hover {
+                background: #5a6268;
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 80px 20px;
+                color: #999;
+            }
+
+            .empty-icon {
+                font-size: 64px;
+                margin-bottom: 20px;
+            }
+
+            .empty-text {
+                font-size: 18px;
+                margin-bottom: 24px;
+            }
+
+            .btn-add-store {
+                display: inline-block;
+                padding: 14px 28px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 12px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+
+            .btn-add-store:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                text-decoration: none;
+                color: white;
+            }
+
+            .danger-zone {
+                background: #fff5f5;
+                border: 2px solid #feb2b2;
+                border-radius: 16px;
+                padding: 32px;
+            }
+
+            .danger-title {
+                font-size: 20px;
+                font-weight: 600;
+                color: #e53e3e;
+                margin-bottom: 16px;
+            }
+
+            .danger-description {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 24px;
+                line-height: 1.6;
+            }
+
+            /* 계정 관리 그리드 */
+            .account-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 24px;
+            }
+
+            .account-card {
+                background: white;
+                border: 2px solid #e0e0e0;
+                border-radius: 16px;
+                padding: 32px;
+                transition: all 0.3s;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                gap: 20px;
+                aspect-ratio: 1;
+            }
+
+            .account-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+            .account-card.danger {
+                border-color: #ffebee;
+            }
+
+            .account-card.danger:hover {
+                border-color: #ffcdd2;
+            }
+
+            .account-card-icon {
+                font-size: 64px;
+            }
+
+            .account-card-title {
+                font-size: 20px;
+                font-weight: 600;
+                color: #1E1E1E;
+            }
+
+            .account-card-description {
+                font-size: 14px;
+                color: #666;
+                line-height: 1.5;
+            }
+
+            .account-card-button {
+                width: 100%;
+                padding: 12px 24px;
+                border-radius: 8px;
+                border: none;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-primary {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #5568d3;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-danger {
+                background: #e53e3e;
+                color: white;
+            }
+
+            .btn-danger:hover {
+                background: #c53030;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+            }
+
+            @media (max-width: 768px) {
+                .mypage-header {
+                    padding: 32px 24px;
+                }
+
+                .tabs {
+                    flex-wrap: wrap;
+                }
+
+                .tab-content {
+                    padding: 24px;
+                }
+
+                .stores-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="mypage-wrapper" layout:fragment="content">
+    <div class="mypage-container">
+        <div class="mypage-header">
+            <h1 class="mypage-title">마이페이지</h1>
+            
+            <div class="user-info-section">
+                <div class="info-card">
+                    <div class="info-label">이름</div>
+                    <div class="info-value" id="userName">로딩 중...</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">이메일</div>
+                    <div class="info-value" id="userEmail">로딩 중...</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">회원 ID</div>
+                    <div class="info-value" id="userId">로딩 중...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab" id="tab-reservations" onclick="switchTab('reservations')">예약 내역</button>
+                <button class="tab" id="tab-reservation-manage" style="display: none;" onclick="switchTab('reservation-manage')">예약 관리</button>
+                <button class="tab" id="tab-my-stores" style="display: none;" onclick="switchTab('my-stores')">내 가게</button>
+                <button class="tab" onclick="switchTab('account')">계정 관리</button>
+            </div>
+
+            <div id="reservations" class="tab-content active">
+                <div id="reservationsContent">
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <div class="empty-text">예약 내역을 불러오는 중...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reservation-manage" class="tab-content">
+                <div id="reservationManageContent">
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-text">예약 관리 목록을 불러오는 중...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="my-stores" class="tab-content">
+                <div id="myStoresContent">
+                    <div class="empty-state">
+                        <div class="empty-icon">🏪</div>
+                        <div class="empty-text">등록한 가게를 불러오는 중...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="account" class="tab-content">
+                <div class="account-grid">
+                    <!-- 계정 수정 카드 -->
+                    <div class="account-card">
+                        <div class="account-card-icon">✏️</div>
+                        <div class="account-card-title">계정 수정</div>
+                        <div class="account-card-description">이메일, 비밀번호, 이름 등 회원 정보를 수정할 수 있습니다</div>
+                        <button class="account-card-button btn-primary" onclick="editAccount()">정보 수정하기</button>
+                    </div>
+
+                    <!-- 예약 알림 설정 카드 -->
+                    <div class="account-card">
+                        <div class="account-card-icon">🔔</div>
+                        <div class="account-card-title">알림 설정</div>
+                        <div class="account-card-description">예약 승인/거절 시 이메일 알림을 받을 수 있습니다</div>
+                        <button class="account-card-button btn-primary" id="notificationBtn" onclick="toggleNotifications()">알림 켜기</button>
+                    </div>
+
+                    <!-- 계정 삭제 카드 -->
+                    <div class="account-card danger">
+                        <div class="account-card-icon">🗑️</div>
+                        <div class="account-card-title">계정 삭제</div>
+                        <div class="account-card-description">모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다</div>
+                        <button class="account-card-button btn-danger" onclick="deleteAccount()">계정 삭제하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        // 탭 전환
+        function switchTab(tabName) {
+            // 모든 탭 비활성화
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            // 탭 전환 시 데이터 로드
+            if (tabName === 'my-stores') {
+                loadMyStores();
+            } else if (tabName === 'reservations') {
+                loadReservations();
+            } else if (tabName === 'reservation-manage') {
+                loadReservationManage();
+            }
+        }
+
+        // 사용자 정보 로드 - UserState 사용으로 중복 API 호출 방지
+        function loadUserInfo() {
+            // UserState를 통해 캐시된 사용자 정보 가져오기
+            window.UserState.getUser()
+                .then(data => {
+                    document.getElementById('userName').textContent = data.name || '알 수 없음';
+                    document.getElementById('userEmail').textContent = data.email || '알 수 없음';
+                    document.getElementById('userId').textContent = data.id || '알 수 없음';
+
+                    // 🔒 역할에 따라 UI 표시 제어
+                    const role = data.role; // "USER", "BUSINESS", "ADMIN"
+                    const myStoresTab = document.getElementById('tab-my-stores');
+                    const reservationsTab = document.getElementById('tab-reservations');
+                    const reservationManageTab = document.getElementById('tab-reservation-manage');
+
+                    if (role === 'BUSINESS' || role === 'ADMIN') {
+                        // 사업자나 관리자인 경우 "내 가게", "예약 관리" 탭 표시
+                        myStoresTab.style.display = 'block';
+                        reservationManageTab.style.display = 'block';
+
+                        // 기본 활성화 탭을 "예약 관리"로 변경
+                        reservationsTab.classList.remove('active');
+                        reservationManageTab.classList.add('active');
+
+                        document.getElementById('reservations').classList.remove('active');
+                        document.getElementById('reservation-manage').classList.add('active');
+
+                        // 예약 관리 로드
+                        loadReservationManage();
+                    } else {
+                        // 일반 사용자인 경우 "내 가게", "예약 관리" 탭 숨김
+                        myStoresTab.style.display = 'none';
+                        reservationManageTab.style.display = 'none';
+
+                        // 기본 활성화 탭을 "예약 내역"으로 설정
+                        reservationsTab.classList.add('active');
+                        document.getElementById('reservations').classList.add('active');
+
+                        // 예약 내역 로드
+                        loadReservations();
+                    }
+                })
+                .catch(error => {
+                    console.error('사용자 정보 로드 실패:', error);
+                    document.getElementById('userName').textContent = '로드 실패';
+                    document.getElementById('userEmail').textContent = '로드 실패';
+                    document.getElementById('userId').textContent = '로드 실패';
+
+                    // 인증 실패 시 로그인 페이지로 리다이렉트
+                    if (error.message === '인증 필요') {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/user/login';
+                    }
+                });
+        }
+
+        // 내 가게 목록 로드
+        function loadMyStores() {
+            window.fetchWithAuth('/api/stores/my')
+                .then(response => {
+                    if (response.status === 403) {
+                        // 권한 없음 - 일반 사용자가 접근 시도
+                        const container = document.getElementById('myStoresContent');
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">🔒</div>
+                                <div class="empty-text">가게 등록은 사업자 회원만 가능합니다</div>
+                            </div>
+                        `;
+                        return null;
+                    }
+
+                    if (!response.ok) throw new Error('가게 목록을 불러올 수 없습니다');
+                    return response.json();
+                })
+                .then(stores => {
+                    if (stores === null) return; // 권한 없음 처리됨
+
+                    const container = document.getElementById('myStoresContent');
+
+                    if (stores.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">🏪</div>
+                                <div class="empty-text">등록한 가게가 없습니다</div>
+                                <a href="/store/register" class="btn-add-store">가게 등록하기</a>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = `
+                            <div class="stores-grid">
+                                ${stores.map(store => `
+                                    <div class="store-card">
+                                        <div class="store-image">
+                                            ${store.mainImageUrl ?
+                                                `<img src="${store.mainImageUrl}" alt="${store.name}">` :
+                                                '🏪'}
+                                        </div>
+                                        <div class="store-name">${store.name}</div>
+                                        <div class="store-category">${store.category || '카테고리 없음'}</div>
+                                        <div class="store-actions">
+                                            <button class="btn btn-edit" onclick="editStore(${store.id})">수정</button>
+                                            <button class="btn btn-delete" onclick="deleteStore(${store.id})">삭제</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('가게 목록 로드 실패:', error);
+                    document.getElementById('myStoresContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">❌</div>
+                            <div class="empty-text">가게 목록을 불러오는데 실패했습니다</div>
+                        </div>
+                    `;
+                });
+        }
+
+        // 예약 내역 로드
+        function loadReservations() {
+            window.fetchWithAuth('/api/reservations/my-reservations')
+                .then(response => {
+                    if (!response.ok) throw new Error('예약 내역을 불러올 수 없습니다');
+                    return response.json();
+                })
+                .then(reservations => {
+                    displayReservations(reservations, 'reservationsContent', false);
+                })
+                .catch(error => {
+                    console.error('예약 내역 로드 실패:', error);
+                    document.getElementById('reservationsContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">❌</div>
+                            <div class="empty-text">예약 내역을 불러오는데 실패했습니다</div>
+                        </div>
+                    `;
+                });
+        }
+
+        // 예약 관리 로드 (사업자용)
+        function loadReservationManage() {
+            window.fetchWithAuth('/api/reservations/store-reservations')
+                .then(response => {
+                    if (!response.ok) throw new Error('예약 목록을 불러올 수 없습니다');
+                    return response.json();
+                })
+                .then(reservations => {
+                    displayReservations(reservations, 'reservationManageContent', true);
+                })
+                .catch(error => {
+                    console.error('예약 관리 로드 실패:', error);
+                    document.getElementById('reservationManageContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">❌</div>
+                            <div class="empty-text">예약 목록을 불러오는데 실패했습니다</div>
+                        </div>
+                    `;
+                });
+        }
+
+        // 예약 목록 표시
+        function displayReservations(reservations, containerId, isOwnerView) {
+            const container = document.getElementById(containerId);
+
+            if (reservations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <div class="empty-text">예약 내역이 없습니다</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="reservations-list">
+                    ${reservations.map(reservation => {
+                        const statusMap = {
+                            'PENDING': { class: 'status-pending', text: '대기중' },
+                            'CONFIRMED': { class: 'status-confirmed', text: '승인됨' },
+                            'REJECTED': { class: 'status-rejected', text: '거절됨' },
+                            'CANCELLED': { class: 'status-cancelled', text: '취소됨' }
+                        };
+                        const status = statusMap[reservation.status] || { class: 'status-pending', text: '알수없음' };
+
+                        return `
+                        <div class="reservation-card">
+                            <div class="reservation-info">
+                                <div class="reservation-store">${reservation.storeName}</div>
+                                ${isOwnerView ? `
+                                <div class="reservation-detail">
+                                    <span class="reservation-detail-icon">👤</span>
+                                    <span>${reservation.memberName} (${reservation.memberEmail})</span>
+                                </div>
+                                ` : ''}
+                                <div class="reservation-detail">
+                                    <span class="reservation-detail-icon">📅</span>
+                                    <span>${reservation.reservationDate}</span>
+                                </div>
+                                <div class="reservation-detail">
+                                    <span class="reservation-detail-icon">🕐</span>
+                                    <span>${reservation.reservationTime}</span>
+                                </div>
+                                <div class="reservation-detail">
+                                    <span class="reservation-detail-icon">👥</span>
+                                    <span>${reservation.guestCount}명</span>
+                                </div>
+                                ${reservation.specialRequest ? `
+                                <div class="reservation-detail">
+                                    <span class="reservation-detail-icon">💬</span>
+                                    <span>${reservation.specialRequest}</span>
+                                </div>
+                                ` : ''}
+                                ${reservation.rejectionReason ? `
+                                <div class="reservation-detail" style="color: #e53e3e;">
+                                    <span class="reservation-detail-icon">⚠️</span>
+                                    <span>거절 사유: ${reservation.rejectionReason}</span>
+                                </div>
+                                ` : ''}
+                                <span class="reservation-status ${status.class}">${status.text}</span>
+                            </div>
+                            <div class="reservation-actions">
+                                ${getActionButtons(reservation, isOwnerView)}
+                            </div>
+                        </div>
+                    `}).join('')}
+                </div>
+            `;
+        }
+
+        // 액션 버튼 생성
+        function getActionButtons(reservation, isOwnerView) {
+            if (isOwnerView) {
+                // 사업자 뷰
+                if (reservation.status === 'PENDING') {
+                    return `
+                        <button class="btn-reservation btn-approve" onclick="approveReservation(${reservation.id})">승인</button>
+                        <button class="btn-reservation btn-reject" onclick="rejectReservation(${reservation.id})">거절</button>
+                    `;
+                } else if (reservation.status === 'CONFIRMED') {
+                    return `
+                        <button class="btn-reservation btn-cancel-reservation" onclick="cancelReservationByOwner(${reservation.id})">취소</button>
+                    `;
+                } else if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED') {
+                    return `
+                        <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
+                    `;
+                }
+                return '';
+            } else {
+                // 사용자 뷰
+                if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED') {
+                    return `
+                        <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
+                    `;
+                } else if (reservation.status === 'PENDING') {
+                    return `
+                        <button class="btn-reservation btn-edit-reservation" onclick="editReservation(${reservation.id})">수정</button>
+                        <button class="btn-reservation btn-cancel-reservation" onclick="cancelReservation(${reservation.id})">취소</button>
+                    `;
+                } else if (reservation.status === 'CONFIRMED') {
+                    return `
+                        <button class="btn-reservation btn-cancel-reservation" onclick="cancelReservation(${reservation.id})">취소</button>
+                    `;
+                }
+            }
+        }
+
+        // 예약 승인 (사업자)
+        function approveReservation(reservationId) {
+            if (!confirm('이 예약을 승인하시겠습니까?')) return;
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}/approve`, {
+                method: 'PATCH'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('예약이 승인되었습니다');
+                    loadReservationManage();
+                } else {
+                    throw new Error('예약 승인 실패');
+                }
+            })
+            .catch(error => {
+                console.error('예약 승인 실패:', error);
+                alert('예약 승인에 실패했습니다');
+            });
+        }
+
+        // 예약 거절 (사업자)
+        function rejectReservation(reservationId) {
+            // 거절 사유는 선택사항 (빈 문자열도 허용)
+            const reason = prompt('거절 사유를 입력해주세요 (선택사항):');
+
+            // 사용자가 취소 버튼을 누른 경우에만 중단
+            if (reason === null) return;
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}/reject`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rejectionReason: reason || '' })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('예약이 거절되었습니다');
+                    loadReservationManage();
+                } else {
+                    throw new Error('예약 거절 실패');
+                }
+            })
+            .catch(error => {
+                console.error('예약 거절 실패:', error);
+                alert('예약 거절에 실패했습니다');
+            });
+        }
+
+        // 예약 취소 (사업자)
+        function cancelReservationByOwner(reservationId) {
+            if (!confirm('승인된 예약을 취소하시겠습니까?\n고객에게 알림이 전송됩니다.')) return;
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}/cancel-by-owner`, {
+                method: 'PATCH'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('예약이 취소되었습니다');
+                    loadReservationManage();
+                } else {
+                    throw new Error('예약 취소 실패');
+                }
+            })
+            .catch(error => {
+                console.error('예약 취소 실패:', error);
+                alert('예약 취소에 실패했습니다');
+            });
+        }
+
+        // 예약 수정
+        function editReservation(reservationId) {
+            // 예약 정보를 먼저 불러와서 storeId 확인
+            window.fetchWithAuth(`/api/reservations/${reservationId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('예약 정보를 불러올 수 없습니다');
+                return response.json();
+            })
+            .then(reservation => {
+                // 가게 상세 페이지로 이동 (reservationId 파라미터 포함)
+                window.location.href = `/store/${reservation.storeId}?reservationId=${reservationId}`;
+            })
+            .catch(error => {
+                console.error('예약 수정 실패:', error);
+                alert('예약 정보를 불러오는데 실패했습니다.');
+            });
+        }
+
+        // 예약 취소
+        function cancelReservation(reservationId) {
+            if (!confirm('정말로 이 예약을 취소하시겠습니까?')) {
+                return;
+            }
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}/cancel`, {
+                method: 'PATCH'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('예약이 취소되었습니다');
+                    loadReservations(); // 목록 새로고침
+                } else {
+                    throw new Error('예약 취소 실패');
+                }
+            })
+            .catch(error => {
+                console.error('예약 취소 실패:', error);
+                alert('예약 취소에 실패했습니다');
+            });
+        }
+
+        // 예약 삭제 (DB에서 완전 삭제)
+        function deleteReservation(reservationId) {
+            if (!confirm('이 예약을 완전히 삭제하시겠습니까?\n삭제된 예약은 복구할 수 없습니다.')) {
+                return;
+            }
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('예약이 삭제되었습니다');
+                    // 현재 활성화된 탭 확인 후 새로고침
+                    const activeTab = document.querySelector('.tab.active').id;
+                    if (activeTab === 'tab-reservation-manage') {
+                        loadReservationManage(); // 사업자 예약 관리 새로고침
+                    } else {
+                        loadReservations(); // 사용자 예약 내역 새로고침
+                    }
+                } else {
+                    throw new Error('예약 삭제 실패');
+                }
+            })
+            .catch(error => {
+                console.error('예약 삭제 실패:', error);
+                alert('예약 삭제에 실패했습니다');
+            });
+        }
+
+        // 가게 수정
+        function editStore(storeId) {
+            window.location.href = `/store/edit/${storeId}`;
+        }
+
+        // 가게 삭제
+        function deleteStore(storeId) {
+            if (confirm('정말로 이 가게를 삭제하시겠습니까?')) {
+                window.fetchWithAuth(`/api/stores/${storeId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('가게가 삭제되었습니다');
+                        loadMyStores();
+                    } else {
+                        throw new Error('삭제 실패');
+                    }
+                })
+                .catch(error => {
+                    console.error('가게 삭제 실패:', error);
+                    alert('가게 삭제에 실패했습니다');
+                });
+            }
+        }
+
+        // 계정 삭제
+        function deleteAccount() {
+            if (confirm('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                window.fetchWithAuth('/api/member/delete', {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('계정이 삭제되었습니다');
+                        window.location.href = '/';
+                    } else {
+                        throw new Error('삭제 실패');
+                    }
+                })
+                .catch(error => {
+                    console.error('계정 삭제 실패:', error);
+                    alert('계정 삭제에 실패했습니다');
+                });
+            }
+        }
+
+        // 계정 수정
+        function editAccount() {
+            // 회원정보 수정 페이지로 이동
+            window.location.href = '/user/edit';
+        }
+
+        // 알림 설정 토글
+        let notificationsEnabled = false;
+        function toggleNotifications() {
+            notificationsEnabled = !notificationsEnabled;
+            const btn = document.getElementById('notificationBtn');
+
+            if (notificationsEnabled) {
+                btn.textContent = '알림 끄기';
+                alert('예약 알림이 활성화되었습니다.');
+            } else {
+                btn.textContent = '알림 켜기';
+                alert('예약 알림이 비활성화되었습니다.');
+            }
+
+            // TODO: 실제 알림 설정 API 호출
+            console.log('알림 설정:', notificationsEnabled);
+        }
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo(); // 사용자 정보를 먼저 로드 (역할에 따라 탭 표시 결정)
+        });
+    </script>
+</th:block>
+</body>
+</html>

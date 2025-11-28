@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='가게 상세', currentPage='stores'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .store-detail-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+                padding: 40px 20px;
+            }
+
+            .store-detail-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .store-header {
+                background: white;
+                border-radius: 24px;
+                padding: 48px;
+                margin-bottom: 32px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 64px;
+            }
+
+            .store-image-section {
+                position: relative;
+            }
+
+            .store-main-image {
+                width: 100%;
+                height: 500px;
+                border-radius: 16px;
+                object-fit: cover;
+                background: linear-gradient(135deg, #E3E3E3 0%, #F5F5F5 100%);
+                cursor: pointer;
+            }
+
+            /* 이미지 슬라이더 스타일 */
+            .image-slider {
+                position: relative;
+                width: 100%;
+                height: 500px;
+                overflow: hidden;
+                border-radius: 16px;
+            }
+
+            .slider-images {
+                display: flex;
+                transition: transform 0.5s ease;
+                height: 100%;
+            }
+
+            .slider-image {
+                min-width: 100%;
+                height: 100%;
+                object-fit: cover;
+                background: linear-gradient(135deg, #E3E3E3 0%, #F5F5F5 100%);
+            }
+
+            .slider-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: rgba(0, 0, 0, 0.5);
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s;
+                z-index: 10;
+            }
+
+            .slider-btn:hover {
+                background: rgba(0, 0, 0, 0.7);
+            }
+
+            .slider-btn-prev {
+                left: 16px;
+            }
+
+            .slider-btn-next {
+                right: 16px;
+            }
+
+            .slider-indicators {
+                position: absolute;
+                bottom: 16px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 8px;
+                z-index: 10;
+            }
+
+            .slider-indicator {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .slider-indicator.active {
+                background: white;
+                width: 24px;
+                border-radius: 5px;
+            }
+
+            .favorite-btn {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: #667eea;
+                border: 2px solid #667eea;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .favorite-btn:hover {
+                transform: scale(1.1);
+            }
+
+            .favorite-btn svg {
+                width: 20px;
+                height: 20px;
+                fill: white;
+            }
+
+            .store-info-section {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .store-title-section {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .store-name {
+                font-size: 48px;
+                font-weight: 700;
+                color: #1E1E1E;
+                line-height: 1.2;
+                letter-spacing: -0.03em;
+            }
+
+            .store-description {
+                font-size: 24px;
+                color: #757575;
+                line-height: 1.4;
+            }
+
+            .store-tags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .store-tag {
+                padding: 8px 16px;
+                background: #E6E6E6;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #0C0C0D;
+            }
+
+            .reservation-section {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .form-field {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .field-label {
+                font-size: 16px;
+                font-weight: 600;
+                color: #1E1E1E;
+            }
+
+            .select-field {
+                width: 100%;
+                padding: 14px 16px;
+                border: 1px solid #D9D9D9;
+                border-radius: 8px;
+                font-size: 16px;
+                color: #1E1E1E;
+                background: white;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .select-field:hover {
+                border-color: #667eea;
+            }
+
+            .select-field:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            .select-field option:disabled {
+                color: #B3B3B3;
+            }
+
+            .btn-reserve {
+                width: 100%;
+                padding: 14px;
+                background: #2C2C2C;
+                color: #F5F5F5;
+                border: 1px solid #2C2C2C;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-reserve:hover {
+                background: #1a1a1a;
+            }
+
+            .btn-reserve:disabled {
+                background: #E3E3E3;
+                color: #B3B3B3;
+                border-color: #E3E3E3;
+                cursor: not-allowed;
+            }
+
+            .store-details-section {
+                background: white;
+                border-radius: 24px;
+                padding: 48px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+
+            .section-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #1E1E1E;
+                margin-bottom: 24px;
+            }
+
+            .detail-item {
+                margin-bottom: 16px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .detail-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .detail-label {
+                font-size: 14px;
+                color: #757575;
+                margin-bottom: 4px;
+            }
+
+            .detail-value {
+                font-size: 16px;
+                color: #1E1E1E;
+                font-weight: 600;
+            }
+
+            .accordion {
+                margin-top: 32px;
+            }
+
+            .accordion-item {
+                background: white;
+                border: 1px solid #D9D9D9;
+                border-radius: 8px;
+                padding: 16px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .accordion-item:hover {
+                border-color: #667eea;
+            }
+
+            .accordion-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .accordion-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #1E1E1E;
+            }
+
+            .accordion-icon {
+                font-size: 20px;
+                color: #1E1E1E;
+                transition: transform 0.3s;
+            }
+
+            .accordion-content {
+                margin-top: 8px;
+                font-size: 16px;
+                color: #1E1E1E;
+                line-height: 1.4;
+                display: none;
+            }
+
+            .accordion-item.open .accordion-content {
+                display: block;
+            }
+
+            .accordion-item.open .accordion-icon {
+                transform: rotate(180deg);
+            }
+
+            @media (max-width: 768px) {
+                .store-header {
+                    grid-template-columns: 1fr;
+                    gap: 32px;
+                    padding: 32px;
+                }
+
+                .store-name {
+                    font-size: 32px;
+                }
+
+                .store-description {
+                    font-size: 18px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="store-detail-wrapper" layout:fragment="content">
+    <div class="store-detail-container">
+        <!-- 가게 헤더 -->
+        <div class="store-header">
+            <!-- 이미지 섹션 -->
+            <div class="store-image-section">
+                <!-- 이미지 슬라이더 -->
+                <div class="image-slider" id="imageSlider">
+                    <div class="slider-images" id="sliderImages">
+                        <!-- 메인 이미지 -->
+                        <img th:src="${store.mainImageUrl != null ? store.mainImageUrl : '/images/placeholder.png'}"
+                             alt="가게 이미지" class="slider-image">
+                        <!-- 상세 이미지들 -->
+                        <img th:each="detailImage : ${store.detailImages}"
+                             th:src="${detailImage}"
+                             alt="가게 상세 이미지" class="slider-image">
+                    </div>
+
+                    <!-- 이전/다음 버튼 -->
+                    <button class="slider-btn slider-btn-prev" onclick="moveSlide(-1)" id="prevBtn">‹</button>
+                    <button class="slider-btn slider-btn-next" onclick="moveSlide(1)" id="nextBtn">›</button>
+
+                    <!-- 인디케이터 -->
+                    <div class="slider-indicators" id="sliderIndicators"></div>
+                </div>
+
+                <button class="favorite-btn" onclick="toggleFavorite()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 정보 및 예약 섹션 -->
+            <div class="store-info-section">
+                <!-- 가게 정보 -->
+                <div class="store-title-section">
+                    <h1 class="store-name" th:text="${store.name}">가게 이름</h1>
+                    <p class="store-description" th:text="${store.description}">가게 설명</p>
+                </div>
+
+                <!-- 태그 -->
+                <div class="store-tags" th:if="${store.keywords != null && !store.keywords.isEmpty()}">
+                    <span class="store-tag" th:each="keyword : ${store.keywords}" th:text="${keyword}">태그</span>
+                </div>
+
+                <!-- 예약 폼 -->
+                <div class="reservation-section">
+                    <div class="form-field">
+                        <label class="field-label">예약 날짜</label>
+                        <input type="date" class="select-field" id="reservationDate" 
+                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label">예약 시간</label>
+                        <input type="time" class="select-field" id="reservationTime"
+                               min="00:00" max="23:59" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label">예약 인원</label>
+                        <select class="select-field" id="guestCount">
+                            <option value="" disabled selected>인원을 선택해주세요.</option>
+                            <option value="1">1명</option>
+                            <option value="2">2명</option>
+                            <option value="3">3명</option>
+                            <option value="4">4명</option>
+                            <option value="5">5명</option>
+                            <option value="6">6명</option>
+                            <option value="7">7명</option>
+                            <option value="8">8명</option>
+                            <option value="9">9명</option>
+                            <option value="10">10명</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="field-label">특별 요청 (선택사항)</label>
+                        <textarea class="select-field" id="specialRequest"
+                                  placeholder="특별한 요청사항이 있으시면 입력해주세요."
+                                  style="min-height: 80px; resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+
+                    <button class="btn-reserve" onclick="makeReservation()">
+                        예약하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상세 정보 -->
+        <div class="store-details-section">
+            <h2 class="section-title">가게 정보</h2>
+            
+            <div class="detail-item" th:if="${store.address != null && !store.address.isEmpty()}">
+                <div class="detail-label">주소</div>
+                <div class="detail-value" th:text="${store.address}">주소</div>
+            </div>
+
+            <div class="detail-item" th:if="${store.phone != null && !store.phone.isEmpty()}">
+                <div class="detail-label">전화번호</div>
+                <div class="detail-value" th:text="${store.phone}">전화번호</div>
+            </div>
+
+            <div class="detail-item" th:if="${store.category != null && !store.category.isEmpty()}">
+                <div class="detail-label">카테고리</div>
+                <div class="detail-value" th:text="${store.category}">카테고리</div>
+            </div>
+
+            <!-- 아코디언 -->
+            <div class="accordion">
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        <div class="accordion-title" th:text="${store.name}">가게 이름</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content" th:text="${store.description}">
+                        가게 설명
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script th:inline="javascript">
+        const storeId = /*[[${store.id}]]*/ 0;
+        const openTime = /*[[${store.openTime}]]*/ null;
+        const closeTime = /*[[${store.closeTime}]]*/ null;
+
+        // 이미지 슬라이더 변수
+        let currentSlide = 0;
+        let totalSlides = 0;
+
+        // 수정할 예약 ID
+        let editingReservationId = null;
+
+        // 페이지 로드 시 슬라이더 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initSlider();
+            setTimeConstraints();
+            checkEditMode();
+        });
+
+        // 수정 모드 확인
+        function checkEditMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            editingReservationId = urlParams.get('reservationId');
+
+            if (editingReservationId) {
+                loadReservationData(editingReservationId);
+                document.querySelector('.btn-reserve').textContent = '예약 수정하기';
+            }
+        }
+
+        // 예약 정보 불러오기
+        function loadReservationData(reservationId) {
+            window.fetchWithAuth(`/api/reservations/${reservationId}`)
+            .then(response => {
+                if (!response.ok) throw new Error('예약 정보를 불러올 수 없습니다');
+                return response.json();
+            })
+            .then(reservation => {
+                document.getElementById('reservationDate').value = reservation.reservationDate;
+                document.getElementById('reservationTime').value = reservation.reservationTime;
+                document.getElementById('guestCount').value = reservation.guestCount;
+                document.getElementById('specialRequest').value = reservation.specialRequest || '';
+
+                console.log('✅ 예약 정보 로드 완료:', reservation);
+            })
+            .catch(error => {
+                console.error('❌ 예약 정보 로드 실패:', error);
+                alert('예약 정보를 불러오는데 실패했습니다.');
+                editingReservationId = null;
+            });
+        }
+
+        // 시간 제약 설정
+        function setTimeConstraints() {
+            const timeInput = document.getElementById('reservationTime');
+            if (openTime && closeTime) {
+                timeInput.setAttribute('min', openTime);
+                timeInput.setAttribute('max', closeTime);
+                console.log('⏰ 예약 가능 시간:', openTime, '~', closeTime);
+            }
+        }
+
+        // 슬라이더 초기화
+        function initSlider() {
+            const sliderImages = document.getElementById('sliderImages');
+            const images = sliderImages.querySelectorAll('.slider-image');
+            totalSlides = images.length;
+
+            // 이미지가 1개면 버튼과 인디케이터 숨기기
+            if (totalSlides <= 1) {
+                document.getElementById('prevBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+                return;
+            }
+
+            // 인디케이터 생성
+            const indicatorsContainer = document.getElementById('sliderIndicators');
+            for (let i = 0; i < totalSlides; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'slider-indicator' + (i === 0 ? ' active' : '');
+                indicator.onclick = () => goToSlide(i);
+                indicatorsContainer.appendChild(indicator);
+            }
+        }
+
+        // 슬라이드 이동
+        function moveSlide(direction) {
+            currentSlide += direction;
+
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            } else if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+
+            updateSlider();
+        }
+
+        // 특정 슬라이드로 이동
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
+
+        // 슬라이더 업데이트
+        function updateSlider() {
+            const sliderImages = document.getElementById('sliderImages');
+            sliderImages.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // 인디케이터 업데이트
+            const indicators = document.querySelectorAll('.slider-indicator');
+            indicators.forEach((indicator, index) => {
+                indicator.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // 아코디언 토글
+        function toggleAccordion(item) {
+            item.classList.toggle('open');
+        }
+
+        // 찜하기 토글
+        function toggleFavorite() {
+            alert('찜하기 기능은 준비 중입니다.');
+        }
+
+        // 예약하기
+        function makeReservation() {
+            const date = document.getElementById('reservationDate').value;
+            const time = document.getElementById('reservationTime').value;
+            const guestCount = document.getElementById('guestCount').value;
+            const specialRequest = document.getElementById('specialRequest').value;
+
+            if (!date) {
+                alert('예약 날짜를 선택해주세요.');
+                return;
+            }
+
+            if (!time) {
+                alert('예약 시간을 선택해주세요.');
+                return;
+            }
+
+            // 운영 시간 체크
+            if (openTime && closeTime) {
+                if (time < openTime || time > closeTime) {
+                    alert(`예약 가능 시간은 ${openTime} ~ ${closeTime} 입니다.`);
+                    return;
+                }
+            }
+
+            if (!guestCount) {
+                alert('예약 인원을 선택해주세요.');
+                return;
+            }
+
+            const reservationData = {
+                storeId: storeId,
+                reservationDate: date,
+                reservationTime: time,
+                guestCount: parseInt(guestCount),
+                specialRequest: specialRequest || null
+            };
+
+            console.log('예약 요청 데이터:', reservationData);
+
+            // 수정 모드인지 확인
+            const isEditMode = editingReservationId !== null;
+            const url = isEditMode ? `/api/reservations/${editingReservationId}` : '/api/reservations';
+            const method = isEditMode ? 'PUT' : 'POST';
+
+            window.fetchWithAuth(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reservationData)
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                        window.location.href = '/user/login';
+                    }
+                    throw new Error('인증 필요');
+                }
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('서버 응답:', text);
+                        throw new Error(isEditMode ? '예약 수정에 실패했습니다' : '예약에 실패했습니다');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(isEditMode ? '예약 수정 성공:' : '예약 성공:', data);
+                alert(isEditMode ? '예약이 수정되었습니다!' : '예약이 완료되었습니다!');
+                window.location.href = '/user/mypage';
+            })
+            .catch(error => {
+                console.error(isEditMode ? '예약 수정 실패:' : '예약 실패:', error);
+                if (error.message !== '인증 필요') {
+                    alert(error.message);
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

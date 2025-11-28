@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='회원정보 수정', currentPage='member-edit'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .edit-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: calc(100vh - 200px);
+                padding: 40px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .edit-container {
+                max-width: 600px;
+                width: 100%;
+                background-color: white;
+                padding: 48px;
+                border-radius: 24px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+
+            .edit-title {
+                font-size: 32px;
+                font-weight: 700;
+                color: #667eea;
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 15px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .form-label .required {
+                color: #e53e3e;
+                margin-left: 4px;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 14px 18px;
+                font-size: 15px;
+                border-radius: 10px;
+                border: 2px solid #e0e0e0;
+                transition: all 0.3s;
+            }
+
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            .form-control:disabled {
+                background-color: #f5f5f5;
+                cursor: not-allowed;
+            }
+
+            .form-text {
+                font-size: 13px;
+                color: #666;
+                margin-top: 6px;
+            }
+
+            .error-message {
+                font-size: 13px;
+                color: #e53e3e;
+                margin-top: 6px;
+                display: none;
+            }
+
+            .error-message.active {
+                display: block;
+            }
+
+            .btn-group {
+                display: flex;
+                gap: 12px;
+                margin-top: 32px;
+            }
+
+            .btn {
+                flex: 1;
+                padding: 16px;
+                font-size: 16px;
+                font-weight: 600;
+                border-radius: 12px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-primary:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .btn-secondary {
+                background: #e0e0e0;
+                color: #333;
+            }
+
+            .btn-secondary:hover {
+                background: #d0d0d0;
+            }
+
+            .info-box {
+                background-color: #f0f4ff;
+                border: 2px solid #667eea;
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 24px;
+            }
+
+            .info-box-title {
+                font-size: 14px;
+                font-weight: 600;
+                color: #667eea;
+                margin-bottom: 8px;
+            }
+
+            .info-box-text {
+                font-size: 13px;
+                color: #666;
+                line-height: 1.6;
+            }
+
+            @media (max-width: 768px) {
+                .edit-container {
+                    padding: 32px 24px;
+                }
+
+                .edit-title {
+                    font-size: 28px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="edit-wrapper" layout:fragment="content">
+    <div class="edit-container">
+        <h1 class="edit-title">회원정보 수정</h1>
+
+        <div class="info-box">
+            <div class="info-box-title">💡 안내사항</div>
+            <div class="info-box-text">
+                • 이메일은 변경할 수 없습니다.<br>
+                • 비밀번호를 변경하지 않으려면 비밀번호 필드를 비워두세요.<br>
+                • 비밀번호는 최소 8자 이상이어야 합니다.
+            </div>
+        </div>
+
+        <form id="editForm">
+            <div class="form-group">
+                <label for="name" class="form-label">
+                    이름<span class="required">*</span>
+                </label>
+                <input type="text" id="name" name="name" class="form-control" 
+                       placeholder="이름을 입력하세요" required>
+                <div class="error-message" id="nameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    이메일<span class="required">*</span>
+                </label>
+                <input type="email" id="email" name="email" class="form-control" 
+                       placeholder="이메일" disabled>
+                <div class="form-text">이메일은 변경할 수 없습니다.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    새 비밀번호
+                </label>
+                <input type="password" id="password" name="password" class="form-control" 
+                       placeholder="변경하지 않으려면 비워두세요" minlength="8">
+                <div class="form-text">비밀번호를 변경하지 않으려면 비워두세요.</div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="passwordConfirm" class="form-label">
+                    새 비밀번호 확인
+                </label>
+                <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" 
+                       placeholder="새 비밀번호를 다시 입력하세요">
+                <div class="error-message" id="passwordConfirmError"></div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">
+                    취소
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    수정하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        // 페이지 로드 시 현재 사용자 정보 가져오기
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentUserInfo();
+        });
+
+        // 현재 사용자 정보 로드
+        function loadCurrentUserInfo() {
+            // UserState를 통해 캐시된 사용자 정보 가져오기
+            window.UserState.getUser()
+                .then(user => {
+                    document.getElementById('name').value = user.name || '';
+                    document.getElementById('email').value = user.email || '';
+                })
+                .catch(error => {
+                    console.error('사용자 정보 로드 실패:', error);
+                    alert('사용자 정보를 불러오는데 실패했습니다.');
+                    window.location.href = '/user/login';
+                });
+        }
+
+        // 폼 제출 처리
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 유효성 검사
+            if (!validateForm()) {
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '수정 중...';
+
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+                passwordConfirm: document.getElementById('passwordConfirm').value
+            };
+
+            // 비밀번호가 비어있으면 제외
+            if (!formData.password) {
+                delete formData.password;
+                delete formData.passwordConfirm;
+            }
+
+            console.log('📝 회원정보 수정 요청:', formData);
+
+            window.fetchWithAuth('/api/member/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/user/login';
+                    throw new Error('인증 필요');
+                }
+
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '회원정보 수정에 실패했습니다');
+                    });
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ 회원정보 수정 성공:', data);
+                
+                // UserState 갱신 (캐시된 정보 업데이트)
+                window.UserState.user = data;
+                
+                alert('회원정보가 수정되었습니다!');
+                window.location.href = '/user/mypage';
+            })
+            .catch(error => {
+                console.error('❌ 회원정보 수정 오류:', error);
+                if (error.message !== '인증 필요') {
+                    alert('회원정보 수정에 실패했습니다: ' + error.message);
+                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = '수정하기';
+            });
+        });
+
+        // 폼 유효성 검사
+        function validateForm() {
+            let isValid = true;
+
+            // 에러 메시지 초기화
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('active');
+                el.textContent = '';
+            });
+
+            // 이름 검사
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                showError('nameError', '이름을 입력해주세요.');
+                isValid = false;
+            }
+
+            // 비밀번호 검사 (입력된 경우에만)
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+
+            if (password) {
+                if (password.length < 8) {
+                    showError('passwordError', '비밀번호는 최소 8자 이상이어야 합니다.');
+                    isValid = false;
+                }
+
+                if (password !== passwordConfirm) {
+                    showError('passwordConfirmError', '비밀번호가 일치하지 않습니다.');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        // 에러 메시지 표시
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('active');
+        }
+
+        // 취소 버튼
+        function goBack() {
+            if (confirm('수정을 취소하시겠습니까?')) {
+                window.location.href = '/user/mypage';
+            }
+        }
+
+        // 비밀번호 입력 시 확인 필드 활성화
+        document.getElementById('password').addEventListener('input', function() {
+            const passwordConfirm = document.getElementById('passwordConfirm');
+            if (this.value) {
+                passwordConfirm.required = true;
+            } else {
+                passwordConfirm.required = false;
+                passwordConfirm.value = '';
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

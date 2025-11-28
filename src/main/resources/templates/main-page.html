@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='통합예약시스템', currentPage='main'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .main-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: calc(100vh - 200px);
+                padding-bottom: 40px;
+            }
+            .hero-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 120px 24px 80px;
+                gap: 40px;
+            }
+            .hero-title {
+                font-weight: 700;
+                font-size: clamp(36px, 8vw, 72px);
+                line-height: 1.2;
+                letter-spacing: -0.03em;
+                text-align: center;
+                color: #667eea;
+                margin: 0;
+            }
+            .hero-subtitle {
+                font-weight: 400;
+                font-size: clamp(20px, 4vw, 32px);
+                line-height: 1.2;
+                text-align: center;
+                color: #555;
+                margin: 0;
+            }
+            .search-form {
+                display: flex;
+                gap: 12px;
+                width: 100%;
+                max-width: 500px;
+                padding: 0 20px;
+            }
+            .search-input {
+                flex: 1;
+                padding: 14px 20px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                font-size: 16px;
+                color: #1E1E1E;
+                background-color: #FFFFFF;
+                transition: all 0.3s;
+            }
+            .search-input:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            .search-input::placeholder {
+                color: #B3B3B3;
+            }
+            .search-button {
+                padding: 14px 24px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                color: #FFFFFF;
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .search-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+            .newsletter-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 80px 24px;
+                gap: 32px;
+                background-color: white;
+                border-radius: 24px;
+                margin: 40px 20px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .newsletter-heading {
+                font-weight: 700;
+                font-size: clamp(20px, 4vw, 28px);
+                line-height: 1.2;
+                letter-spacing: -0.02em;
+                text-align: center;
+                color: #667eea;
+                margin: 0;
+            }
+            .newsletter-subheading {
+                font-weight: 400;
+                font-size: clamp(16px, 3vw, 20px);
+                line-height: 1.2;
+                text-align: center;
+                color: #666;
+                margin: 0;
+            }
+            .newsletter-form {
+                display: flex;
+                gap: 12px;
+                width: 100%;
+                max-width: 500px;
+                padding: 0 20px;
+            }
+            .newsletter-input {
+                flex: 1;
+                padding: 14px 20px;
+                border: 2px solid #e0e0e0;
+                border-radius: 12px;
+                font-size: 16px;
+                color: #1E1E1E;
+                background-color: #FFFFFF;
+                transition: all 0.3s;
+            }
+            .newsletter-input:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            .newsletter-input::placeholder {
+                color: #B3B3B3;
+            }
+            .newsletter-button {
+                padding: 14px 24px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                color: #FFFFFF;
+                font-size: 16px;
+                font-weight: 600;
+                white-space: nowrap;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+            .newsletter-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            }
+
+            @media (max-width: 768px) {
+                .search-form, .newsletter-form {
+                    flex-direction: column;
+                }
+                .search-button, .newsletter-button {
+                    width: 100%;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="main-wrapper" layout:fragment="content">
+    <div class="hero-section">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <h1 class="hero-title">지금 예약하세요</h1>
+            <p class="hero-subtitle">언제든 어디든</p>
+        </div>
+
+        <form class="search-form" action="/store/stores" method="get">
+            <input type="text" name="keyword" class="search-input" placeholder="예) 서울 맛집" aria-label="검색어 입력" required>
+            <button class="search-button" type="submit">검색하기</button>
+        </form>
+    </div>
+
+    <div class="newsletter-section">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+            <h2 class="newsletter-heading">최근 트렌드가 궁금하다면?</h2>
+            <p class="newsletter-subheading">뉴스레터 구독하기</p>
+        </div>
+
+        <form class="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="you@example.com" aria-label="이메일 입력">
+            <button class="newsletter-button" type="button">보내기</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,148 @@
+.header-custom {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+}
+
+.header-logo:hover {
+    transform: scale(1.1);
+}
+
+.header-logo svg {
+    width: 40px;
+    height: 40px;
+}
+
+.header-logo svg path {
+    stroke: #FFFFFF;
+}
+
+.header-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.header-auth {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.nav-pill {
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-pill::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: #FFFFFF;
+    transition: width 0.3s;
+}
+
+.nav-pill:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+.nav-pill:hover::after {
+    width: 60%;
+}
+
+.nav-pill.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+}
+
+.nav-pill.active::after {
+    width: 60%;
+}
+
+.btn-login {
+    padding: 10px 24px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-login:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-signup {
+    padding: 10px 24px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    color: #667eea;
+    border: 2px solid #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.btn-signup:hover {
+    background-color: transparent;
+    color: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1024px) {
+    .header-custom {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .header-logo {
+        order: 1;
+    }
+
+    .header-auth {
+        order: 2;
+    }
+
+    .header-nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

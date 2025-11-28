@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='가게 검색 결과', currentPage='stores'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .store-list-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: calc(100vh - 80px);
+                padding: 32px 20px;
+            }
+
+            .store-list-container {
+                max-width: 1400px;
+                margin: 0 auto;
+                display: flex;
+                gap: 32px;
+            }
+
+            /* 필터 메뉴 (왼쪽 사이드바) */
+            .filter-menu {
+                width: 280px;
+                flex-shrink: 0;
+                background-color: white;
+                border-radius: 16px;
+                border: 1px solid #E0E0E0;
+                padding: 24px;
+                height: fit-content;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                position: sticky;
+                top: 100px;
+            }
+
+            .filter-section {
+                margin-bottom: 32px;
+            }
+
+            .filter-section:last-child {
+                margin-bottom: 0;
+            }
+
+            .filter-title {
+                font-weight: 600;
+                font-size: 16px;
+                color: #1E1E1E;
+                margin: 0 0 16px 0;
+            }
+
+            /* 키워드 태그 */
+            .keyword-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .keyword-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 12px;
+                background-color: #F5F5F5;
+                border-radius: 8px;
+                font-size: 14px;
+                color: #1E1E1E;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .keyword-tag:hover {
+                background-color: #E3E3E3;
+            }
+
+            .keyword-tag-icon {
+                width: 14px;
+                height: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 체크박스 그룹 */
+            .checkbox-group {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .checkbox-item {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .checkbox-label-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                cursor: pointer;
+            }
+
+            .checkbox-input {
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+                border: 2px solid #D9D9D9;
+                accent-color: #667eea;
+                cursor: pointer;
+            }
+
+            .checkbox-label {
+                font-size: 16px;
+                color: #1E1E1E;
+                cursor: pointer;
+            }
+
+            .checkbox-description {
+                font-size: 14px;
+                color: #757575;
+                margin-left: 30px;
+            }
+
+            /* 슬라이더 */
+            .slider-field {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .slider-label-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .slider-value {
+                font-size: 14px;
+                color: #1E1E1E;
+            }
+
+            .slider-input {
+                width: 100%;
+                height: 8px;
+                border-radius: 999px;
+                background: #E6E6E6;
+                outline: none;
+                accent-color: #667eea;
+            }
+
+            /* 검색 결과 영역 (오른쪽) */
+            .results-section {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 32px;
+            }
+
+            /* 필터 바 */
+            .filter-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 24px;
+            }
+
+            .search-filter {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex: 1;
+                max-width: 400px;
+            }
+
+            .search-box {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 16px;
+                background-color: white;
+                border: 1px solid #D9D9D9;
+                border-radius: 999px;
+                transition: all 0.3s;
+            }
+
+            .search-box:focus-within {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+
+            .search-box-input {
+                flex: 1;
+                border: none;
+                outline: none;
+                font-size: 16px;
+                color: #1E1E1E;
+            }
+
+            .search-box-input::placeholder {
+                color: #B3B3B3;
+            }
+
+            .search-icon {
+                width: 16px;
+                height: 16px;
+                color: #757575;
+            }
+
+            /* 정렬 토글 그룹 */
+            .sort-toggle-group {
+                display: flex;
+                gap: 8px;
+            }
+
+            .sort-toggle {
+                padding: 8px 16px;
+                border-radius: 8px;
+                border: none;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+                background-color: #F5F5F5;
+                color: #757575;
+            }
+
+            .sort-toggle.active {
+                background-color: #2C2C2C;
+                color: #F5F5F5;
+            }
+
+            .sort-toggle:hover:not(.active) {
+                background-color: #E3E3E3;
+            }
+
+            /* 카드 그리드 */
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 24px;
+            }
+
+            /* 가게 카드 */
+            .store-card {
+                background-color: white;
+                border: 1px solid #D9D9D9;
+                border-radius: 16px;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+
+            .store-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+                border-color: #667eea;
+            }
+
+            .store-image {
+                width: 100%;
+                height: 200px;
+                background: linear-gradient(135deg, #E3E3E3 0%, #F5F5F5 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #B3B3B3;
+                font-size: 14px;
+                overflow: hidden;
+            }
+
+            .store-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .store-body {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .store-name {
+                font-size: 16px;
+                font-weight: 400;
+                color: #1E1E1E;
+                margin: 0;
+                line-height: 1.4;
+            }
+
+            .store-action {
+                font-size: 16px;
+                font-weight: 600;
+                color: #667eea;
+                margin: 0;
+                line-height: 1.4;
+            }
+
+            /* 로딩 상태 */
+            .loading {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 60px;
+                font-size: 18px;
+                color: #757575;
+            }
+
+            /* 결과 없음 */
+            .no-results {
+                text-align: center;
+                padding: 80px 20px;
+                color: #757575;
+            }
+
+            .no-results-title {
+                font-size: 24px;
+                font-weight: 600;
+                margin: 0 0 12px 0;
+            }
+
+            .no-results-text {
+                font-size: 16px;
+                margin: 0;
+            }
+
+            /* 반응형 */
+            @media (max-width: 1024px) {
+                .filter-menu {
+                    display: none;
+                }
+
+                .card-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                }
+            }
+
+            @media (max-width: 768px) {
+                .filter-bar {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .search-filter {
+                    max-width: 100%;
+                }
+
+                .sort-toggle-group {
+                    overflow-x: auto;
+                }
+
+                .card-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="store-list-wrapper" layout:fragment="content">
+    <div class="store-list-container">
+        <!-- 왼쪽 필터 메뉴 -->
+        <aside class="filter-menu">
+            <!-- 키워드 섹션 -->
+            <div class="filter-section">
+                <h3 class="filter-title">키워드</h3>
+                <div class="keyword-list" id="keywordList">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 필터 옵션 -->
+            <div class="filter-section">
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <label class="checkbox-label-wrapper">
+                            <input type="checkbox" class="checkbox-input" id="favoriteFilter">
+                            <span class="checkbox-label">관심한 가게</span>
+                        </label>
+                        <span class="checkbox-description">관심한 가게를 보여드려요</span>
+                    </div>
+
+                    <div class="checkbox-item">
+                        <label class="checkbox-label-wrapper">
+                            <input type="checkbox" class="checkbox-input" id="recentFilter">
+                            <span class="checkbox-label">최근 예약</span>
+                        </label>
+                        <span class="checkbox-description">예약한 가게를 보여드려요</span>
+                    </div>
+
+                    <div class="checkbox-item">
+                        <label class="checkbox-label-wrapper">
+                            <input type="checkbox" class="checkbox-input" id="nearbyFilter">
+                            <span class="checkbox-label">동네 가게</span>
+                        </label>
+                        <span class="checkbox-description">동네 가게를 보여드려요</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 거리 슬라이더 -->
+            <div class="filter-section">
+                <div class="slider-field">
+                    <div class="slider-label-row">
+                        <span class="filter-title" style="margin: 0;">나와의 거리</span>
+                        <span class="slider-value"><span id="distanceValue">10</span> km</span>
+                    </div>
+                    <input type="range" class="slider-input" id="distanceSlider" min="1" max="50" value="10">
+                </div>
+            </div>
+        </aside>
+
+        <!-- 오른쪽 검색 결과 -->
+        <main class="results-section">
+            <!-- 필터 바 -->
+            <div class="filter-bar">
+                <div class="search-filter">
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.333 12.667A5.333 5.333 0 1 0 7.333 2a5.333 5.333 0 0 0 0 10.667ZM14 14l-2.9-2.9" 
+                                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <input type="text" class="search-box-input" id="searchInput" 
+                               th:value="${keyword}" placeholder="가게를 검색하세요">
+                    </div>
+                </div>
+
+                <div class="sort-toggle-group">
+                    <button class="sort-toggle active" data-sort="recommended">추천순</button>
+                    <button class="sort-toggle" data-sort="recent">최근 등록순</button>
+                    <button class="sort-toggle" data-sort="reviews">리뷰 많은순</button>
+                </div>
+            </div>
+
+            <!-- 카드 그리드 -->
+            <div class="card-grid" id="storeGrid">
+                <!-- 로딩 상태 -->
+                <div class="loading" id="loadingState">
+                    검색 중...
+                </div>
+            </div>
+
+            <!-- 결과 없음 (초기 숨김) -->
+            <div class="no-results" id="noResultsState" style="display: none;">
+                <h3 class="no-results-title">검색 결과가 없습니다</h3>
+                <p class="no-results-text">다른 키워드로 검색해보세요</p>
+            </div>
+        </main>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script th:inline="javascript">
+        // 페이지 로드 시 키워드 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const keyword = urlParams.get('keyword') || /*[[${keyword}]]*/ '';
+        
+        console.log('🔍 검색 키워드:', keyword);
+
+        // 키워드 파싱 (띄어쓰기로 분리)
+        const keywords = keyword ? keyword.trim().split(/\s+/) : [];
+        
+        // 키워드 태그 렌더링
+        const keywordList = document.getElementById('keywordList');
+        if (keywords.length > 0) {
+            keywords.forEach(kw => {
+                const tag = document.createElement('button');
+                tag.className = 'keyword-tag';
+                tag.innerHTML = `
+                    <span>${kw}</span>
+                    <span class="keyword-tag-icon">✕</span>
+                `;
+                tag.addEventListener('click', () => removeKeyword(kw));
+                keywordList.appendChild(tag);
+            });
+        }
+
+        // 거리 슬라이더
+        const distanceSlider = document.getElementById('distanceSlider');
+        const distanceValue = document.getElementById('distanceValue');
+        
+        distanceSlider.addEventListener('input', (e) => {
+            distanceValue.textContent = e.target.value;
+            filterStores();
+        });
+
+        // 체크박스 필터
+        ['favoriteFilter', 'recentFilter', 'nearbyFilter'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', filterStores);
+        });
+
+        // 정렬 토글
+        document.querySelectorAll('.sort-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.sort-toggle').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                sortStores(e.target.dataset.sort);
+            });
+        });
+
+        // 검색 입력 - 자동 검색 제거
+        const searchInput = document.getElementById('searchInput');
+
+        // 검색 시 엔터키만 허용
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const newKeyword = e.target.value.trim();
+                if (newKeyword) {
+                    window.location.href = '/store/stores?keyword=' + encodeURIComponent(newKeyword);
+                } else {
+                    // 키워드가 없으면 전체 목록
+                    window.location.href = '/store/stores';
+                }
+            }
+        });
+
+        // 키워드 제거
+        function removeKeyword(removedKw) {
+            const newKeywords = keywords.filter(k => k !== removedKw);
+            if (newKeywords.length > 0) {
+                window.location.href = '/store/stores?keyword=' + encodeURIComponent(newKeywords.join(' '));
+            } else {
+                window.location.href = '/';
+            }
+        }
+
+        // 가게 데이터 로드
+        async function loadStores() {
+            try {
+                console.log('📡 가게 데이터 로딩...');
+
+                // 로딩 상태 표시
+                const loadingState = document.getElementById('loadingState');
+                if (loadingState) {
+                    loadingState.style.display = 'flex';
+                }
+
+                // 서버에서 전달된 데이터 사용
+                const stores = /*[[${stores}]]*/ [];
+
+                if (stores && stores.length > 0) {
+                    allStores = stores;
+                    displayStores(allStores);
+                } else {
+                    showNoResults();
+                }
+            } catch (error) {
+                console.error('❌ 가게 로딩 실패:', error);
+                showNoResults();
+            }
+        }
+
+        // 가게 표시
+        function displayStores(stores) {
+            const storeGrid = document.getElementById('storeGrid');
+            const loadingState = document.getElementById('loadingState');
+            const noResultsState = document.getElementById('noResultsState');
+
+            // null 체크
+            if (!storeGrid) {
+                console.error('❌ storeGrid 요소를 찾을 수 없습니다');
+                return;
+            }
+
+            if (loadingState) {
+                loadingState.style.display = 'none';
+            }
+
+            if (stores.length === 0) {
+                showNoResults();
+                return;
+            }
+
+            if (noResultsState) {
+                noResultsState.style.display = 'none';
+            }
+            storeGrid.innerHTML = '';
+
+            stores.forEach(store => {
+                const card = document.createElement('div');
+                card.className = 'store-card';
+
+                const imageUrl = store.mainImageUrl || '/images/placeholder.png';
+                const keywords = store.keywords || [];
+                const keywordsHtml = keywords.length > 0
+                    ? `<div style="font-size: 12px; color: #667eea; margin-top: 4px;">${keywords.join(', ')}</div>`
+                    : '';
+
+                card.innerHTML = `
+                    <div class="store-image">
+                        ${store.mainImageUrl
+                            ? `<img src="${store.mainImageUrl}" alt="${store.name}">`
+                            : '이미지 준비중'}
+                    </div>
+                    <div class="store-body">
+                        <p class="store-name">${store.name}</p>
+                        ${keywordsHtml}
+                        <p class="store-action">예약하기</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => goToStore(store.id));
+                storeGrid.appendChild(card);
+            });
+
+            console.log(`✅ ${stores.length}개 가게 표시됨`);
+        }
+
+        // 결과 없음 표시
+        function showNoResults() {
+            const loadingState = document.getElementById('loadingState');
+            const storeGrid = document.getElementById('storeGrid');
+            const noResultsState = document.getElementById('noResultsState');
+
+            if (loadingState) {
+                loadingState.style.display = 'none';
+            }
+            if (storeGrid) {
+                storeGrid.innerHTML = '';
+            }
+            if (noResultsState) {
+                noResultsState.style.display = 'block';
+            }
+        }
+
+        // 필터링
+        function filterStores() {
+            console.log('🔄 필터 적용 중...');
+            // TODO: 실제 필터 로직 구현
+            displayStores(allStores);
+        }
+
+        // 정렬
+        function sortStores(sortType) {
+            console.log('🔄 정렬:', sortType);
+            // TODO: 실제 정렬 로직 구현
+            let sorted = [...allStores];
+            switch(sortType) {
+                case 'recent':
+                    sorted.reverse();
+                    break;
+                case 'reviews':
+                    // 리뷰순 정렬
+                    break;
+                case 'recommended':
+                default:
+                    // 추천순 (기본)
+                    break;
+            }
+            displayStores(sorted);
+        }
+
+        // 가게 상세 페이지로 이동
+        function goToStore(storeId) {
+            window.location.href = `/store/${storeId}`;
+        }
+
+        // 페이지 로드 시 가게 데이터 로드
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 가게 목록 페이지 초기화');
+            loadStores();
+        });
+    </script>
+</th:block>
+</body>
+</html>

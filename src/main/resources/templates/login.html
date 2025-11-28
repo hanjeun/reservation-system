@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='로그인', currentPage='login'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .login-container {
+                flex-grow: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 60px 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            .login-box {
+                width: 100%;
+                max-width: 450px;
+                padding: 50px 40px;
+                background-color: white;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+            .login-box h2 {
+                margin-bottom: 40px;
+                font-size: clamp(24px, 5vw, 32px);
+                text-align: center;
+                color: #667eea;
+            }
+            .form-label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+            .form-control {
+                padding: 14px 18px;
+                font-size: 15px;
+                border-radius: 10px;
+                border: 2px solid #e0e0e0;
+                transition: all 0.3s;
+                width: 100%;
+            }
+            .form-control:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+            .btn-dark {
+                padding: 14px;
+                font-size: 16px;
+                font-weight: 600;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                transition: transform 0.2s;
+                width: 100%;
+            }
+            .btn-dark:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            }
+            .link-text {
+                color: #667eea;
+                font-weight: 600;
+                text-decoration: none;
+            }
+            .link-text:hover {
+                text-decoration: underline;
+            }
+            .form-check {
+                font-size: 14px;
+            }
+
+            @media (max-width: 576px) {
+                .login-box {
+                    padding: 40px 30px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<section class="login-container" layout:fragment="content">
+    <div class="login-box">
+        <h2 class="fw-bold">로그인</h2>
+        <form id="loginForm">
+            <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+            <div class="mb-4">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="이메일을 입력하세요" required>
+            </div>
+            <div class="mb-4">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            <div class="d-grid mb-4">
+                <button type="submit" class="btn btn-dark" id="loginBtn">로그인</button>
+            </div>
+            <div class="text-center">
+                <small>계정이 없으신가요? <a th:href="@{/user/signup}" class="link-text">회원가입</a></small>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('errorMessage');
+
+            console.log('🔐 로그인 시도 시작:', email);
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = '로그인 중...';
+            errorDiv.style.display = 'none';
+
+            fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+                credentials: 'include'
+            })
+            .then(response => {
+                console.log('📡 서버 응답 받음:', response.status, response.statusText);
+                console.log('📋 응답 헤더:', [...response.headers.entries()]);
+
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        console.error('❌ 로그인 실패:', data);
+                        throw new Error(data.error || '로그인에 실패했습니다.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ 로그인 성공 - 응답 데이터:', data);
+                console.log('🍪 현재 쿠키:', document.cookie);
+
+                // UserState 캐시 초기화
+                if (window.UserState) {
+                    window.UserState.clearUser();
+                }
+
+                // 메인 페이지로 리다이렉트
+                console.log('🔀 메인 페이지로 리다이렉트');
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('❌ 로그인 에러:', error);
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.textContent = '로그인';
+            });
+        });
+    </script>
+</section>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='공지사항', currentPage='notice'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .content-wrapper {
+                flex-grow: 1;
+                padding: 40px 20px;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            }
+            .content-container {
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 50px;
+                background-color: white;
+                border-radius: 20px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+            .content-container h2 {
+                font-size: clamp(28px, 5vw, 36px);
+                margin-bottom: 8px;
+                color: #667eea;
+                font-weight: 700;
+            }
+            .content-container .subtitle {
+                font-size: clamp(14px, 3vw, 16px);
+                margin-bottom: 32px;
+                color: #888;
+            }
+            .list-group {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+            .list-group-item {
+                border: 2px solid #f0f0f0;
+                border-radius: 12px;
+                padding: 24px;
+                background-color: #fafafa;
+                transition: all 0.3s;
+                position: relative;
+            }
+            .list-group-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+                border: 2px solid #667eea;
+                background-color: white;
+            }
+            .notice-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 16px;
+                margin-bottom: 12px;
+                flex-wrap: wrap;
+            }
+            .list-group-item h5 {
+                color: #333;
+                font-size: clamp(16px, 3vw, 18px);
+                font-weight: 700;
+                margin: 0;
+                flex: 1;
+                min-width: 0;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            .notice-date {
+                color: #999;
+                font-size: 14px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .list-group-item p {
+                color: #666;
+                line-height: 1.6;
+                margin: 0;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            @media (max-width: 768px) {
+                .content-container {
+                    padding: 30px 20px;
+                }
+                .list-group-item {
+                    padding: 20px;
+                }
+                .notice-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="content-wrapper" layout:fragment="content">
+    <div class="content-container">
+        <h2>공지사항</h2>
+        <p class="subtitle">중요한 공지사항을 확인하세요</p>
+
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>서비스 점검 안내</h5>
+                    <span class="notice-date">2025-10-20</span>
+                </div>
+                <p>10월 25일 새벽 2시부터 4시까지 서비스 점검이 진행됩니다. 더욱 나은 서비스를 위한 시스템 안정화 작업이 예정되어 있습니다.</p>
+            </div>
+
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>새로운 기능 업데이트</h5>
+                    <span class="notice-date">2025-10-15</span>
+                </div>
+                <p>가게 홍보 기능이 추가되었습니다. 이제 더 많은 고객에게 여러분의 가게를 알릴 수 있습니다. 많은 이용 부탁드립니다.</p>
+            </div>
+
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>이용약관 개정 안내</h5>
+                    <span class="notice-date">2025-10-10</span>
+                </div>
+                <p>이용약관이 일부 개정되었습니다. 정책 페이지에서 확인하실 수 있습니다. 주요 변경사항은 개인정보 처리방침 관련 내용입니다.</p>
+            </div>
+
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>추석 연휴 고객센터 운영 안내</h5>
+                    <span class="notice-date">2025-10-05</span>
+                </div>
+                <p>추석 연휴 기간 동안 고객센터 운영시간이 조정됩니다. 9월 28일부터 10월 1일까지 오전 10시부터 오후 5시까지 운영됩니다.</p>
+            </div>
+
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>모바일 앱 출시 예정</h5>
+                    <span class="notice-date">2025-09-30</span>
+                </div>
+                <p>더욱 편리한 서비스 이용을 위한 모바일 앱이 11월 중 출시 예정입니다. iOS와 Android 모두 지원될 예정이니 많은 관심 부탁드립니다.</p>
+            </div>
+
+            <div class="list-group-item">
+                <div class="notice-header">
+                    <h5>예약 시스템 개선 안내</h5>
+                    <span class="notice-date">2025-09-25</span>
+                </div>
+                <p>예약 확인 및 취소 기능이 개선되었습니다. 이제 더욱 빠르고 편리하게 예약을 관리하실 수 있습니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

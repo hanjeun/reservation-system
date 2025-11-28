@@ -1,0 +1,88 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+    session:
+      tracking-modes: []  # 세션 트래킹 완전 비활성화 (JSESSIONID 생성 방지)
+
+spring:
+  application:
+    name: reservation-system
+  main:
+    lazy-initialization: true
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+
+  ####################################
+  # MySQL
+  ####################################
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/reservation_system?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 1234
+
+  ####################################
+  # JPA
+  ####################################
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  ####################################
+  # 파일 업로드 설정
+  ####################################
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 50MB
+      file-size-threshold: 2MB
+
+####################################
+# JWT
+####################################
+jwt:
+  issuer: reservation-system
+  secret-key: test-secret-key-minimum-256-bits-for-development-only # JWT 시크릿 환경변수
+  access-token:
+    expiration-minutes: 30  # 30분
+  refresh-token:
+    expiration-days: 14  # 14일
+
+####################################
+# 파일 저장 경로
+####################################
+file:
+  upload-dir: uploads
+
+####################################
+# 로그 설정
+####################################
+logging:
+  level:
+    root: INFO
+    ac.inhatc.reservation_system.config.service.TokenService: INFO
+    ac.inhatc.reservation_system.config.controller.TokenApiController: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
