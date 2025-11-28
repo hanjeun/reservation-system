@@ -598,55 +598,37 @@
 
 <th:block layout:fragment="custom-script">
     <script>
-
-
         let currentSort = 'latest';
         let currentPage = 0;
         let currentUser = null;
 
-        // 페이지 로드
         document.addEventListener('DOMContentLoaded', async function() {
-
-
             try {
-                // 사용자 정보 가져오기
-
                 currentUser = await window.UserState.getUser().catch(() => null);
 
-
-                // 역할에 따라 페이지 제목 변경
                 const heroTitle = document.querySelector('.hero-title');
                 const heroSubtitle = document.querySelector('.hero-subtitle');
                 const heroDescription = document.querySelector('.hero-description');
 
                 if (currentUser && window.hasBusinessOrAdminRole(currentUser.role)) {
-                    // 사업자/관리자: "홍보하기"
-
                     if (heroTitle) heroTitle.textContent = '🎯 가게 홍보';
                     if (heroSubtitle) heroSubtitle.textContent = '당신의 가게를 알리세요';
                     if (heroDescription) heroDescription.textContent = '매력적인 홍보로 더 많은 고객을 만나보세요';
-
                     document.getElementById('myStoresSection').style.display = 'block';
                     loadMyStores();
                 } else {
-                    // 일반 사용자: "추천 가게"
-
                     if (heroTitle) heroTitle.textContent = '⭐ 추천 가게';
                     if (heroSubtitle) heroSubtitle.textContent = '특별한 가게를 만나보세요';
                     if (heroDescription) heroDescription.textContent = '엄선된 가게들의 특별한 이야기를 확인해보세요';
                 }
 
-                // 모든 홍보글 로드
-
                 await loadPromotions();
             } catch (error) {
-                console.error('❌ 초기화 에러:', error);
+                console.error('초기화 에러:', error);
             }
 
-            // 정렬 탭 이벤트
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
-
                     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     currentSort = this.dataset.sort;
@@ -655,7 +637,6 @@
                 });
             });
 
-            // 모달 닫기 이벤트
             const closeBtn = document.getElementById('closeModalBtn');
             if (closeBtn) {
                 closeBtn.addEventListener('click', closePromotionModal);
@@ -664,63 +645,42 @@
             const modal = document.getElementById('promotionModal');
             if (modal) {
                 modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closePromotionModal();
-                    }
+                    if (e.target === this) closePromotionModal();
                 });
             }
 
-            // 폼 제출
             const form = document.getElementById('promotionForm');
             if (form) {
                 form.addEventListener('submit', handleSubmit);
             }
         });
 
-        // 내 가게 목록 로드
         async function loadMyStores() {
-
             try {
-                const url = '/api/promotions/my-stores';
-
-
-                const response = await window.fetchWithAuth(url);
-
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
+                const response = await window.fetchWithAuth('/api/promotions/my-stores');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const stores = await response.json();
-
                 displayMyStores(stores);
             } catch (error) {
-                console.error('❌ 가게 목록 로드 실패:', error);
-                // 에러가 나도 페이지는 계속 작동
+                console.error('가게 목록 로드 실패:', error);
             }
         }
 
-        // 내 가게 표시
         function displayMyStores(stores) {
             const grid = document.getElementById('myStoresGrid');
             const emptyState = document.getElementById('emptyStoresState');
 
             if (!stores || stores.length === 0) {
-
                 grid.innerHTML = '';
                 emptyState.style.display = 'block';
                 return;
             }
 
-
             emptyState.style.display = 'none';
 
             const categoryNames = {
-                'RESTAURANT': '음식점',
-                'CAFE': '카페',
-                'BEAUTY': '뷰티',
-                'ACTIVITY': '액티비티',
-                'ETC': '기타'
+                'RESTAURANT': '음식점', 'CAFE': '카페', 'BEAUTY': '뷰티',
+                'ACTIVITY': '액티비티', 'ETC': '기타'
             };
 
             grid.innerHTML = stores.map(store => `
@@ -736,146 +696,101 @@
                         📞 ${escapeHtml(store.phone || '전화번호 미등록')}
                     </div>
                     <div class="store-card-actions">
-                        <button class="btn-promote" onclick="openPromotionModal(${store.id}, '${escapeHtml(store.name).replace(/'/g, "\\'")}')">
-                            홍보 작성
-                        </button>
-                        <button class="btn-view-store" onclick="viewStore(${store.id})">
-                            상세보기
-                        </button>
+                        <button class="btn-promote" onclick="openPromotionModal(${store.id}, '${escapeHtml(store.name).replace(/'/g, "\\'")}')">홍보 작성</button>
+                        <button class="btn-view-store" onclick="viewStore(${store.id})">상세보기</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // 가게 상세보기
         function viewStore(storeId) {
-
             window.location.href = `/store/${storeId}`;
         }
 
-        // 홍보글 목록 로드
         async function loadPromotions() {
-
             try {
-                const url = `/api/promotions?page=${currentPage}&size=12&sortBy=${currentSort}`;
-
-
-                const response = await fetch(url);
-
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
+                const response = await fetch(`/api/promotions?page=${currentPage}&size=12&sortBy=${currentSort}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
-
-
-
-
                 displayPromotions(data.content || []);
             } catch (error) {
-                console.error('❌ 홍보글 로드 실패:', error);
-                // 에러 메시지 표시
+                console.error('홍보글 로드 실패:', error);
                 const grid = document.getElementById('promotionsGrid');
                 grid.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #e74c3c;">
-                        <h3>❌ 오류 발생</h3>
+                        <h3>오류 발생</h3>
                         <p>${error.message}</p>
-                        <button onclick="loadPromotions()" style="padding: 10px 20px; margin-top: 20px; cursor: pointer;">
-                            다시 시도
-                        </button>
+                        <button onclick="loadPromotions()" style="padding: 10px 20px; margin-top: 20px; cursor: pointer;">다시 시도</button>
                     </div>
                 `;
             }
         }
 
-        // 홍보글 표시
         function displayPromotions(promotions) {
-
             const grid = document.getElementById('promotionsGrid');
             const emptyState = document.getElementById('emptyPromotionsState');
 
             if (!promotions || promotions.length === 0) {
-
                 grid.innerHTML = '';
                 emptyState.style.display = 'block';
                 return;
             }
 
-
             emptyState.style.display = 'none';
 
             const categoryNames = {
-                'RESTAURANT': '음식점',
-                'CAFE': '카페',
-                'BEAUTY': '뷰티',
-                'ACTIVITY': '액티비티',
-                'ETC': '기타'
+                'RESTAURANT': '음식점', 'CAFE': '카페', 'BEAUTY': '뷰티',
+                'ACTIVITY': '액티비티', 'ETC': '기타'
             };
 
-            try {
-                grid.innerHTML = promotions.map(promo => {
+            grid.innerHTML = promotions.map(promo => {
+                const contentPreview = promo.content && promo.content.length > 100
+                    ? promo.content.substring(0, 100) + '...'
+                    : (promo.content || '내용 없음');
 
-                    const contentPreview = promo.content && promo.content.length > 100
-                        ? promo.content.substring(0, 100) + '...'
-                        : (promo.content || '내용 없음');
-
-                    return `
-                        <div class="promotion-card" onclick="viewPromotion(${promo.id})">
-                            <div class="promotion-card-image">
-                                ${promo.imageUrl
-                                    ? `<img src="${promo.imageUrl}" alt="${escapeHtml(promo.title)}" style="width: 100%; height: 100%; object-fit: cover;">`
-                                    : '🏪'}
+                return `
+                    <div class="promotion-card" onclick="viewPromotion(${promo.id})">
+                        <div class="promotion-card-image">
+                            ${promo.imageUrl
+                                ? `<img src="${promo.imageUrl}" alt="${escapeHtml(promo.title)}" style="width: 100%; height: 100%; object-fit: cover;">`
+                                : '🏪'}
+                        </div>
+                        <div class="promotion-card-content">
+                            <div class="promotion-card-header">
+                                <span class="promotion-card-category">${categoryNames[promo.category] || promo.category}</span>
+                                <span class="promotion-card-date">${formatDate(promo.createdAt)}</span>
                             </div>
-                            <div class="promotion-card-content">
-                                <div class="promotion-card-header">
-                                    <span class="promotion-card-category">${categoryNames[promo.category] || promo.category}</span>
-                                    <span class="promotion-card-date">${formatDate(promo.createdAt)}</span>
-                                </div>
-                                <h3 class="promotion-card-title">${escapeHtml(promo.title)}</h3>
-                                <p class="promotion-card-content-text">${escapeHtml(contentPreview)}</p>
-                                <div class="promotion-card-footer">
-                                    <span class="promotion-card-author">${escapeHtml(promo.storeName || '가게')}</span>
-                                    <span class="promotion-card-views">👁️ ${promo.viewCount || 0}</span>
-                                </div>
+                            <h3 class="promotion-card-title">${escapeHtml(promo.title)}</h3>
+                            <p class="promotion-card-content-text">${escapeHtml(contentPreview)}</p>
+                            <div class="promotion-card-footer">
+                                <span class="promotion-card-author">${escapeHtml(promo.storeName || '가게')}</span>
+                                <span class="promotion-card-views">👁️ ${promo.viewCount || 0}</span>
                             </div>
                         </div>
-                    `;
-                }).join('');
-
-
-            } catch (error) {
-
-            }
+                    </div>
+                `;
+            }).join('');
         }
 
-        // 홍보글 상세 보기
         function viewPromotion(promotionId) {
-
             alert('상세 페이지 (구현 예정): ' + promotionId);
         }
 
-        // 모달 열기
         function openPromotionModal(storeId, storeName) {
-
             document.getElementById('selectedStoreId').value = storeId;
             document.getElementById('selectedStoreName').value = storeName;
             document.getElementById('promotionModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // 모달 닫기
         function closePromotionModal() {
-
             document.getElementById('promotionModal').classList.remove('active');
             document.getElementById('promotionForm').reset();
             document.body.style.overflow = 'auto';
         }
 
-        // 폼 제출 처리
         async function handleSubmit(e) {
             e.preventDefault();
-
 
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.textContent;
@@ -892,9 +807,6 @@
                     tags: document.getElementById('promotionTags').value.trim() || null
                 };
 
-
-
-                // 유효성 검사
                 if (data.content.length < 20) {
                     alert('상세 설명은 최소 20자 이상 입력해주세요');
                     submitBtn.disabled = false;
@@ -908,10 +820,8 @@
                     body: JSON.stringify(data)
                 });
 
-
-
                 if (response.ok) {
-                    alert('✅ 홍보가 성공적으로 등록되었습니다!');
+                    alert('홍보가 성공적으로 등록되었습니다!');
                     closePromotionModal();
                     await loadPromotions();
                 } else {
@@ -919,15 +829,14 @@
                     throw new Error(error.message || '홍보 등록에 실패했습니다');
                 }
             } catch (error) {
-                console.error('❌ 홍보 등록 실패:', error);
-                alert('❌ ' + error.message);
+                console.error('홍보 등록 실패:', error);
+                alert(error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
         }
 
-        // 유틸리티 함수
         function formatDate(dateString) {
             if (!dateString) return '';
             try {
@@ -935,13 +844,11 @@
                 const now = new Date();
                 const diff = now - date;
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
                 if (days === 0) return '오늘';
                 if (days === 1) return '어제';
                 if (days < 7) return `${days}일 전`;
                 return date.toLocaleDateString('ko-KR');
             } catch (e) {
-                console.error('날짜 포맷 에러:', e);
                 return dateString;
             }
         }
@@ -952,8 +859,6 @@
             div.textContent = text;
             return div.innerHTML;
         }
-
-
     </script>
 </th:block>
 </body>

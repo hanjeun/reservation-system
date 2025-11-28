@@ -32,19 +32,15 @@ public class StoreApiController {
             return ResponseEntity.status(401).build();
         }
 
-        // 🔒 권한 체크: BUSINESS 또는 ADMIN만 가게 등록 가능
         if (!member.isBusiness() && !member.isAdmin()) {
-            log.warn("❌ 권한 없음: 일반 사용자가 가게 등록 시도 - memberId={}", member.getId());
-            return ResponseEntity.status(403).build(); // 403 Forbidden
+            return ResponseEntity.status(403).build();
         }
-
-        log.info("✅ 가게 등록 API: memberId={}, storeName={}", member.getId(), request.getName());
         
         try {
             StoreResponse store = storeService.createStore(request, member);
             return ResponseEntity.ok(store);
         } catch (Exception e) {
-            log.error("❌ 가게 등록 실패", e);
+            log.error("가게 등록 실패", e);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -56,10 +52,8 @@ public class StoreApiController {
             return ResponseEntity.status(401).build();
         }
         
-        // 🔒 권한 체크: BUSINESS 또는 ADMIN만 내 가게 조회 가능
         if (!member.isBusiness() && !member.isAdmin()) {
-            log.warn("❌ 권한 없음: 일반 사용자가 가게 목록 조회 시도 - memberId={}", member.getId());
-            return ResponseEntity.status(403).build(); // 403 Forbidden
+            return ResponseEntity.status(403).build();
         }
         
         List<StoreResponse> stores = storeService.getMyStores(member);
@@ -92,9 +86,7 @@ public class StoreApiController {
             return ResponseEntity.status(401).build();
         }
         
-        // 🔒 권한 체크: BUSINESS 또는 ADMIN만 가게 수정 가능
         if (!member.isBusiness() && !member.isAdmin()) {
-            log.warn("❌ 권한 없음: 일반 사용자가 가게 수정 시도 - memberId={}, storeId={}", member.getId(), id);
             return ResponseEntity.status(403).build();
         }
         
@@ -112,9 +104,7 @@ public class StoreApiController {
             return ResponseEntity.status(401).build();
         }
         
-        // 🔒 권한 체크: BUSINESS 또는 ADMIN만 가게 삭제 가능
         if (!member.isBusiness() && !member.isAdmin()) {
-            log.warn("❌ 권한 없음: 일반 사용자가 가게 삭제 시도 - memberId={}, storeId={}", member.getId(), id);
             return ResponseEntity.status(403).build();
         }
         
