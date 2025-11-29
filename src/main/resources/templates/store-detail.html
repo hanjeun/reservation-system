@@ -5,6 +5,9 @@
       layout:decorate="~{layouts/main-layout}">
 <head>
     <meta charset="UTF-8">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
     <th:block layout:fragment="custom-css">
         <style>
             .store-detail-wrapper {
@@ -120,6 +123,7 @@
                 border-radius: 5px;
             }
 
+            /* 찜하기 버튼 스타일 */
             .favorite-btn {
                 position: absolute;
                 top: 16px;
@@ -127,23 +131,63 @@
                 width: 48px;
                 height: 48px;
                 border-radius: 50%;
-                background: #667eea;
-                border: 2px solid #667eea;
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
                 transition: all 0.3s;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10;
             }
 
             .favorite-btn:hover {
                 transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.2);
             }
 
             .favorite-btn svg {
-                width: 20px;
-                height: 20px;
+                width: 24px;
+                height: 24px;
+                transition: all 0.3s;
+            }
+
+            .favorite-btn:not(.active) svg {
+                fill: transparent;
+                stroke: #667eea;
+                stroke-width: 2;
+            }
+
+            .favorite-btn.active {
+                background: #ff4757;
+            }
+
+            .favorite-btn.active svg {
                 fill: white;
+                stroke: white;
+            }
+
+            .favorite-count {
+                position: absolute;
+                top: 16px;
+                right: 72px;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                z-index: 10;
+            }
+
+            .favorite-count svg {
+                width: 16px;
+                height: 16px;
+                fill: #ff4757;
             }
 
             .store-info-section {
@@ -229,6 +273,299 @@
 
             .select-field option:disabled {
                 color: #B3B3B3;
+            }
+
+            /* Flatpickr 커스텀 스타일 */
+            .flatpickr-input {
+                background-image: none !important;
+            }
+
+            .flatpickr-calendar {
+                border-radius: 20px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
+                border: none !important;
+                padding: 20px !important;
+                width: 340px !important;
+                font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                background: white !important;
+                overflow: hidden;
+            }
+
+            .flatpickr-calendar.arrowTop:before,
+            .flatpickr-calendar.arrowTop:after {
+                display: none !important;
+            }
+
+            .flatpickr-months {
+                padding: 0 8px 16px 8px !important;
+                border-bottom: 1px solid #f0f0f0;
+                margin-bottom: 12px;
+            }
+
+            .flatpickr-months .flatpickr-month {
+                height: 40px !important;
+            }
+
+            .flatpickr-current-month {
+                font-size: 18px !important;
+                font-weight: 700 !important;
+                color: #1a1a2e !important;
+                padding-top: 8px !important;
+            }
+
+            .flatpickr-current-month .flatpickr-monthDropdown-months {
+                font-weight: 700 !important;
+                font-size: 18px !important;
+            }
+
+            .flatpickr-months .flatpickr-prev-month,
+            .flatpickr-months .flatpickr-next-month {
+                padding: 8px !important;
+                width: 36px !important;
+                height: 36px !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .flatpickr-months .flatpickr-prev-month:hover,
+            .flatpickr-months .flatpickr-next-month:hover {
+                background: #f0f0f0 !important;
+            }
+
+            .flatpickr-months .flatpickr-prev-month svg,
+            .flatpickr-months .flatpickr-next-month svg {
+                width: 14px !important;
+                height: 14px !important;
+                stroke: #667eea !important;
+                stroke-width: 3 !important;
+            }
+
+            .flatpickr-weekdays {
+                padding: 8px 4px !important;
+                width: 100%;
+            }
+
+            .flatpickr-weekdaycontainer {
+                display: flex;
+                width: 100%;
+            }
+
+            .flatpickr-weekday {
+                flex: 1;
+                font-size: 12px !important;
+                font-weight: 600 !important;
+                color: #9ca3af !important;
+                text-transform: uppercase !important;
+                text-align: center;
+            }
+
+            .flatpickr-innerContainer {
+                display: flex;
+                justify-content: center;
+            }
+
+            .flatpickr-rContainer {
+                width: 100%;
+            }
+
+            .flatpickr-days {
+                width: 100% !important;
+            }
+
+            .dayContainer {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                padding: 0 4px;
+            }
+
+            .flatpickr-day {
+                flex: 0 0 calc(100% / 7) !important;
+                max-width: calc(100% / 7) !important;
+                height: 42px !important;
+                line-height: 42px !important;
+                border-radius: 10px !important;
+                font-weight: 500 !important;
+                font-size: 14px !important;
+                color: #374151 !important;
+                margin: 0 !important;
+                transition: all 0.15s ease !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-sizing: border-box !important;
+            }
+
+            .flatpickr-day:hover {
+                background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+                border-color: transparent !important;
+            }
+
+            .flatpickr-day.selected,
+            .flatpickr-day.selected:hover {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                border-color: transparent !important;
+                color: white !important;
+                font-weight: 600 !important;
+                box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4) !important;
+            }
+
+            .flatpickr-day.today {
+                border: 2px solid #667eea !important;
+                background: transparent !important;
+            }
+
+            .flatpickr-day.today:hover {
+                background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%) !important;
+            }
+
+            .flatpickr-day.today.selected {
+                border-color: transparent !important;
+            }
+
+            .flatpickr-day.prevMonthDay,
+            .flatpickr-day.nextMonthDay {
+                color: #d1d5db !important;
+            }
+
+            .flatpickr-day.flatpickr-disabled {
+                color: #e5e7eb !important;
+            }
+
+            /* 시간 선택기 스타일 */
+            .flatpickr-time {
+                border-top: 1px solid #f0f0f0 !important;
+                margin-top: 16px !important;
+                padding-top: 16px !important;
+                max-height: 60px !important;
+            }
+
+            .flatpickr-time input {
+                font-size: 24px !important;
+                font-weight: 700 !important;
+                color: #1a1a2e !important;
+            }
+
+            .flatpickr-time input:hover,
+            .flatpickr-time input:focus {
+                background: #f8f9ff !important;
+            }
+
+            .numInputWrapper {
+                border-radius: 12px !important;
+                overflow: hidden;
+            }
+
+            .numInputWrapper:hover {
+                background: #f8f9ff !important;
+            }
+
+            .numInputWrapper span.arrowUp,
+            .numInputWrapper span.arrowDown {
+                border: none !important;
+                opacity: 0;
+                transition: opacity 0.2s ease !important;
+            }
+
+            .numInputWrapper:hover span.arrowUp,
+            .numInputWrapper:hover span.arrowDown {
+                opacity: 1;
+            }
+
+            .numInputWrapper span.arrowUp:after {
+                border-bottom-color: #667eea !important;
+            }
+
+            .numInputWrapper span.arrowDown:after {
+                border-top-color: #667eea !important;
+            }
+
+            .flatpickr-time .flatpickr-time-separator {
+                font-size: 24px !important;
+                font-weight: 700 !important;
+                color: #667eea !important;
+            }
+
+            .flatpickr-am-pm {
+                border-radius: 10px !important;
+                font-weight: 600 !important;
+                font-size: 14px !important;
+                color: #667eea !important;
+                transition: all 0.2s ease !important;
+            }
+
+            .flatpickr-am-pm:hover {
+                background: #f0f0ff !important;
+            }
+
+            /* 모바일 대응 */
+            @media (max-width: 768px) {
+                .flatpickr-calendar {
+                    width: 100% !important;
+                    max-width: 320px !important;
+                    padding: 16px !important;
+                }
+
+                .flatpickr-day {
+                    height: 38px !important;
+                    line-height: 38px !important;
+                    font-size: 13px !important;
+                }
+            }
+
+            /* 날짜/시간 입력 필드 아이콘 */
+            .datetime-field-wrapper {
+                position: relative;
+            }
+
+            .datetime-field-wrapper .select-field {
+                padding-right: 48px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .datetime-field-wrapper .select-field:hover {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+            }
+
+            .datetime-field-wrapper .select-field.active,
+            .datetime-field-wrapper .select-field:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            }
+
+            .datetime-field-wrapper .field-icon {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 20px;
+                color: #667eea;
+                pointer-events: none;
+                transition: all 0.3s ease;
+            }
+
+            .datetime-field-wrapper:hover .field-icon {
+                color: #764ba2;
+                transform: translateY(-50%) scale(1.1);
+            }
+
+            /* altInput 스타일 (Flatpickr가 생성하는 보이는 입력 필드) */
+            .flatpickr-input[readonly] {
+                cursor: pointer !important;
+                background: white !important;
+            }
+
+            input.flatpickr-input.form-control + input {
+                background: white !important;
             }
 
             .btn-reserve {
@@ -358,6 +695,11 @@
                 .store-description {
                     font-size: 18px;
                 }
+
+                .flatpickr-calendar {
+                    width: 100% !important;
+                    max-width: 300px !important;
+                }
             }
         </style>
     </th:block>
@@ -389,7 +731,16 @@
                     <div class="slider-indicators" id="sliderIndicators"></div>
                 </div>
 
-                <button class="favorite-btn" onclick="toggleFavorite()">
+                <!-- 찜 개수 표시 -->
+                <div class="favorite-count" id="favoriteCount" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <span id="favoriteCountText">0</span>
+                </div>
+
+                <!-- 찜하기 버튼 -->
+                <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                     </svg>
@@ -413,14 +764,24 @@
                 <div class="reservation-section">
                     <div class="form-field">
                         <label class="field-label">예약 날짜</label>
-                        <input type="date" class="select-field" id="reservationDate" 
-                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                        <div class="datetime-field-wrapper">
+                            <input type="text" class="select-field" id="reservationDate" 
+                                   placeholder="날짜를 선택해주세요" readonly>
+                            <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
                     </div>
 
                     <div class="form-field">
                         <label class="field-label">예약 시간</label>
-                        <input type="time" class="select-field" id="reservationTime"
-                               min="00:00" max="23:59" required>
+                        <div class="datetime-field-wrapper">
+                            <input type="text" class="select-field" id="reservationTime"
+                                   placeholder="시간을 선택해주세요" readonly>
+                            <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
                     </div>
 
                     <div class="form-field">
@@ -490,10 +851,18 @@
 </div>
 
 <th:block layout:fragment="custom-script">
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    
     <script th:inline="javascript">
         const storeId = /*[[${store.id}]]*/ 0;
         const openTime = /*[[${store.openTime}]]*/ null;
         const closeTime = /*[[${store.closeTime}]]*/ null;
+
+        // Flatpickr 인스턴스
+        let datePicker = null;
+        let timePicker = null;
 
         // 이미지 슬라이더 변수
         let currentSlide = 0;
@@ -502,12 +871,154 @@
         // 수정할 예약 ID
         let editingReservationId = null;
 
-        // 페이지 로드 시 슬라이더 초기화
+        // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
             initSlider();
-            setTimeConstraints();
+            initDateTimePickers();
+            loadFavoriteStatus();
             checkEditMode();
         });
+
+        // Flatpickr 날짜/시간 선택기 초기화
+        function initDateTimePickers() {
+            // 날짜 선택기
+            datePicker = flatpickr("#reservationDate", {
+                locale: "ko",
+                dateFormat: "Y-m-d",
+                altInput: true,
+                altFormat: "Y년 n월 j일 (D)",
+                minDate: "today",
+                maxDate: new Date().fp_incr(90), // 90일 후까지
+                disableMobile: true, // 모바일에서도 커스텀 UI 사용
+                animate: true,
+                monthSelectorType: "static",
+                prevArrow: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+                nextArrow: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+                onOpen: function() {
+                    document.getElementById('reservationDate').classList.add('active');
+                },
+                onClose: function() {
+                    document.getElementById('reservationDate').classList.remove('active');
+                },
+                onChange: function(selectedDates, dateStr) {
+                    console.log('선택된 날짜:', dateStr);
+                }
+            });
+
+            // altInput에도 스타일 적용
+            const dateAltInput = document.querySelector('#reservationDate + input');
+            if (dateAltInput) {
+                dateAltInput.classList.add('select-field');
+                dateAltInput.style.paddingRight = '48px';
+            }
+
+            // 시간 선택기 설정
+            let timeConfig = {
+                locale: "ko",
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                altInput: true,
+                altFormat: "H시 i분",
+                time_24hr: true,
+                minuteIncrement: 30,
+                disableMobile: true, // 모바일에서도 커스텀 UI 사용
+                onOpen: function() {
+                    document.getElementById('reservationTime').classList.add('active');
+                },
+                onClose: function() {
+                    document.getElementById('reservationTime').classList.remove('active');
+                },
+                onChange: function(selectedDates, dateStr) {
+                    console.log('선택된 시간:', dateStr);
+                }
+            };
+
+            // 운영 시간이 있으면 제한 설정
+            if (openTime && closeTime) {
+                timeConfig.minTime = openTime;
+                timeConfig.maxTime = closeTime;
+                timeConfig.defaultHour = parseInt(openTime.split(':')[0]);
+                timeConfig.defaultMinute = parseInt(openTime.split(':')[1]);
+
+                // placeholder 업데이트
+                document.getElementById('reservationTime').placeholder =
+                    `${openTime} ~ ${closeTime} 사이에서 선택`;
+            }
+
+            timePicker = flatpickr("#reservationTime", timeConfig);
+
+            // altInput에도 스타일 적용
+            const timeAltInput = document.querySelector('#reservationTime + input');
+            if (timeAltInput) {
+                timeAltInput.classList.add('select-field');
+                timeAltInput.style.paddingRight = '48px';
+            }
+        }
+
+        // 찜 상태 로드
+        function loadFavoriteStatus() {
+            fetch(`/api/favorites/status/${storeId}`)
+            .then(response => response.json())
+            .then(data => {
+                updateFavoriteUI(data.favorite, data.favoriteCount);
+            })
+            .catch(error => {
+                console.error('찜 상태 로드 실패:', error);
+            });
+        }
+
+        // 찜 UI 업데이트
+        function updateFavoriteUI(isFavorite, count) {
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            const favoriteCountEl = document.getElementById('favoriteCount');
+            const favoriteCountText = document.getElementById('favoriteCountText');
+
+            if (isFavorite) {
+                favoriteBtn.classList.add('active');
+            } else {
+                favoriteBtn.classList.remove('active');
+            }
+
+            if (count > 0) {
+                favoriteCountEl.style.display = 'flex';
+                favoriteCountText.textContent = count;
+            } else {
+                favoriteCountEl.style.display = 'none';
+            }
+        }
+
+        // 찜하기 토글
+        function toggleFavorite() {
+            window.fetchWithAuth(`/api/favorites/toggle/${storeId}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    if (confirm('로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?')) {
+                        window.location.href = '/user/login';
+                    }
+                    throw new Error('인증 필요');
+                }
+                if (!response.ok) throw new Error('찜하기 실패');
+                return response.json();
+            })
+            .then(data => {
+                updateFavoriteUI(data.favorite, data.favoriteCount);
+                
+                // 애니메이션 효과
+                const favoriteBtn = document.getElementById('favoriteBtn');
+                favoriteBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    favoriteBtn.style.transform = '';
+                }, 200);
+            })
+            .catch(error => {
+                if (error.message !== '인증 필요') {
+                    console.error('찜하기 실패:', error);
+                }
+            });
+        }
 
         // 수정 모드 확인
         function checkEditMode() {
@@ -528,8 +1039,14 @@
                 return response.json();
             })
             .then(reservation => {
-                document.getElementById('reservationDate').value = reservation.reservationDate;
-                document.getElementById('reservationTime').value = reservation.reservationTime;
+                // Flatpickr로 날짜/시간 설정
+                if (datePicker && reservation.reservationDate) {
+                    datePicker.setDate(reservation.reservationDate);
+                }
+                if (timePicker && reservation.reservationTime) {
+                    timePicker.setDate(reservation.reservationTime);
+                }
+                
                 document.getElementById('guestCount').value = reservation.guestCount;
                 document.getElementById('specialRequest').value = reservation.specialRequest || '';
 
@@ -540,16 +1057,6 @@
                 alert('예약 정보를 불러오는데 실패했습니다.');
                 editingReservationId = null;
             });
-        }
-
-        // 시간 제약 설정
-        function setTimeConstraints() {
-            const timeInput = document.getElementById('reservationTime');
-            if (openTime && closeTime) {
-                timeInput.setAttribute('min', openTime);
-                timeInput.setAttribute('max', closeTime);
-                console.log('⏰ 예약 가능 시간:', openTime, '~', closeTime);
-            }
         }
 
         // 슬라이더 초기화
@@ -609,11 +1116,6 @@
         // 아코디언 토글
         function toggleAccordion(item) {
             item.classList.toggle('open');
-        }
-
-        // 찜하기 토글
-        function toggleFavorite() {
-            alert('찜하기 기능은 준비 중입니다.');
         }
 
         // 예약하기

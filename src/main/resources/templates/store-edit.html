@@ -10,24 +10,49 @@
             .edit-wrapper {
                 background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
                 min-height: 100vh;
-                padding: 40px 20px;
+                padding: 40px 20px 80px;
             }
 
             .edit-container {
-                max-width: 900px;
+                max-width: 800px;
                 margin: 0 auto;
-                background: white;
-                border-radius: 24px;
+            }
+
+            .edit-header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .edit-header h1 {
+                font-size: 36px;
+                color: #667eea;
+                font-weight: 700;
+                margin-bottom: 12px;
+            }
+
+            .edit-header p {
+                color: #666;
+                font-size: 16px;
+            }
+
+            .edit-form {
+                background-color: white;
                 padding: 48px;
+                border-radius: 24px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             }
 
-            .edit-title {
-                font-size: 32px;
+            .form-section {
+                margin-bottom: 40px;
+            }
+
+            .section-title {
+                font-size: 20px;
                 font-weight: 700;
-                color: #667eea;
-                margin-bottom: 32px;
-                text-align: center;
+                color: #333;
+                margin-bottom: 24px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #f0f0f0;
             }
 
             .form-group {
@@ -36,30 +61,41 @@
 
             .form-label {
                 display: block;
-                font-size: 16px;
+                font-size: 15px;
                 font-weight: 600;
-                color: #1E1E1E;
+                color: #333;
                 margin-bottom: 8px;
             }
 
-            .form-input,
-            .form-textarea,
-            .form-select {
+            .form-label .required {
+                color: #e53e3e;
+                margin-left: 4px;
+            }
+
+            .form-control, .form-select {
                 width: 100%;
-                padding: 14px 16px;
-                border: 1px solid #D9D9D9;
-                border-radius: 8px;
-                font-size: 16px;
-                color: #1E1E1E;
+                padding: 14px 18px;
+                font-size: 15px;
+                border-radius: 10px;
+                border: 2px solid #e0e0e0;
                 transition: all 0.3s;
             }
 
-            /* 파일 입력 숨기기 */
+            .form-control:focus, .form-select:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            textarea.form-control {
+                resize: vertical;
+                min-height: 120px;
+            }
+
             input[type="file"] {
                 display: none;
             }
 
-            /* 커스텀 파일 업로드 버튼 */
             .custom-file-upload {
                 display: inline-flex;
                 align-items: center;
@@ -90,36 +126,23 @@
                 color: #666;
             }
 
-            .form-input:focus,
-            .form-textarea:focus,
-            .form-select:focus {
-                border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-                outline: none;
-            }
-
-            .form-textarea {
-                min-height: 120px;
-                resize: vertical;
-            }
-
             .image-preview-container {
                 display: flex;
                 gap: 16px;
                 flex-wrap: wrap;
-                margin-top: 12px;
+                margin-top: 16px;
             }
 
-            .image-preview {
+            .image-preview-item {
                 position: relative;
                 width: 150px;
                 height: 150px;
-                border-radius: 8px;
+                border-radius: 12px;
                 overflow: hidden;
                 border: 2px solid #e0e0e0;
             }
 
-            .image-preview img {
+            .image-preview-item img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -141,10 +164,12 @@
                 justify-content: center;
                 font-size: 18px;
                 line-height: 1;
+                transition: all 0.3s;
             }
 
             .remove-image-btn:hover {
                 background: rgba(197, 48, 48, 1);
+                transform: scale(1.1);
             }
 
             .btn-container {
@@ -157,7 +182,7 @@
                 flex: 1;
                 padding: 16px;
                 border: none;
-                border-radius: 8px;
+                border-radius: 12px;
                 font-size: 16px;
                 font-weight: 600;
                 cursor: pointer;
@@ -165,12 +190,13 @@
             }
 
             .btn-primary {
-                background: #667eea;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
             }
 
             .btn-primary:hover {
-                background: #5568d3;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
             }
 
             .btn-secondary {
@@ -198,85 +224,121 @@
                 0% { transform: rotate(0deg); }
                 100% { transform: rotate(360deg); }
             }
+
+            @media (max-width: 768px) {
+                .edit-form {
+                    padding: 32px 24px;
+                }
+
+                .edit-header h1 {
+                    font-size: 28px;
+                }
+
+                .image-preview-item {
+                    width: 120px;
+                    height: 120px;
+                }
+
+                .btn-container {
+                    flex-direction: column;
+                }
+            }
         </style>
     </th:block>
 </head>
 <body>
 <div class="edit-wrapper" layout:fragment="content">
     <div class="edit-container">
-        <h1 class="edit-title">가게 정보 수정</h1>
+        <div class="edit-header">
+            <h1>가게 정보 수정</h1>
+            <p>가게 정보를 수정하고 저장하세요</p>
+        </div>
 
         <div id="loadingState" class="loading">
             <div class="loading-icon">⏳</div>
             <div>가게 정보를 불러오는 중...</div>
         </div>
 
-        <form id="editForm" style="display: none;">
-            <div class="form-group">
-                <label class="form-label">가게 이름 *</label>
-                <input type="text" class="form-input" id="name" name="name" required>
+        <form class="edit-form" id="editForm" style="display: none;">
+            <!-- 기본 정보 -->
+            <div class="form-section">
+                <h2 class="section-title">기본 정보</h2>
+
+                <div class="form-group">
+                    <label for="name" class="form-label">
+                        가게 이름<span class="required">*</span>
+                    </label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category" class="form-label">
+                        카테고리<span class="required">*</span>
+                    </label>
+                    <input type="text" id="category" name="category" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label">
+                        주소<span class="required">*</span>
+                    </label>
+                    <input type="text" id="address" name="address" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label">
+                        전화번호<span class="required">*</span>
+                    </label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">설명 *</label>
-                <textarea class="form-textarea" id="description" name="description" required></textarea>
+            <!-- 이미지 -->
+            <div class="form-section">
+                <h2 class="section-title">이미지</h2>
+
+                <div class="form-group">
+                    <label class="form-label">메인 이미지</label>
+                    <label for="mainImage" class="custom-file-upload">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        이미지 선택
+                    </label>
+                    <input type="file" id="mainImage" accept="image/*">
+                    <div id="mainImagePreview" class="image-preview-container"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">상세 이미지 (여러 장 선택 가능)</label>
+                    <label for="detailImages" class="custom-file-upload">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        이미지 선택 (여러 장)
+                    </label>
+                    <input type="file" id="detailImages" accept="image/*" multiple>
+                    <div id="detailImagesName" class="file-name-display"></div>
+                    <div id="detailImagesPreview" class="image-preview-container"></div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">주소 *</label>
-                <input type="text" class="form-input" id="address" name="address" required>
-            </div>
+            <!-- 상세 설명 -->
+            <div class="form-section">
+                <h2 class="section-title">상세 설명</h2>
 
-            <div class="form-group">
-                <label class="form-label">전화번호 *</label>
-                <input type="tel" class="form-input" id="phone" name="phone" required>
-            </div>
+                <div class="form-group">
+                    <label for="description" class="form-label">
+                        가게 소개<span class="required">*</span>
+                    </label>
+                    <textarea id="description" name="description" class="form-control" required></textarea>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">카테고리 *</label>
-                <select class="form-select" id="category" name="category" required>
-                    <option value="">카테고리를 선택하세요</option>
-                    <option value="한식">한식</option>
-                    <option value="중식">중식</option>
-                    <option value="일식">일식</option>
-                    <option value="양식">양식</option>
-                    <option value="분식">분식</option>
-                    <option value="카페">카페</option>
-                    <option value="기타">기타</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">키워드 (쉼표로 구분)</label>
-                <input type="text" class="form-input" id="keywords" name="keywords" 
-                       placeholder="예: 분위기좋은, 데이트, 조용한">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">메인 이미지</label>
-                <label for="mainImage" class="custom-file-upload">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    이미지 선택
-                </label>
-                <input type="file" class="form-input" id="mainImage" name="mainImage" accept="image/*">
-                <div id="mainImageName" class="file-name-display"></div>
-                <div id="mainImagePreview" class="image-preview-container"></div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">상세 이미지 (여러 장 선택 가능)</label>
-                <label for="detailImages" class="custom-file-upload">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    이미지 선택 (여러 장)
-                </label>
-                <input type="file" class="form-input" id="detailImages" name="detailImages"
-                       accept="image/*" multiple>
-                <div id="detailImagesName" class="file-name-display"></div>
-                <div id="detailImagesPreview" class="image-preview-container"></div>
+                <div class="form-group">
+                    <label for="keywords" class="form-label">키워드 (쉼표로 구분)</label>
+                    <input type="text" id="keywords" name="keywords" class="form-control"
+                           placeholder="예: 분위기좋은, 데이트, 조용한">
+                </div>
             </div>
 
             <div class="btn-container">
@@ -291,13 +353,15 @@
     <script>
         const storeId = window.location.pathname.split('/').pop();
         let currentStore = null;
+        let mainImageFile = null;
+        let mainImageUrl = null; // 기존 이미지 URL
+        let detailImageFiles = []; // 새로 추가할 파일들
+        let existingDetailImages = []; // 기존 이미지 URL들
 
-        // 페이지 로드 시 가게 정보 불러오기
         document.addEventListener('DOMContentLoaded', function() {
             loadStoreData();
         });
 
-        // 가게 정보 불러오기
         function loadStoreData() {
             window.fetchWithAuth(`/api/stores/${storeId}`)
                 .then(response => {
@@ -317,7 +381,6 @@
                 });
         }
 
-        // 폼에 기존 데이터 채우기
         function populateForm(store) {
             document.getElementById('name').value = store.name || '';
             document.getElementById('description').value = store.description || '';
@@ -328,87 +391,124 @@
 
             // 메인 이미지 미리보기
             if (store.mainImageUrl) {
-                const mainPreview = document.getElementById('mainImagePreview');
-                mainPreview.innerHTML = `
-                    <div class="image-preview">
-                        <img src="${store.mainImageUrl}" alt="메인 이미지">
-                        <button type="button" class="remove-image-btn" onclick="removeMainImage()">×</button>
-                    </div>
-                `;
+                mainImageUrl = store.mainImageUrl;
+                displayMainImagePreview(store.mainImageUrl, true);
             }
 
             // 상세 이미지 미리보기
             if (store.detailImages && store.detailImages.length > 0) {
-                const detailPreview = document.getElementById('detailImagesPreview');
-                detailPreview.innerHTML = store.detailImages.map((url, index) => `
-                    <div class="image-preview" data-url="${url}">
-                        <img src="${url}" alt="상세 이미지 ${index + 1}">
-                        <button type="button" class="remove-image-btn" onclick="removeDetailImage('${url}')">×</button>
-                    </div>
-                `).join('');
+                existingDetailImages = [...store.detailImages];
+                updateDetailImagesPreview();
             }
         }
 
-        // 메인 이미지 제거
+        function displayMainImagePreview(src, isUrl = false) {
+            const preview = document.getElementById('mainImagePreview');
+            preview.innerHTML = `
+                <div class="image-preview-item">
+                    <img src="${src}" alt="메인 이미지">
+                    <button type="button" class="remove-image-btn" onclick="removeMainImage()">×</button>
+                </div>
+            `;
+        }
+
         function removeMainImage() {
+            mainImageFile = null;
+            mainImageUrl = null;
             document.getElementById('mainImage').value = '';
             document.getElementById('mainImagePreview').innerHTML = '';
         }
 
-        // 상세 이미지 제거
-        function removeDetailImage(url) {
-            const preview = document.querySelector(`[data-url="${url}"]`);
-            if (preview) {
-                preview.remove();
-            }
-        }
-
-        // 메인 이미지 선택 시 미리보기
+        // 메인 이미지 선택
         document.getElementById('mainImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                // 파일명 표시
-                document.getElementById('mainImageName').textContent = `선택됨: ${file.name}`;
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('파일 크기는 5MB를 초과할 수 없습니다.');
+                    e.target.value = '';
+                    return;
+                }
+                mainImageFile = file;
+                mainImageUrl = null; // 새 파일 선택 시 기존 URL 제거
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('mainImagePreview').innerHTML = `
-                        <div class="image-preview">
-                            <img src="${e.target.result}" alt="새 메인 이미지">
-                            <button type="button" class="remove-image-btn" onclick="removeMainImage()">×</button>
-                        </div>
-                    `;
+                    displayMainImagePreview(e.target.result, false);
                 };
                 reader.readAsDataURL(file);
             }
         });
 
-        // 상세 이미지 선택 시 미리보기
+        // 상세 이미지 선택 (누적 방식)
         document.getElementById('detailImages').addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                // 파일명 표시
-                const fileNames = Array.from(files).map(f => f.name).join(', ');
-                document.getElementById('detailImagesName').textContent = `선택됨: ${files.length}개 파일`;
+            const files = Array.from(e.target.files);
+
+            files.forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert(`${file.name}: 파일 크기는 5MB를 초과할 수 없습니다.`);
+                    return;
+                }
+                const exists = detailImageFiles.some(f => f.name === file.name && f.size === file.size);
+                if (!exists) {
+                    detailImageFiles.push(file);
+                }
+            });
+
+            updateDetailImagesPreview();
+            e.target.value = '';
+        });
+
+        function updateDetailImagesPreview() {
+            const preview = document.getElementById('detailImagesPreview');
+            const nameDisplay = document.getElementById('detailImagesName');
+            const totalCount = existingDetailImages.length + detailImageFiles.length;
+
+            if (totalCount === 0) {
+                preview.innerHTML = '';
+                nameDisplay.textContent = '';
+                return;
             }
 
-            const preview = document.getElementById('detailImagesPreview');
-            preview.innerHTML = ''; // 기존 미리보기 제거
+            nameDisplay.textContent = `총 ${totalCount}개 이미지`;
+            preview.innerHTML = '';
 
-            Array.from(e.target.files).forEach((file, index) => {
+            // 기존 이미지 표시
+            existingDetailImages.forEach((url, index) => {
+                const div = document.createElement('div');
+                div.className = 'image-preview-item';
+                div.innerHTML = `
+                    <img src="${url}" alt="상세 이미지">
+                    <button type="button" class="remove-image-btn" onclick="removeExistingDetailImage(${index})">×</button>
+                `;
+                preview.appendChild(div);
+            });
+
+            // 새로 추가된 이미지 표시
+            detailImageFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const div = document.createElement('div');
-                    div.className = 'image-preview';
+                    div.className = 'image-preview-item';
+                    div.setAttribute('data-new-index', index);
                     div.innerHTML = `
-                        <img src="${e.target.result}" alt="상세 이미지 ${index + 1}">
-                        <button type="button" class="remove-image-btn" onclick="this.parentElement.remove()">×</button>
+                        <img src="${e.target.result}" alt="새 이미지">
+                        <button type="button" class="remove-image-btn" onclick="removeNewDetailImage(${index})">×</button>
                     `;
                     preview.appendChild(div);
                 };
                 reader.readAsDataURL(file);
             });
-        });
+        }
+
+        function removeExistingDetailImage(index) {
+            existingDetailImages.splice(index, 1);
+            updateDetailImagesPreview();
+        }
+
+        function removeNewDetailImage(index) {
+            detailImageFiles.splice(index, 1);
+            updateDetailImagesPreview();
+        }
 
         // 폼 제출
         document.getElementById('editForm').addEventListener('submit', function(e) {
@@ -429,21 +529,20 @@
             keywords.forEach(keyword => formData.append('keywords', keyword));
 
             // 메인 이미지
-            const mainImageFile = document.getElementById('mainImage').files[0];
             if (mainImageFile) {
                 formData.append('mainImage', mainImageFile);
+            } else if (mainImageUrl) {
+                formData.append('existingMainImageUrl', mainImageUrl);
             }
 
-            // 상세 이미지
-            const detailImageFiles = document.getElementById('detailImages').files;
-            Array.from(detailImageFiles).forEach(file => {
-                formData.append('detailImages', file);
+            // 기존 상세 이미지 URL들
+            existingDetailImages.forEach(url => {
+                formData.append('existingDetailImageUrls', url);
             });
 
-            console.log('수정 요청 데이터:', {
-                name: formData.get('name'),
-                description: formData.get('description'),
-                keywords: keywords
+            // 새 상세 이미지 파일들
+            detailImageFiles.forEach(file => {
+                formData.append('detailImages', file);
             });
 
             window.fetchWithAuth(`/api/stores/${storeId}`, {
@@ -462,12 +561,10 @@
                 return response.json();
             })
             .then(data => {
-                console.log('수정 성공:', data);
                 alert('가게 정보가 성공적으로 수정되었습니다!');
                 window.location.href = '/user/mypage';
             })
             .catch(error => {
-                console.error('가게 수정 실패:', error);
                 if (error.message !== '인증 필요') {
                     alert('가게 수정에 실패했습니다: ' + error.message);
                 }

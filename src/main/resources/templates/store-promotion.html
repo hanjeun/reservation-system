@@ -294,6 +294,71 @@
                 color: #999;
             }
 
+            /* Custom File Upload */
+            .custom-file-upload {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .custom-file-upload:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            }
+
+            .image-preview-container {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .image-preview-item {
+                position: relative;
+                width: 150px;
+                height: 150px;
+                border-radius: 12px;
+                overflow: hidden;
+                border: 2px solid #e0e0e0;
+            }
+
+            .image-preview-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .remove-image-btn {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: rgba(229, 62, 62, 0.9);
+                color: white;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                line-height: 1;
+                transition: all 0.3s;
+            }
+
+            .remove-image-btn:hover {
+                background: rgba(197, 48, 48, 1);
+                transform: scale(1.1);
+            }
+
             /* Empty State */
             .empty-state {
                 text-align: center;
@@ -575,10 +640,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">이미지 URL</label>
-                    <input type="url" class="form-control" id="promotionImage"
-                           placeholder="https://example.com/image.jpg">
-                    <div class="form-help-text">이미지 URL을 입력하거나 비워두세요</div>
+                    <label class="form-label">홍보 이미지</label>
+                    <label for="promotionImageFile" class="custom-file-upload">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        이미지 선택
+                    </label>
+                    <input type="file" id="promotionImageFile" accept="image/*" style="display: none;">
+                    <div id="promotionImagePreview" class="image-preview-container" style="margin-top: 16px;"></div>
+                    <input type="hidden" id="promotionImage">
+                    <div class="form-help-text">이미지를 선택하거나 가게의 대표 이미지가 자동으로 사용됩니다</div>
                 </div>
 
                 <div class="form-group">
@@ -653,7 +725,48 @@
             if (form) {
                 form.addEventListener('submit', handleSubmit);
             }
+
+            // 이미지 파일 선택 핸들링
+            const imageInput = document.getElementById('promotionImageFile');
+            if (imageInput) {
+                imageInput.addEventListener('change', handleImageSelect);
+            }
         });
+
+        let selectedImageFile = null;
+
+        function handleImageSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('파일 크기는 5MB를 초과할 수 없습니다.');
+                    e.target.value = '';
+                    return;
+                }
+                selectedImageFile = file;
+                displayImagePreview(file);
+            }
+        }
+
+        function displayImagePreview(file) {
+            const preview = document.getElementById('promotionImagePreview');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `
+                    <div class="image-preview-item">
+                        <img src="${e.target.result}" alt="홍보 이미지">
+                        <button type="button" class="remove-image-btn" onclick="removePromotionImage()">×</button>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removePromotionImage() {
+            selectedImageFile = null;
+            document.getElementById('promotionImageFile').value = '';
+            document.getElementById('promotionImagePreview').innerHTML = '';
+        }
 
         async function loadMyStores() {
             try {
@@ -696,7 +809,7 @@
                         📞 ${escapeHtml(store.phone || '전화번호 미등록')}
                     </div>
                     <div class="store-card-actions">
-                        <button class="btn-promote" onclick="openPromotionModal(${store.id}, '${escapeHtml(store.name).replace(/'/g, "\\'")}')">홍보 작성</button>
+                        <button class="btn-promote" onclick="openPromotionModal(${store.id}, '${escapeHtml(store.name).replace(/'/g, "\\'")}', '${escapeHtml(store.mainImageUrl || '').replace(/'/g, "\\'")}')">홍보 작성</button>
                         <button class="btn-view-store" onclick="viewStore(${store.id})">상세보기</button>
                     </div>
                 </div>
@@ -776,9 +889,11 @@
             alert('상세 페이지 (구현 예정): ' + promotionId);
         }
 
-        function openPromotionModal(storeId, storeName) {
+        function openPromotionModal(storeId, storeName, storeImageUrl) {
             document.getElementById('selectedStoreId').value = storeId;
             document.getElementById('selectedStoreName').value = storeName;
+            // 가게 이미지 URL을 저장 (이미지를 선택하지 않으면 이걸 사용)
+            document.getElementById('promotionImage').value = storeImageUrl || '';
             document.getElementById('promotionModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -786,6 +901,8 @@
         function closePromotionModal() {
             document.getElementById('promotionModal').classList.remove('active');
             document.getElementById('promotionForm').reset();
+            document.getElementById('promotionImagePreview').innerHTML = '';
+            selectedImageFile = null;
             document.body.style.overflow = 'auto';
         }
 

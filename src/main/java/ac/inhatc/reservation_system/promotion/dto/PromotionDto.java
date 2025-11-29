@@ -87,5 +87,6 @@ public class PromotionDto {
         private String category;
         private String address;
         private String phone;
+        private String mainImageUrl;
     }
 }

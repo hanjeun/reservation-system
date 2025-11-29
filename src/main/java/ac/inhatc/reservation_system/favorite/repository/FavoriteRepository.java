@@ -1,0 +1,30 @@
+package ac.inhatc.reservation_system.favorite.repository;
+
+import ac.inhatc.reservation_system.favorite.entity.Favorite;
+import ac.inhatc.reservation_system.member.entity.Member;
+import ac.inhatc.reservation_system.store.entity.Store;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
+
+    // 회원과 가게로 찜 여부 확인
+    boolean existsByMemberAndStore(Member member, Store store);
+
+    // 회원과 가게로 찜 찾기
+    Optional<Favorite> findByMemberAndStore(Member member, Store store);
+
+    // 회원의 모든 찜 목록 조회
+    List<Favorite> findByMemberOrderByCreatedAtDesc(Member member);
+
+    // 가게의 찜 개수 조회
+    long countByStore(Store store);
+
+    // 회원 ID와 가게 ID로 찜 여부 확인
+    @Query("SELECT COUNT(f) > 0 FROM Favorite f WHERE f.member.id = :memberId AND f.store.id = :storeId")
+    boolean existsByMemberIdAndStoreId(@Param("memberId") Long memberId, @Param("storeId") Long storeId);
+}

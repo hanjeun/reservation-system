@@ -69,6 +69,7 @@ public class PromotionService {
                         .category(store.getCategory())
                         .address(store.getAddress())
                         .phone(store.getPhone())
+                        .mainImageUrl(store.getMainImageUrl())
                         .build())
                 .collect(Collectors.toList());
     }
