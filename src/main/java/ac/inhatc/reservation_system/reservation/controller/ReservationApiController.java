@@ -282,4 +282,34 @@ public class ReservationApiController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    /**
+     * 이용완료 처리 (사업자용)
+     */
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<Void> completeReservation(
+            @PathVariable Long id,
+            jakarta.servlet.http.HttpServletRequest httpRequest
+    ) {
+        Member member = (Member) httpRequest.getAttribute("authenticatedUser");
+
+        if (member == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        // 사업자 권한 체크
+        if (!member.isBusiness() && !member.isAdmin()) {
+            return ResponseEntity.status(403).build();
+        }
+
+        log.info("✅ 이용완료 처리 요청: reservationId={}, memberId={}", id, member.getId());
+
+        try {
+            reservationService.completeReservation(id, member);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            log.error("❌ 이용완료 처리 실패: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

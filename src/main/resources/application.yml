@@ -64,7 +64,7 @@ spring:
 ####################################
 jwt:
   issuer: reservation-system
-  secret-key: test-secret-key-minimum-256-bits-for-development-only # JWT 시크릿 환경변수
+  secret-key: ${JWT_SECRET_KEY} # JWT 시크릿 환경변수
   access-token:
     expiration-minutes: 30  # 30분
   refresh-token:

@@ -283,6 +283,29 @@
                 color: #721c24;
             }
 
+            .status-completed {
+                background: #e3f2fd;
+                color: #1565c0;
+            }
+
+            .btn-complete {
+                background: #1565c0;
+                color: white;
+            }
+
+            .btn-complete:hover {
+                background: #0d47a1;
+            }
+
+            .btn-review {
+                background: #ff9800;
+                color: white;
+            }
+
+            .btn-review:hover {
+                background: #f57c00;
+            }
+
             .btn-approve {
                 background: #28a745;
                 color: white;
@@ -876,7 +899,7 @@
         }
 
         // 예약 목록 표시
-        function displayReservations(reservations, containerId, isOwnerView) {
+        async function displayReservations(reservations, containerId, isOwnerView) {
             const container = document.getElementById(containerId);
 
             if (reservations.length === 0) {
@@ -889,16 +912,38 @@
                 return;
             }
 
+            // 이용완료된 예약들의 리뷰 존재 여부를 미리 확인
+            const completedReservations = reservations.filter(r => r.status === 'COMPLETED');
+            const reviewStatusMap = {};
+
+            if (!isOwnerView && completedReservations.length > 0) {
+                await Promise.all(completedReservations.map(async (reservation) => {
+                    try {
+                        const response = await window.fetchWithAuth(`/api/reviews/reservation/${reservation.id}`);
+                        if (response.ok) {
+                            const review = await response.json();
+                            reviewStatusMap[reservation.id] = review;
+                        } else {
+                            reviewStatusMap[reservation.id] = null;
+                        }
+                    } catch (e) {
+                        reviewStatusMap[reservation.id] = null;
+                    }
+                }));
+            }
+
             container.innerHTML = `
                 <div class="reservations-list">
                     ${reservations.map(reservation => {
                         const statusMap = {
                             'PENDING': { class: 'status-pending', text: '대기중' },
                             'CONFIRMED': { class: 'status-confirmed', text: '승인됨' },
+                            'COMPLETED': { class: 'status-completed', text: '이용완료' },
                             'REJECTED': { class: 'status-rejected', text: '거절됨' },
                             'CANCELLED': { class: 'status-cancelled', text: '취소됨' }
                         };
                         const status = statusMap[reservation.status] || { class: 'status-pending', text: '알수없음' };
+                        const existingReview = reviewStatusMap[reservation.id];
 
                         return `
                         <div class="reservation-card">
@@ -937,7 +982,7 @@
                                 <span class="reservation-status ${status.class}">${status.text}</span>
                             </div>
                             <div class="reservation-actions">
-                                ${getActionButtons(reservation, isOwnerView)}
+                                ${getActionButtons(reservation, isOwnerView, existingReview)}
                             </div>
                         </div>
                     `}).join('')}
@@ -946,7 +991,7 @@
         }
 
         // 액션 버튼 생성
-        function getActionButtons(reservation, isOwnerView) {
+        function getActionButtons(reservation, isOwnerView, existingReview = null) {
             if (isOwnerView) {
                 // 사업자 뷰
                 if (reservation.status === 'PENDING') {
@@ -956,7 +1001,12 @@
                     `;
                 } else if (reservation.status === 'CONFIRMED') {
                     return `
+                        <button class="btn-reservation btn-complete" onclick="completeReservation(${reservation.id})">이용완료</button>
                         <button class="btn-reservation btn-cancel-reservation" onclick="cancelReservationByOwner(${reservation.id})">취소</button>
+                    `;
+                } else if (reservation.status === 'COMPLETED') {
+                    return `
+                        <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
                     `;
                 } else if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED') {
                     return `
@@ -966,7 +1016,21 @@
                 return '';
             } else {
                 // 사용자 뷰
-                if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED') {
+                if (reservation.status === 'COMPLETED') {
+                    if (existingReview) {
+                        // 이미 리뷰가 있는 경우 - 리뷰 보기 버튼
+                        return `
+                            <button class="btn-reservation btn-edit-reservation" onclick="viewReview(${reservation.storeId}, ${existingReview.id})">리뷰 보기</button>
+                            <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
+                        `;
+                    } else {
+                        // 리뷰가 없는 경우 - 리뷰 작성 버튼
+                        return `
+                            <button class="btn-reservation btn-review" onclick="writeReview(${reservation.id}, ${reservation.storeId})">리뷰 작성</button>
+                            <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
+                        `;
+                    }
+                } else if (reservation.status === 'CANCELLED' || reservation.status === 'REJECTED') {
                     return `
                         <button class="btn-reservation btn-delete-reservation" onclick="deleteReservation(${reservation.id})">삭제</button>
                     `;
@@ -980,6 +1044,7 @@
                         <button class="btn-reservation btn-cancel-reservation" onclick="cancelReservation(${reservation.id})">취소</button>
                     `;
                 }
+                return '';
             }
         }
 
@@ -1125,6 +1190,39 @@
         // 가게 수정
         function editStore(storeId) {
             window.location.href = `/store/edit/${storeId}`;
+        }
+
+        // 이용완료 처리 (사업자)
+        function completeReservation(reservationId) {
+            if (!confirm('이 예약을 이용완료 처리하시겠습니까?')) return;
+
+            window.fetchWithAuth(`/api/reservations/${reservationId}/complete`, {
+                method: 'PATCH'
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('이용완료 처리되었습니다');
+                    loadReservationManage();
+                } else {
+                    throw new Error('이용완료 처리 실패');
+                }
+            })
+            .catch(error => {
+                console.error('이용완료 처리 실패:', error);
+                alert('이용완료 처리에 실패했습니다');
+            });
+        }
+
+        // 리뷰 작성 (사용자)
+        function writeReview(reservationId, storeId) {
+            // 가게 상세 페이지의 리뷰 작성 섹션으로 이동
+            window.location.href = `/store/${storeId}?writeReview=${reservationId}`;
+        }
+
+        // 리뷰 보기 (사용자)
+        function viewReview(storeId, reviewId) {
+            // 가게 상세 페이지의 리뷰 섹션으로 이동
+            window.location.href = `/store/${storeId}?viewReview=${reviewId}#reviewsSection`;
         }
 
         // 가게 삭제

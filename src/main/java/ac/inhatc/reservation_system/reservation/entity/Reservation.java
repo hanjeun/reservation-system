@@ -74,6 +74,7 @@ public class Reservation {
     public enum ReservationStatus {
         PENDING,    // 대기중 (사용자가 예약 신청)
         CONFIRMED,  // 승인됨 (사업자가 승인)
+        COMPLETED,  // 이용완료 (사업자가 이용완료 처리)
         REJECTED,   // 거절됨 (사업자가 거절)
         CANCELLED   // 취소됨 (사용자 또는 사업자가 취소)
     }

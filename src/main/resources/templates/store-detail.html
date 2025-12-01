@@ -681,6 +681,307 @@
                 transform: rotate(180deg);
             }
 
+            /* 리뷰 섹션 스타일 */
+            .reviews-section {
+                background: white;
+                border-radius: 24px;
+                padding: 48px;
+                margin-top: 32px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            }
+
+            .reviews-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+
+            .reviews-title-wrap {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .reviews-stats {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .reviews-rating {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 18px;
+                font-weight: 600;
+                color: #1E1E1E;
+            }
+
+            .reviews-rating svg {
+                width: 20px;
+                height: 20px;
+                fill: #ffc107;
+            }
+
+            .reviews-count {
+                font-size: 14px;
+                color: #757575;
+            }
+
+            .reviews-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                gap: 24px;
+            }
+
+            .review-card {
+                background: white;
+                border: 1px solid #D9D9D9;
+                border-radius: 12px;
+                padding: 24px;
+                transition: all 0.3s;
+            }
+
+            .review-card:hover {
+                border-color: #667eea;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            }
+
+            .review-rating {
+                display: flex;
+                gap: 4px;
+                margin-bottom: 16px;
+            }
+
+            .review-star {
+                width: 20px;
+                height: 20px;
+            }
+
+            .review-star.filled {
+                fill: #ffc107;
+            }
+
+            .review-star.empty {
+                fill: #e0e0e0;
+            }
+
+            .review-body {
+                margin-bottom: 16px;
+            }
+
+            .review-title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin-bottom: 8px;
+            }
+
+            .review-content {
+                font-size: 14px;
+                color: #1E1E1E;
+                line-height: 1.5;
+            }
+
+            .review-author {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .review-author-info {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .review-author-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #757575;
+            }
+
+            .review-date {
+                font-size: 12px;
+                color: #B3B3B3;
+            }
+
+            .review-actions {
+                display: flex;
+                gap: 8px;
+                margin-left: auto;
+            }
+
+            .review-action-btn {
+                padding: 6px 12px;
+                border: 1px solid #D9D9D9;
+                border-radius: 6px;
+                background: white;
+                font-size: 12px;
+                font-weight: 600;
+                color: #666;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .review-action-btn:hover {
+                border-color: #667eea;
+                color: #667eea;
+            }
+
+            .review-delete-btn:hover {
+                border-color: #e53e3e;
+                color: #e53e3e;
+            }
+
+            .empty-reviews {
+                text-align: center;
+                padding: 60px 20px;
+                color: #757575;
+            }
+
+            .empty-reviews-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+
+            .empty-reviews-text {
+                font-size: 16px;
+            }
+
+            /* 리뷰 작성 모달 */
+            .review-modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+
+            .review-modal-overlay.show {
+                display: flex;
+            }
+
+            .review-modal {
+                background: white;
+                border-radius: 24px;
+                padding: 48px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+
+            .review-modal-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #1E1E1E;
+                margin-bottom: 32px;
+                text-align: center;
+            }
+
+            .rating-select {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-bottom: 24px;
+            }
+
+            .rating-star {
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .rating-star:hover {
+                transform: scale(1.1);
+            }
+
+            .rating-star.selected {
+                fill: #ffc107;
+            }
+
+            .rating-star.unselected {
+                fill: #e0e0e0;
+            }
+
+            .review-form-field {
+                margin-bottom: 20px;
+            }
+
+            .review-form-label {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                color: #1E1E1E;
+                margin-bottom: 8px;
+            }
+
+            .review-form-input {
+                width: 100%;
+                padding: 14px 16px;
+                border: 1px solid #D9D9D9;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: all 0.3s;
+            }
+
+            .review-form-input:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            .review-form-textarea {
+                min-height: 120px;
+                resize: vertical;
+                font-family: inherit;
+            }
+
+            .review-modal-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 32px;
+            }
+
+            .btn-modal {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: none;
+            }
+
+            .btn-modal-cancel {
+                background: #E3E3E3;
+                color: #1E1E1E;
+            }
+
+            .btn-modal-cancel:hover {
+                background: #d0d0d0;
+            }
+
+            .btn-modal-submit {
+                background: #2C2C2C;
+                color: white;
+            }
+
+            .btn-modal-submit:hover {
+                background: #1a1a1a;
+            }
+
             @media (max-width: 768px) {
                 .store-header {
                     grid-template-columns: 1fr;
@@ -847,7 +1148,75 @@
                 </div>
             </div>
         </div>
+
+        <!-- 리뷰 섹션 -->
+        <div class="reviews-section" id="reviewsSection">
+            <div class="reviews-header">
+                <div class="reviews-title-wrap">
+                    <h2 class="section-title" style="margin-bottom: 0;">리뷰</h2>
+                    <div class="reviews-stats">
+                        <div class="reviews-rating">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span id="averageRating">0.0</span>
+                        </div>
+                        <span class="reviews-count">(<span id="reviewCount">0</span>개의 리뷰)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviewsContainer">
+                <div class="empty-reviews">
+                    <div class="empty-reviews-icon">📝</div>
+                    <div class="empty-reviews-text">아직 리뷰가 없습니다</div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- 리뷰 작성 모달 (layout:fragment 안으로 이동) -->
+<div class="review-modal-overlay" id="reviewModal">
+    <div class="review-modal">
+        <h3 class="review-modal-title" id="reviewModalTitle">리뷰 작성</h3>
+
+        <div class="review-form-field">
+            <label class="review-form-label">별점</label>
+            <div class="rating-select" id="ratingSelect">
+                <svg class="rating-star unselected" data-rating="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="selectRating(1)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg class="rating-star unselected" data-rating="2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="selectRating(2)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg class="rating-star unselected" data-rating="3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="selectRating(3)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg class="rating-star unselected" data-rating="4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="selectRating(4)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <svg class="rating-star unselected" data-rating="5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="selectRating(5)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="review-form-field">
+            <label class="review-form-label">제목</label>
+            <input type="text" class="review-form-input" id="reviewTitle" placeholder="리뷰 제목을 입력해주세요" maxlength="100">
+        </div>
+
+        <div class="review-form-field">
+            <label class="review-form-label">내용</label>
+            <textarea class="review-form-input review-form-textarea" id="reviewContent" placeholder="리뷰 내용을 입력해주세요" maxlength="1000"></textarea>
+        </div>
+
+        <div class="review-modal-actions">
+            <button class="btn-modal btn-modal-cancel" onclick="closeReviewModal()">취소</button>
+            <button class="btn-modal btn-modal-submit" onclick="submitReview()">작성하기</button>
+        </div>
+    </div>
+</div>
 </div>
 
 <th:block layout:fragment="custom-script">
@@ -876,7 +1245,9 @@
             initSlider();
             initDateTimePickers();
             loadFavoriteStatus();
+            loadReviews();
             checkEditMode();
+            checkReviewMode();
         });
 
         // Flatpickr 날짜/시간 선택기 초기화
@@ -1197,6 +1568,340 @@
                 }
             });
         }
+
+        // ========== 리뷰 관련 함수 ==========
+        let selectedRating = 0;
+        let reviewReservationId = null;
+        let editingReviewId = null;
+        let currentUserId = null;
+
+        // 현재 사용자 ID 가져오기
+        async function getCurrentUserId() {
+            try {
+                const user = await window.UserState.getUser();
+                currentUserId = user.id;
+            } catch (e) {
+                currentUserId = null;
+            }
+        }
+
+        // 리뷰 목록 로드
+        async function loadReviews() {
+            await getCurrentUserId();
+
+            fetch(`/api/reviews/store/${storeId}`)
+            .then(response => response.json())
+            .then(reviews => {
+                displayReviews(reviews);
+                loadReviewStats();
+            })
+            .catch(error => {
+                console.error('리뷰 로드 실패:', error);
+            });
+        }
+
+        // 리뷰 통계 로드
+        function loadReviewStats() {
+            fetch(`/api/reviews/store/${storeId}/stats`)
+            .then(response => response.json())
+            .then(stats => {
+                document.getElementById('averageRating').textContent = stats.averageRating.toFixed(1);
+                document.getElementById('reviewCount').textContent = stats.reviewCount;
+            })
+            .catch(error => {
+                console.error('리뷰 통계 로드 실패:', error);
+            });
+        }
+
+        // 리뷰 목록 표시
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+
+            if (reviews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-reviews">
+                        <div class="empty-reviews-icon">📝</div>
+                        <div class="empty-reviews-text">아직 리뷰가 없습니다</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="reviews-grid">
+                    ${reviews.map(review => {
+                        const isMyReview = currentUserId && review.memberId === currentUserId;
+                        return `
+                        <div class="review-card" id="review-${review.id}">
+                            <div class="review-rating">
+                                ${generateStars(review.rating)}
+                            </div>
+                            <div class="review-body">
+                                <div class="review-title">${escapeHtml(review.title)}</div>
+                                <div class="review-content">${escapeHtml(review.content)}</div>
+                            </div>
+                            <div class="review-author">
+                                <div class="review-author-info">
+                                    <span class="review-author-name">${escapeHtml(review.memberName)}</span>
+                                    <span class="review-date">${review.createdAtFormatted}</span>
+                                </div>
+                                ${isMyReview ? `
+                                <div class="review-actions">
+                                    <button class="review-action-btn" onclick="openEditReviewModal(${review.id}, ${review.rating}, '${escapeHtml(review.title).replace(/'/g, "\\'")}', '${escapeHtml(review.content).replace(/'/g, "\\'")}')">수정</button>
+                                    <button class="review-action-btn review-delete-btn" onclick="deleteReview(${review.id})">삭제</button>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `}).join('')}
+                </div>
+            `;
+        }
+
+        // 별점 생성
+        function generateStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                const filled = i <= rating ? 'filled' : 'empty';
+                stars += `
+                    <svg class="review-star ${filled}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                `;
+            }
+            return stars;
+        }
+
+        // HTML 이스케이프
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 리뷰 작성 모드 확인 (마이페이지에서 넘어온 경우)
+        function checkReviewMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const writeReview = urlParams.get('writeReview');
+            const viewReview = urlParams.get('viewReview');
+
+            if (writeReview) {
+                reviewReservationId = parseInt(writeReview);
+                openReviewModal();
+            }
+
+            if (viewReview) {
+                // 리뷰 섹션으로 스크롤
+                setTimeout(() => {
+                    const reviewElement = document.getElementById(`review-${viewReview}`);
+                    if (reviewElement) {
+                        reviewElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        reviewElement.style.boxShadow = '0 0 0 3px #667eea';
+                        setTimeout(() => {
+                            reviewElement.style.boxShadow = '';
+                        }, 2000);
+                    }
+                }, 500);
+            }
+        }
+
+        // 리뷰 모달 열기
+        function openReviewModal() {
+            editingReviewId = null;
+            document.getElementById('reviewModalTitle').textContent = '리뷰 작성';
+            document.getElementById('reviewModal').classList.add('show');
+            // 배경 스크롤은 허용 (body overflow 변경하지 않음)
+        }
+
+        // 리뷰 수정 모달 열기
+        function openEditReviewModal(reviewId, rating, title, content) {
+            editingReviewId = reviewId;
+            selectedRating = rating;
+            updateRatingStars();
+            document.getElementById('reviewTitle').value = title;
+            document.getElementById('reviewContent').value = content;
+            document.getElementById('reviewModalTitle').textContent = '리뷰 수정';
+            document.getElementById('reviewModal').classList.add('show');
+        }
+
+        // 리뷰 모달 닫기
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('show');
+            // body overflow는 건드리지 않음
+
+            // 폼 초기화
+            selectedRating = 0;
+            editingReviewId = null;
+            updateRatingStars();
+            document.getElementById('reviewTitle').value = '';
+            document.getElementById('reviewContent').value = '';
+            document.getElementById('reviewModalTitle').textContent = '리뷰 작성';
+
+            // URL에서 writeReview 파라미터 제거
+            const url = new URL(window.location);
+            url.searchParams.delete('writeReview');
+            url.searchParams.delete('viewReview');
+            window.history.replaceState({}, '', url);
+        }
+
+        // 별점 선택
+        function selectRating(rating) {
+            selectedRating = rating;
+            updateRatingStars();
+        }
+
+        // 별점 UI 업데이트
+        function updateRatingStars() {
+            const stars = document.querySelectorAll('#ratingSelect .rating-star');
+            stars.forEach((star, index) => {
+                if (index < selectedRating) {
+                    star.classList.remove('unselected');
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                    star.classList.add('unselected');
+                }
+            });
+        }
+
+        // 리뷰 제출 (작성/수정)
+        function submitReview() {
+            const title = document.getElementById('reviewTitle').value.trim();
+            const content = document.getElementById('reviewContent').value.trim();
+
+            if (selectedRating === 0) {
+                alert('별점을 선택해주세요.');
+                return;
+            }
+
+            if (!title) {
+                alert('제목을 입력해주세요.');
+                return;
+            }
+
+            if (!content) {
+                alert('내용을 입력해주세요.');
+                return;
+            }
+
+            if (editingReviewId) {
+                // 수정 모드
+                const updateData = {
+                    rating: selectedRating,
+                    title: title,
+                    content: content
+                };
+
+                window.fetchWithAuth(`/api/reviews/${editingReviewId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/user/login';
+                        throw new Error('인증 필요');
+                    }
+                    if (!response.ok) {
+                        throw new Error('리뷰 수정에 실패했습니다');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('리뷰가 수정되었습니다!');
+                    closeReviewModal();
+                    loadReviews();
+                })
+                .catch(error => {
+                    if (error.message !== '인증 필요') {
+                        console.error('리뷰 수정 실패:', error);
+                        alert(error.message);
+                    }
+                });
+            } else {
+                // 작성 모드
+                if (!reviewReservationId) {
+                    alert('예약 정보가 없습니다. 마이페이지에서 다시 시도해주세요.');
+                    return;
+                }
+
+                const reviewData = {
+                    reservationId: reviewReservationId,
+                    rating: selectedRating,
+                    title: title,
+                    content: content
+                };
+
+                window.fetchWithAuth('/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reviewData)
+                })
+                .then(response => {
+                    if (response.status === 401) {
+                        alert('로그인이 필요합니다.');
+                        window.location.href = '/user/login';
+                        throw new Error('인증 필요');
+                    }
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error('리뷰 작성에 실패했습니다');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('리뷰가 작성되었습니다!');
+                    closeReviewModal();
+                    loadReviews();
+                })
+                .catch(error => {
+                    if (error.message !== '인증 필요') {
+                        console.error('리뷰 작성 실패:', error);
+                        alert(error.message);
+                    }
+                });
+            }
+        }
+
+        // 리뷰 삭제
+        function deleteReview(reviewId) {
+            if (!confirm('리뷰를 삭제하시겠습니까?')) return;
+
+            window.fetchWithAuth(`/api/reviews/${reviewId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/user/login';
+                    throw new Error('인증 필요');
+                }
+                if (!response.ok) {
+                    throw new Error('리뷰 삭제에 실패했습니다');
+                }
+                alert('리뷰가 삭제되었습니다.');
+                loadReviews();
+            })
+            .catch(error => {
+                if (error.message !== '인증 필요') {
+                    console.error('리뷰 삭제 실패:', error);
+                    alert(error.message);
+                }
+            });
+        }
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReviewModal();
+            }
+        });
     </script>
 </th:block>
 </body>

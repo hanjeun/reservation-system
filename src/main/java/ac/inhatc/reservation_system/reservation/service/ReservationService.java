@@ -6,6 +6,8 @@ import ac.inhatc.reservation_system.reservation.dto.ReservationResponse;
 import ac.inhatc.reservation_system.reservation.dto.ReservationUpdateRequest;
 import ac.inhatc.reservation_system.reservation.entity.Reservation;
 import ac.inhatc.reservation_system.reservation.repository.ReservationRepository;
+import ac.inhatc.reservation_system.review.entity.Review;
+import ac.inhatc.reservation_system.review.repository.ReviewRepository;
 import ac.inhatc.reservation_system.store.repository.StoreRepository;
 import ac.inhatc.reservation_system.store.entity.Store;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final StoreRepository storeRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 예약 생성
@@ -193,6 +196,13 @@ public class ReservationService {
             throw new IllegalArgumentException("본인의 예약이거나 본인 가게의 예약만 삭제할 수 있습니다.");
         }
 
+        // 해당 예약에 연결된 리뷰가 있으면 예약 참조를 null로 설정 (리뷰는 유지)
+        reviewRepository.findByReservationId(id).ifPresent(review -> {
+            review.setReservation(null);
+            reviewRepository.save(review);
+            log.info("📝 리뷰의 예약 참조 해제: reviewId={}", review.getId());
+        });
+
         reservationRepository.delete(reservation);
         log.info("✅ 예약 삭제 완료: reservationId={}", id);
     }
@@ -306,5 +316,31 @@ public class ReservationService {
         reservationRepository.save(reservation);
         
         log.info("✅ 사업자 예약 취소 완료: reservationId={}", id);
+    }
+
+    /**
+     * 이용완료 처리 (사업자용)
+     */
+    @Transactional
+    public void completeReservation(Long id, Member owner) {
+        log.info("✅ 이용완료 처리: reservationId={}, ownerId={}", id, owner.getId());
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+
+        // 가게 소유자 확인
+        if (!reservation.getStore().getOwner().getId().equals(owner.getId())) {
+            throw new IllegalArgumentException("본인 가게의 예약만 이용완료 처리할 수 있습니다.");
+        }
+
+        // 승인된 상태인지 확인
+        if (reservation.getStatus() != Reservation.ReservationStatus.CONFIRMED) {
+            throw new IllegalArgumentException("승인된 예약만 이용완료 처리할 수 있습니다.");
+        }
+
+        reservation.setStatus(Reservation.ReservationStatus.COMPLETED);
+        reservationRepository.save(reservation);
+
+        log.info("✅ 이용완료 처리 완료: reservationId={}", id);
     }
 }
