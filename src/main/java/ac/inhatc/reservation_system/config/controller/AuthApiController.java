@@ -106,23 +106,34 @@ public class AuthApiController {
     @PostMapping("/check")
     public ResponseEntity<?> checkAuth(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        boolean hasAccessToken = false;
-        boolean hasRefreshToken = false;
+        String accessToken = null;
+        String refreshToken = null;
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("access_token".equals(cookie.getName())) {
-                    hasAccessToken = true;
+                    accessToken = cookie.getValue();
                 } else if ("refresh_token".equals(cookie.getName())) {
-                    hasRefreshToken = true;
+                    refreshToken = cookie.getValue();
                 }
             }
         }
 
+        boolean hasValidAccessToken = accessToken != null && tokenProvider.validToken(accessToken);
+        boolean hasValidRefreshToken = refreshToken != null && tokenProvider.validToken(refreshToken);
+
+        // Refresh Token이 DB에 존재하는지도 확인
+        boolean refreshTokenInDb = false;
+        if (hasValidRefreshToken) {
+            refreshTokenInDb = refreshTokenRepository.findByRefreshToken(refreshToken).isPresent();
+        }
+
         return ResponseEntity.ok(Map.of(
-            "hasAccessToken", hasAccessToken,
-            "hasRefreshToken", hasRefreshToken,
-            "authenticated", hasAccessToken && hasRefreshToken
+            "hasAccessToken", accessToken != null,
+            "hasRefreshToken", refreshToken != null,
+            "accessTokenValid", hasValidAccessToken,
+            "refreshTokenValid", hasValidRefreshToken && refreshTokenInDb,
+            "authenticated", hasValidAccessToken || (hasValidRefreshToken && refreshTokenInDb)
         ));
     }
 

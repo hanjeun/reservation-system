@@ -5,7 +5,10 @@ server:
       charset: UTF-8
       force: true
     session:
-      tracking-modes: []  # 세션 트래킹 완전 비활성화 (JSESSIONID 생성 방지)
+      tracking-modes: cookie  # NONE 대신 cookie로 설정 (Spring Boot 호환성)
+      timeout: 1s             # 세션 타임아웃 최소화
+      cookie:
+        max-age: 0            # 세션 쿠키 즉시 만료
 
 spring:
   application:

@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 
 @RequiredArgsConstructor
 @Configuration
@@ -29,19 +30,24 @@ public class SecurityConfig {
                 // 2. HTTP Basic 인증 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable())
                 
-                // 3. 세션 사용 안 함 (Stateless 방식) - JWT의 핵심!
+                // 3. 세션 완전 비활성화 (STATELESS) - JWT의 핵심!
                 .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(false))
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 
-                // 4. 폼 로그인 비활성화 (세션 생성 방지)
+                // 4. SecurityContext를 세션에 저장하지 않음
+                .securityContext(context -> context
+                    .securityContextRepository(new NullSecurityContextRepository()))
+                
+                // 5. Request Cache 비활성화 (세션 사용 방지)
+                .requestCache(cache -> cache.disable())
+                
+                // 6. 폼 로그인 비활성화 (세션 생성 방지)
                 .formLogin(form -> form.disable())
                 
-                // 5. 로그아웃 비활성화 (세션 기반 로그아웃 방지)
+                // 7. 로그아웃 비활성화 (세션 기반 로그아웃 방지)
                 .logout(logout -> logout.disable())
                 
-                // 6. URL별 접근 권한 설정
+                // 8. URL별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         // 정적 리소스 (누구나 접근 가능)
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/favicon.ico", "/favicon.svg").permitAll()
@@ -67,10 +73,10 @@ public class SecurityConfig {
                         // 기타 모든 요청 (JWT 인증 필요)
                         .anyRequest().authenticated())
                 
-                // 7. JWT 인증 필터 등록 (가장 중요!)
+                // 9. JWT 인증 필터 등록 (가장 중요!)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 
-                // 8. 인증 실패 시 예외 처리
+                // 10. 인증 실패 시 예외 처리
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
                             // API 요청인 경우 JSON 응답
