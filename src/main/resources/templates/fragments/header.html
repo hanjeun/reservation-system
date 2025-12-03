@@ -13,12 +13,15 @@
     </a>
 
     <nav class="header-nav">
-        <a class="nav-pill" th:classappend="${currentPage=='store-register'} ? 'active'" th:href="@{/store/register}" id="menuStoreRegister" style="display:none;">가게등록</a>
-        <a class="nav-pill" th:classappend="${currentPage=='store-promotion'} ? 'active'" th:href="@{/store/promotion}" id="menuStorePromotion">홍보하기</a>
-        <a class="nav-pill" th:classappend="${currentPage=='community'} ? 'active'" th:href="@{/community}">커뮤니티</a>
-        <a class="nav-pill" th:classappend="${currentPage=='notice'} ? 'active'" th:href="@{/customer-service/notice}">공지사항</a>
-        <a class="nav-pill" th:classappend="${currentPage=='inquiry'} ? 'active'" th:href="@{/customer-service/inquiry}">문의하기</a>
+        <!-- 로그인 필요 메뉴 (비로그인 시 숨김) -->
+        <a class="nav-pill auth-required" th:classappend="${currentPage=='store-register'} ? 'active'" th:href="@{/store/register}" id="menuStoreRegister" style="display:none;">가게등록</a>
+        <a class="nav-pill auth-required" th:classappend="${currentPage=='store-promotion'} ? 'active'" th:href="@{/store/promotion}" id="menuStorePromotion" style="display:none;">홍보하기</a>
+        <a class="nav-pill auth-required" th:classappend="${currentPage=='community'} ? 'active'" th:href="@{/community}" id="menuCommunity" style="display:none;">커뮤니티</a>
+        <a class="nav-pill auth-required" th:classappend="${currentPage=='notice'} ? 'active'" th:href="@{/customer-service/notice}" id="menuNotice" style="display:none;">공지사항</a>
+        <a class="nav-pill auth-required" th:classappend="${currentPage=='inquiry'} ? 'active'" th:href="@{/customer-service/inquiry}" id="menuInquiry" style="display:none;">문의하기</a>
+        <!-- 공개 메뉴 (항상 표시) -->
         <a class="nav-pill" th:classappend="${currentPage=='policy'} ? 'active'" th:href="@{/customer-service/policy}">정책</a>
+        <!-- 관리자 메뉴 -->
         <a class="nav-pill" th:classappend="${currentPage=='admin'} ? 'active'" th:href="@{/customer-service/admin/inquiry}" id="menuAdmin" style="display:none;">문의관리</a>
     </nav>
 
@@ -36,13 +39,29 @@
     <script>
         // 페이지 로드 시 인증 상태 확인 - UserState 사용
         (async function checkAuth() {
-            try {
-                // UserState를 통해 사용자 정보 가져오기 (캐싱됨)
-                const user = await window.UserState.getUser();
+            const currentPath = window.location.pathname;
+            const publicPages = ['/user/login', '/user/signup'];
 
+            // 비로그인 상태 UI 설정 함수
+            function showLoggedOutUI() {
+                document.getElementById('loggedOut').style.display = 'flex';
+                document.getElementById('loggedIn').style.display = 'none';
+                document.getElementById('authButtons').style.visibility = 'visible';
+                // 로그인 필요 메뉴 숨김
+                document.querySelectorAll('.auth-required').forEach(el => el.style.display = 'none');
+            }
+
+            // 로그인 상태 UI 설정 함수
+            function showLoggedInUI(user) {
                 document.getElementById('loggedOut').style.display = 'none';
                 document.getElementById('loggedIn').style.display = 'flex';
                 document.getElementById('authButtons').style.visibility = 'visible';
+
+                // 로그인 필요 메뉴 표시
+                document.getElementById('menuStorePromotion').style.display = 'block';
+                document.getElementById('menuCommunity').style.display = 'block';
+                document.getElementById('menuNotice').style.display = 'block';
+                document.getElementById('menuInquiry').style.display = 'block';
 
                 // 권한에 따른 메뉴 표시 및 텍스트 변경
                 const menuStorePromotion = document.getElementById('menuStorePromotion');
@@ -57,16 +76,29 @@
                 if (user.role === window.RoleEnum.ADMIN) {
                     document.getElementById('menuAdmin').style.display = 'block';
                 }
+            }
+
+            // 공개 페이지에서는 인증 체크 스킵
+            if (publicPages.includes(currentPath)) {
+                showLoggedOutUI();
+                return;
+            }
+
+            try {
+                const user = await window.UserState.getUser();
+
+                if (!user) {
+                    showLoggedOutUI();
+                    return;
+                }
+
+                showLoggedInUI(user);
             } catch (error) {
-                // 로그아웃 상태 표시 (조용히 처리, 리다이렉트 없음)
-                document.getElementById('loggedOut').style.display = 'flex';
-                document.getElementById('loggedIn').style.display = 'none';
-                document.getElementById('authButtons').style.visibility = 'visible';
+                showLoggedOutUI();
             }
         })();
 
         function handleLogout() {
-            // UserState 초기화
             window.UserState.clearUser();
 
             fetch('/api/auth/logout', {

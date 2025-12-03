@@ -107,10 +107,12 @@ public class JwtAuthenticationFilter implements Filter {
                requestURI.startsWith("/js/") ||
                requestURI.startsWith("/images/") ||
                requestURI.startsWith("/uploads/") ||
+               requestURI.startsWith("/vendor/") ||
                requestURI.equals("/") ||
                requestURI.equals("/main") ||
                requestURI.equals("/user/login") ||
                requestURI.equals("/user/signup") ||
+               requestURI.equals("/customer-service/policy") ||
                requestURI.startsWith("/api/auth/") ||
                requestURI.equals("/api/token");
     }

@@ -12,8 +12,8 @@
                 padding: 40px 20px;
                 background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             }
+
             .content-container {
-                width: 100%;
                 max-width: 1100px;
                 margin: 0 auto;
                 padding: 50px;
@@ -21,37 +21,87 @@
                 border-radius: 20px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             }
-            .content-container h2 {
+
+            .content-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 40px;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .content-header-text {
+                flex: 1;
+            }
+
+            .content-title {
                 font-size: clamp(28px, 5vw, 36px);
-                margin-bottom: 8px;
-                color: #667eea;
                 font-weight: 700;
+                color: #667eea;
+                margin: 0 0 8px 0;
             }
-            .content-container .subtitle {
+
+            .content-subtitle {
                 font-size: clamp(14px, 3vw, 16px);
-                margin-bottom: 32px;
                 color: #888;
+                margin: 0;
             }
-            .list-group {
+
+            /* 관리자 버튼 */
+            .admin-actions {
+                display: none;
+            }
+
+            .btn-write {
+                padding: 12px 24px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .btn-write:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            /* 공지사항 카드 리스트 */
+            .notice-list {
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
             }
-            .list-group-item {
+
+            .notice-card {
+                padding: 24px;
+                background: #fafafa;
                 border: 2px solid #f0f0f0;
                 border-radius: 12px;
-                padding: 24px;
-                background-color: #fafafa;
                 transition: all 0.3s;
-                position: relative;
+                cursor: pointer;
             }
-            .list-group-item:hover {
+
+            .notice-card:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-                border: 2px solid #667eea;
-                background-color: white;
+                border-color: #667eea;
+                background: white;
             }
-            .notice-header {
+
+            .notice-card.important {
+                border-left: 4px solid #667eea;
+                background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+            }
+
+            .notice-card-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
@@ -59,41 +109,314 @@
                 margin-bottom: 12px;
                 flex-wrap: wrap;
             }
-            .list-group-item h5 {
-                color: #333;
+
+            .notice-card-title-wrap {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 1;
+                min-width: 0;
+            }
+
+            .important-badge {
+                padding: 4px 8px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .notice-card-title {
                 font-size: clamp(16px, 3vw, 18px);
                 font-weight: 700;
+                color: #333;
                 margin: 0;
                 flex: 1;
                 min-width: 0;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
             }
-            .notice-date {
-                color: #999;
-                font-size: 14px;
-                white-space: nowrap;
+
+            .notice-card-meta {
+                display: flex;
+                align-items: center;
+                gap: 16px;
                 flex-shrink: 0;
             }
-            .list-group-item p {
+
+            .notice-card-date {
+                font-size: 14px;
+                color: #999;
+                white-space: nowrap;
+            }
+
+            .notice-card-views {
+                font-size: 13px;
+                color: #aaa;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .notice-card-content {
+                font-size: 15px;
                 color: #666;
-                line-height: 1.6;
+                line-height: 1.7;
                 margin: 0;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
+                white-space: pre-line;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* 관리자용 액션 버튼 */
+            .notice-admin-actions {
+                display: none;
+                gap: 8px;
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid #eee;
+            }
+
+            .btn-edit, .btn-delete {
+                padding: 8px 16px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .btn-edit {
+                background: white;
+                border: 1px solid #667eea;
+                color: #667eea;
+            }
+
+            .btn-edit:hover {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-delete {
+                background: white;
+                border: 1px solid #e53e3e;
+                color: #e53e3e;
+            }
+
+            .btn-delete:hover {
+                background: #e53e3e;
+                color: white;
+            }
+
+            /* 빈 상태 */
+            .empty-notice {
+                text-align: center;
+                padding: 60px 20px;
+                color: #888;
+            }
+
+            .empty-notice-icon {
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+
+            /* 모달 */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 20px;
+            }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                max-width: 600px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+
+            .modal-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #333;
+                margin: 0;
+            }
+
+            .modal-close {
+                padding: 8px;
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #999;
+                line-height: 1;
+            }
+
+            .modal-close:hover {
+                color: #333;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-label {
+                display: block;
+                font-size: 14px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+            }
+
+            .form-input {
+                width: 100%;
+                padding: 14px 16px;
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                font-size: 15px;
+                transition: all 0.3s;
+            }
+
+            .form-input:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                outline: none;
+            }
+
+            .form-textarea {
+                min-height: 200px;
+                resize: vertical;
+                font-family: inherit;
+            }
+
+            .form-checkbox {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .form-checkbox input {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .form-checkbox label {
+                font-size: 14px;
+                color: #555;
+                cursor: pointer;
+            }
+
+            .modal-actions {
+                display: flex;
+                gap: 12px;
+                margin-top: 32px;
+            }
+
+            .btn-modal {
+                flex: 1;
+                padding: 14px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                border: none;
+            }
+
+            .btn-cancel {
+                background: #e0e0e0;
+                color: #333;
+            }
+
+            .btn-cancel:hover {
+                background: #d0d0d0;
+            }
+
+            .btn-submit {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            .btn-submit:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            /* 상세 모달 */
+            .detail-modal .modal-content {
+                max-width: 700px;
+            }
+
+            .detail-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 16px;
+            }
+
+            .detail-meta {
+                display: flex;
+                gap: 16px;
+                margin-bottom: 24px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid #eee;
+                color: #888;
+                font-size: 14px;
+            }
+
+            .detail-content {
+                font-size: 16px;
+                line-height: 1.8;
+                color: #444;
+                white-space: pre-line;
             }
 
             @media (max-width: 768px) {
                 .content-container {
                     padding: 30px 20px;
                 }
-                .list-group-item {
+
+                .notice-card {
                     padding: 20px;
                 }
-                .notice-header {
+
+                .notice-card-header {
                     flex-direction: column;
-                    align-items: flex-start;
                     gap: 8px;
+                }
+
+                .notice-card-meta {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .modal-content {
+                    padding: 24px;
                 }
             }
         </style>
@@ -102,59 +425,324 @@
 <body>
 <div class="content-wrapper" layout:fragment="content">
     <div class="content-container">
-        <h2>공지사항</h2>
-        <p class="subtitle">중요한 공지사항을 확인하세요</p>
-
-        <div class="list-group">
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>서비스 점검 안내</h5>
-                    <span class="notice-date">2025-10-20</span>
-                </div>
-                <p>10월 25일 새벽 2시부터 4시까지 서비스 점검이 진행됩니다. 더욱 나은 서비스를 위한 시스템 안정화 작업이 예정되어 있습니다.</p>
+        <!-- 헤더 -->
+        <div class="content-header">
+            <div class="content-header-text">
+                <h1 class="content-title">공지사항</h1>
+                <p class="content-subtitle">새로운 정보를 확인하세요</p>
             </div>
-
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>새로운 기능 업데이트</h5>
-                    <span class="notice-date">2025-10-15</span>
-                </div>
-                <p>가게 홍보 기능이 추가되었습니다. 이제 더 많은 고객에게 여러분의 가게를 알릴 수 있습니다. 많은 이용 부탁드립니다.</p>
+            <div class="admin-actions" id="adminActions">
+                <button class="btn-write" onclick="openWriteModal()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                    공지 작성
+                </button>
             </div>
+        </div>
 
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>이용약관 개정 안내</h5>
-                    <span class="notice-date">2025-10-10</span>
-                </div>
-                <p>이용약관이 일부 개정되었습니다. 정책 페이지에서 확인하실 수 있습니다. 주요 변경사항은 개인정보 처리방침 관련 내용입니다.</p>
+        <!-- 공지사항 목록 -->
+        <div class="notice-list" id="noticeList">
+            <div class="empty-notice">
+                <div class="empty-notice-icon">📋</div>
+                <p>공지사항을 불러오는 중...</p>
             </div>
+        </div>
+    </div>
 
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>추석 연휴 고객센터 운영 안내</h5>
-                    <span class="notice-date">2025-10-05</span>
-                </div>
-                <p>추석 연휴 기간 동안 고객센터 운영시간이 조정됩니다. 9월 28일부터 10월 1일까지 오전 10시부터 오후 5시까지 운영됩니다.</p>
+    <!-- 작성/수정 모달 -->
+    <div class="modal-overlay" id="writeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">공지사항 작성</h2>
+                <button class="modal-close" onclick="closeWriteModal()">&times;</button>
             </div>
-
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>모바일 앱 출시 예정</h5>
-                    <span class="notice-date">2025-09-30</span>
+            <form id="noticeForm">
+                <input type="hidden" id="noticeId">
+                <div class="form-group">
+                    <label class="form-label">제목</label>
+                    <input type="text" class="form-input" id="noticeTitle" placeholder="공지사항 제목을 입력하세요" required>
                 </div>
-                <p>더욱 편리한 서비스 이용을 위한 모바일 앱이 11월 중 출시 예정입니다. iOS와 Android 모두 지원될 예정이니 많은 관심 부탁드립니다.</p>
+                <div class="form-group">
+                    <label class="form-label">내용</label>
+                    <textarea class="form-input form-textarea" id="noticeContent" placeholder="공지사항 내용을 입력하세요" required></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="noticeImportant">
+                        <label for="noticeImportant">중요 공지로 설정 (상단 고정)</label>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancel" onclick="closeWriteModal()">취소</button>
+                    <button type="submit" class="btn-modal btn-submit">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 상세 모달 -->
+    <div class="modal-overlay detail-modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">공지사항</h2>
+                <button class="modal-close" onclick="closeDetailModal()">&times;</button>
             </div>
-
-            <div class="list-group-item">
-                <div class="notice-header">
-                    <h5>예약 시스템 개선 안내</h5>
-                    <span class="notice-date">2025-09-25</span>
-                </div>
-                <p>예약 확인 및 취소 기능이 개선되었습니다. 이제 더욱 빠르고 편리하게 예약을 관리하실 수 있습니다.</p>
+            <div id="detailContent">
+                <!-- 동적으로 채워짐 -->
             </div>
         </div>
     </div>
 </div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        let isAdmin = false;
+        let editingId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotices();
+            checkAdminRole();
+        });
+
+        // 관리자 권한 확인
+        async function checkAdminRole() {
+            try {
+                const user = await window.UserState.getUser();
+                if (user && user.role === 'ADMIN') {
+                    isAdmin = true;
+                    document.getElementById('adminActions').style.display = 'block';
+                    // 각 공지사항 카드에 관리 버튼 표시
+                    document.querySelectorAll('.notice-admin-actions').forEach(el => {
+                        el.style.display = 'flex';
+                    });
+                }
+            } catch (error) {
+                // 비로그인 상태
+            }
+        }
+
+        // 공지사항 목록 로드
+        async function loadNotices() {
+            try {
+                const response = await fetch('/api/notices');
+                if (!response.ok) throw new Error('공지사항을 불러올 수 없습니다.');
+                
+                const notices = await response.json();
+                renderNotices(notices);
+            } catch (error) {
+                console.error('공지사항 로드 실패:', error);
+                document.getElementById('noticeList').innerHTML = `
+                    <div class="empty-notice">
+                        <div class="empty-notice-icon">📋</div>
+                        <p>등록된 공지사항이 없습니다.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 공지사항 렌더링
+        function renderNotices(notices) {
+            const container = document.getElementById('noticeList');
+            
+            if (!notices || notices.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-notice">
+                        <div class="empty-notice-icon">📋</div>
+                        <p>등록된 공지사항이 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notices.map(notice => `
+                <div class="notice-card ${notice.isImportant ? 'important' : ''}" onclick="openDetailModal(${notice.id})">
+                    <div class="notice-card-header">
+                        <div class="notice-card-title-wrap">
+                            ${notice.isImportant ? '<span class="important-badge">중요</span>' : ''}
+                            <h2 class="notice-card-title">${escapeHtml(notice.title)}</h2>
+                        </div>
+                        <div class="notice-card-meta">
+                            <span class="notice-card-date">${notice.formattedDate}</span>
+                            <span class="notice-card-views">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                                </svg>
+                                ${notice.viewCount}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="notice-card-content">${escapeHtml(notice.content)}</p>
+                    <div class="notice-admin-actions" style="${isAdmin ? 'display: flex;' : 'display: none;'}">
+                        <button class="btn-edit" onclick="event.stopPropagation(); openEditModal(${notice.id})">수정</button>
+                        <button class="btn-delete" onclick="event.stopPropagation(); deleteNotice(${notice.id})">삭제</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // HTML 이스케이프
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 작성 모달 열기
+        function openWriteModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = '공지사항 작성';
+            document.getElementById('noticeId').value = '';
+            document.getElementById('noticeTitle').value = '';
+            document.getElementById('noticeContent').value = '';
+            document.getElementById('noticeImportant').checked = false;
+            document.getElementById('writeModal').classList.add('show');
+        }
+
+        // 수정 모달 열기
+        async function openEditModal(id) {
+            try {
+                const response = await window.fetchWithAuth(`/api/notices/${id}`);
+                if (!response.ok) throw new Error('공지사항을 불러올 수 없습니다.');
+                
+                const notice = await response.json();
+                
+                editingId = id;
+                document.getElementById('modalTitle').textContent = '공지사항 수정';
+                document.getElementById('noticeId').value = id;
+                document.getElementById('noticeTitle').value = notice.title;
+                document.getElementById('noticeContent').value = notice.content;
+                document.getElementById('noticeImportant').checked = notice.isImportant;
+                document.getElementById('writeModal').classList.add('show');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // 작성/수정 모달 닫기
+        function closeWriteModal() {
+            document.getElementById('writeModal').classList.remove('show');
+            editingId = null;
+        }
+
+        // 상세 모달 열기
+        async function openDetailModal(id) {
+            try {
+                const response = await fetch(`/api/notices/${id}`);
+                if (!response.ok) throw new Error('공지사항을 불러올 수 없습니다.');
+                
+                const notice = await response.json();
+                
+                document.getElementById('detailContent').innerHTML = `
+                    <h3 class="detail-title">
+                        ${notice.isImportant ? '<span class="important-badge" style="margin-right: 8px;">중요</span>' : ''}
+                        ${escapeHtml(notice.title)}
+                    </h3>
+                    <div class="detail-meta">
+                        <span>작성자: ${escapeHtml(notice.authorName)}</span>
+                        <span>작성일: ${notice.formattedDate}</span>
+                        <span>조회수: ${notice.viewCount}</span>
+                    </div>
+                    <div class="detail-content">${escapeHtml(notice.content)}</div>
+                `;
+                document.getElementById('detailModal').classList.add('show');
+                
+                // 목록 새로고침 (조회수 반영)
+                loadNotices();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // 상세 모달 닫기
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('show');
+        }
+
+        // 폼 제출 (작성/수정)
+        document.getElementById('noticeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                title: document.getElementById('noticeTitle').value,
+                content: document.getElementById('noticeContent').value,
+                isImportant: document.getElementById('noticeImportant').checked
+            };
+
+            try {
+                let response;
+                if (editingId) {
+                    // 수정
+                    response = await window.fetchWithAuth(`/api/notices/${editingId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // 작성
+                    response = await window.fetchWithAuth('/api/notices', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/user/login';
+                    return;
+                }
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '저장에 실패했습니다.');
+                }
+
+                closeWriteModal();
+                loadNotices();
+                alert(editingId ? '공지사항이 수정되었습니다.' : '공지사항이 작성되었습니다.');
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // 삭제
+        async function deleteNotice(id) {
+            if (!confirm('정말 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await window.fetchWithAuth(`/api/notices/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    window.location.href = '/user/login';
+                    return;
+                }
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || '삭제에 실패했습니다.');
+                }
+
+                loadNotices();
+                alert('공지사항이 삭제되었습니다.');
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // 모달 외부 클릭 시 닫기
+        document.getElementById('writeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeWriteModal();
+        });
+
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDetailModal();
+        });
+    </script>
+</th:block>
 </body>
 </html>

@@ -50,10 +50,13 @@ public class SecurityConfig {
                 // 8. URL별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         // 정적 리소스 (누구나 접근 가능)
-                        .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/favicon.ico", "/favicon.svg").permitAll()
+                        .requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/uploads/**", "/vendor/**", "/favicon.svg").permitAll()
                         
                         // 공개 페이지 (누구나 접근 가능)
                         .requestMatchers("/", "/main", "/user/login", "/user/signup").permitAll()
+                        
+                        // 고객센터 - 정책 페이지만 공개 (공지사항, 문의하기는 로그인 필요)
+                        .requestMatchers("/customer-service/policy").permitAll()
                         
                         // 인증 API (누구나 접근 가능) - 로그인/로그아웃
                         .requestMatchers("/api/auth/**").permitAll()

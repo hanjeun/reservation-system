@@ -31,9 +31,11 @@
 
         <div class="footer-section">
             <h3>고객지원</h3>
-            <a th:href="@{/customer-service/notice}">공지사항</a>
-            <a th:href="@{/customer-service/inquiry}">문의하기</a>
-            <a th:href="@{/customer-service/policy}">이용약관</a>
+            <!-- 로그인 필요 링크 -->
+            <a th:href="@{/customer-service/notice}" id="footerNotice" style="display: none;">공지사항</a>
+            <a th:href="@{/customer-service/inquiry}" id="footerInquiry" style="display: none;">문의하기</a>
+            <!-- 공개 링크 (항상 표시) -->
+            <a th:href="@{/customer-service/policy}">정책</a>
         </div>
 
         <div class="footer-section">
@@ -72,14 +74,18 @@
             const adminSection = document.getElementById('footerAdminSection');
             const storeRegister = document.getElementById('footerStoreRegister');
             const storePromotion = document.getElementById('footerStorePromotion');
+            const footerNotice = document.getElementById('footerNotice');
+            const footerInquiry = document.getElementById('footerInquiry');
 
             if (!serviceSection) return;
 
             // UserState를 통해 캐시된 사용자 정보 사용
             window.UserState.getUser()
                 .then(user => {
-                    // 모든 로그인 사용자에게 서비스 섹션 표시 (커뮤니티 포함)
+                    // 로그인 사용자: 서비스 섹션 + 고객지원 전체 표시
                     serviceSection.style.display = 'block';
+                    footerNotice.style.display = 'block';
+                    footerInquiry.style.display = 'block';
 
                     // 역할에 따라 홍보하기/추천 가게 텍스트 변경
                     if (window.hasBusinessOrAdminRole(user.role)) {
@@ -95,9 +101,11 @@
                     }
                 })
                 .catch(() => {
-                    // 비로그인 상태 - 조용히 처리
+                    // 비로그인 상태: 서비스 섹션 숨김, 고객지원은 정책만 표시
                     serviceSection.style.display = 'none';
                     adminSection.style.display = 'none';
+                    footerNotice.style.display = 'none';
+                    footerInquiry.style.display = 'none';
                 });
         });
     </script>

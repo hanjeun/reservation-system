@@ -42,7 +42,5 @@ public class Member {
         return this.role == Role.BUSINESS;
     }
 
-    public boolean isAdmin() {
-        return this.role == Role.ADMIN;
-    }
+    public boolean isAdmin() { return this.role == Role.ADMIN; }
 }

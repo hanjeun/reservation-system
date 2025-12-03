@@ -5,9 +5,9 @@
       layout:decorate="~{layouts/main-layout}">
 <head>
     <meta charset="UTF-8">
-    <!-- Flatpickr CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/airbnb.css">
+    <!-- Flatpickr CSS (로컬) -->
+    <link rel="stylesheet" th:href="@{/vendor/flatpickr/flatpickr.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/flatpickr/airbnb.css}">
     <th:block layout:fragment="custom-css">
         <style>
             .store-detail-wrapper {
@@ -1221,8 +1221,9 @@
 
 <th:block layout:fragment="custom-script">
     <!-- Flatpickr JS -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+    <!-- Flatpickr JS (로컬) -->
+    <script th:src="@{/vendor/flatpickr/flatpickr.min.js}"></script>
+    <script th:src="@{/vendor/flatpickr/ko.js}"></script>
     
     <script th:inline="javascript">
         const storeId = /*[[${store.id}]]*/ 0;

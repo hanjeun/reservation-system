@@ -12,8 +12,8 @@
                 padding: 40px 20px;
                 background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             }
+
             .content-container {
-                width: 100%;
                 max-width: 900px;
                 margin: 0 auto;
                 padding: 50px;
@@ -21,17 +21,25 @@
                 border-radius: 20px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             }
-            .content-container h2 {
+
+            .content-header {
+                margin-bottom: 40px;
+            }
+
+            .content-title {
                 font-size: clamp(28px, 5vw, 36px);
-                margin-bottom: 8px;
-                color: #667eea;
                 font-weight: 700;
+                color: #667eea;
+                margin: 0 0 8px 0;
             }
-            .content-container .subtitle {
+
+            .content-subtitle {
                 font-size: clamp(14px, 3vw, 16px);
-                margin-bottom: 32px;
                 color: #888;
+                margin: 0;
             }
+
+            /* 정책 섹션 */
             .policy-section {
                 margin-bottom: 32px;
                 padding: 28px;
@@ -39,32 +47,45 @@
                 border-radius: 12px;
                 border-left: 4px solid #667eea;
             }
+
+            .policy-section:last-child {
+                margin-bottom: 0;
+            }
+
             .policy-section h4 {
                 font-size: clamp(18px, 4vw, 22px);
                 font-weight: 700;
                 color: #333;
-                margin-top: 0;
-                margin-bottom: 16px;
+                margin: 0 0 16px 0;
             }
+
             .policy-section h5 {
-                font-size: clamp(16px, 3vw, 18px);
+                font-size: clamp(15px, 3vw, 17px);
                 font-weight: 600;
                 color: #555;
-                margin-top: 20px;
-                margin-bottom: 12px;
+                margin: 20px 0 12px 0;
             }
+
+            .policy-section h5:first-of-type {
+                margin-top: 0;
+            }
+
             .policy-section p {
+                font-size: 15px;
                 color: #666;
                 line-height: 1.8;
-                margin-bottom: 12px;
-                word-wrap: break-word;
-                overflow-wrap: break-word;
+                margin: 0 0 12px 0;
+            }
+
+            .policy-section p:last-child {
+                margin-bottom: 0;
             }
 
             @media (max-width: 768px) {
                 .content-container {
                     padding: 30px 20px;
                 }
+
                 .policy-section {
                     padding: 20px;
                 }
@@ -75,72 +96,57 @@
 <body>
 <div class="content-wrapper" layout:fragment="content">
     <div class="content-container">
-        <h2>정책</h2>
-        <p class="subtitle">이용약관 및 개인정보 처리방침을 안내합니다</p>
-
-        <div class="policy-section">
-            <h4>제1조 (목적)</h4>
-            <p>
-                본 약관은 통합예약시스템(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.
-            </p>
-
-            <h4 style="margin-top: 24px;">제2조 (정의)</h4>
-            <p>
-                1. "서비스"란 회원이 이용할 수 있는 통합예약시스템 및 관련 제반 서비스를 의미합니다.<br>
-                2. "회원"이란 본 약관에 동의하고 회원가입을 완료한 자를 말합니다.<br>
-                3. "예약"이란 회원이 서비스를 통해 가맹점의 상품 또는 서비스를 예약하는 행위를 의미합니다.
-            </p>
+        <!-- 헤더 -->
+        <div class="content-header">
+            <h1 class="content-title">정책</h1>
+            <p class="content-subtitle">이용약관 및 개인정보 처리방침을 안내합니다</p>
         </div>
 
-        <div class="policy-section">
-            <h4>개인정보 처리방침</h4>
+        <!-- 이용약관 -->
+        <div class="policy-section" id="terms">
+            <h4>웹사이트 이용약관</h4>
+            
+            <h5>목적</h5>
+            <p>본 약관은 본 웹사이트(이하 "사이트")의 이용과 관련하여 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+
+            <h5>이용자의 의무</h5>
             <p>
-                통합예약시스템은 「개인정보 보호법」에 따라 이용자의 개인정보 보호 및 권익을 보호하고 개인정보와 관련한 이용자의 고충을 원활하게 처리할 수 있도록 다음과 같은 처리방침을 두고 있습니다.
+                • 사이트를 불법적인 목적으로 사용하지 않습니다.<br>
+                • 다른 이용자의 권리를 침해하지 않습니다.<br>
+                • 사이트 운영을 방해하지 않습니다.
             </p>
 
+            <h5>운영자의 권리</h5>
+            <p>
+                • 서비스 내용을 변경하거나 중단할 수 있습니다.<br>
+                • 부적절한 게시물은 사전 통지 없이 삭제할 수 있습니다.
+            </p>
+
+            <h5>책임의 한계</h5>
+            <p>사이트에서 제공되는 정보는 참고용이며, 운영자는 그 정확성이나 신뢰성에 대해 보증하지 않습니다.</p>
+        </div>
+
+        <!-- 개인정보 처리방침 -->
+        <div class="policy-section" id="privacy">
+            <h4>개인정보 처리방침</h4>
+            
             <h5>수집하는 개인정보 항목</h5>
             <p>
-                • 회원가입 시: 이름, 이메일, 비밀번호, 전화번호<br>
-                • 예약 시: 예약자명, 연락처, 특별 요청사항<br>
-                • 서비스 이용 과정에서 자동 수집되는 정보: IP 주소, 쿠키, 접속 로그
+                • 이름, 이메일 주소<br>
+                • 접속 로그, 쿠키 등 자동 생성 정보
             </p>
 
-            <h5>개인정보의 이용 목적</h5>
+            <h5>개인정보 이용 목적</h5>
             <p>
-                • 회원 관리 및 서비스 제공<br>
-                • 예약 확인 및 관리<br>
-                • 고객 문의사항 응대<br>
-                • 신규 서비스 개발 및 마케팅 (동의한 경우에 한함)
+                • 고객 문의 응대<br>
+                • 서비스 개선 및 통계 분석
             </p>
 
-            <h5>개인정보의 보유 및 이용기간</h5>
-            <p>
-                회원 탈퇴 시 지체 없이 파기합니다. 단, 관련 법령에 따라 일정 기간 보관이 필요한 경우 해당 기간 동안 보관합니다.
-            </p>
-        </div>
+            <h5>보관 및 파기</h5>
+            <p>수집된 개인정보는 목적 달성 후 즉시 파기합니다.</p>
 
-        <div class="policy-section">
-            <h4>취소 및 환불 정책</h4>
-            <p>
-                예약 취소 및 환불은 각 가맹점의 정책을 따릅니다. 일반적인 취소 규정은 다음과 같습니다.
-            </p>
-            <p>
-                • 예약일 7일 전: 전액 환불<br>
-                • 예약일 3~6일 전: 50% 환불<br>
-                • 예약일 2일 전~당일: 환불 불가
-            </p>
-            <p style="margin-top: 16px;">
-                * 가맹점별로 정책이 상이할 수 있으니, 예약 전 반드시 개별 취소 정책을 확인하시기 바랍니다.
-            </p>
-        </div>
-
-        <div class="policy-section">
-            <h4>책임의 한계</h4>
-            <p>
-                회사는 통신망 장애, 천재지변 등 불가항력적 사유로 인한 서비스 중단에 대해서는 책임을 지지 않습니다.
-                또한, 이용자가 제공한 정보의 정확성에 대한 책임은 이용자 본인에게 있으며,
-                허위 정보 제공으로 인해 발생한 불이익에 대해 회사는 책임지지 않습니다.
-            </p>
+            <h5>문의처</h5>
+            <p>개인정보 관련 문의: support@reservation-system.com</p>
         </div>
     </div>
 </div>

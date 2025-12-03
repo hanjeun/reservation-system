@@ -25,24 +25,21 @@ const refreshAccessToken = async () => {
     try {
         const response = await fetch('/api/token', {
             method: 'POST',
-            credentials: 'include',  // 쿠키 포함
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({})  // 빈 객체 (서버가 쿠키에서 refresh_token 읽음)
+            body: JSON.stringify({})
         });
 
         if (response.ok) {
             const data = await response.json();
-            console.log('✅ Access Token 갱신 성공');
             return data.accessToken;
         } else if (response.status === 401) {
-            console.log('❌ Refresh Token 만료 - 재로그인 필요');
+            // Refresh Token 없거나 만료 - 조용히 실패 처리
             throw new Error('Token refresh failed - unauthorized');
         } else {
-            console.log('❌ Token refresh failed:', response.status);
             throw new Error('Token refresh failed');
         }
     } catch (error) {
-        console.error('Token refresh error:', error);
         throw error;
     }
 };
@@ -59,8 +56,6 @@ const fetchWithAuth = async (url, options = {}) => {
 
         // 401 응답이면 토큰 갱신 시도
         if (response.status === 401) {
-            console.log('🔄 401 응답 - 토큰 갱신 시도...');
-
             // 이미 갱신 중이면 대기열에 추가
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
@@ -82,7 +77,7 @@ const fetchWithAuth = async (url, options = {}) => {
                 return response;
             } catch (refreshError) {
                 processQueue(refreshError, null);
-                console.log('토큰 갱신 실패 - 로그인 페이지로 이동 필요');
+                // 토큰 갱신 실패 - 조용히 원래 401 응답 반환
                 return response;
             } finally {
                 isRefreshing = false;
@@ -110,7 +105,6 @@ const checkAuthStatus = async () => {
         }
         return { authenticated: false };
     } catch (error) {
-        console.error('Auth check error:', error);
         return { authenticated: false };
     }
 };

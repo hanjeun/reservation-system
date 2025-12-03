@@ -8,7 +8,7 @@
     <title th:text="${title}">통합예약시스템</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 
     <!-- CSS 링크 -->
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
@@ -143,6 +143,71 @@
             body {
                 font-size: 16px;
             }
+        }
+
+        /* ========================================
+           Select 박스 커스텀 스타일
+           ======================================== */
+
+        /* 기본 select 스타일 개선 */
+        select,
+        .form-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #FFFFFF;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 40px 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1E1E1E;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        select:hover,
+        .form-select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* select option 스타일 (제한적) */
+        select option,
+        .form-select option {
+            padding: 12px 16px;
+            background-color: #FFFFFF;
+            color: #1E1E1E;
+        }
+
+        select option:checked,
+        .form-select option:checked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #FFFFFF;
+        }
+
+        /* disabled 상태 */
+        select:disabled,
+        .form-select:disabled {
+            background-color: #f8f9fa;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* placeholder 스타일 (첫 번째 옵션) */
+        select option[value=""],
+        .form-select option[value=""] {
+            color: #999;
         }
 
         /* ========================================
