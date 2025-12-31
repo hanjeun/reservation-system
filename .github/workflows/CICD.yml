@@ -73,14 +73,14 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/reservation-system:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
+            sudo docker compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
 
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
         with:
           url: http://${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}:${{env.STOPPED_PORT}}/env
-          max-attempts: 3
-          retry-delay: 10s
+          max-attempts: 5
+          retry-delay: 15s
 
       - name: Change nginx upstream
         uses: appleboy/ssh-action@master
@@ -98,5 +98,5 @@ jobs:
           host: ${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo docker stop ${{env.CURRENT_UPSTREAM}}
-            sudo docker rm ${{env.CURRENT_UPSTREAM}}
+            sudo docker stop ${{env.CURRENT_UPSTREAM}} || true
+            sudo docker rm ${{env.CURRENT_UPSTREAM}} || true
