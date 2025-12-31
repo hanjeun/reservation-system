@@ -74,6 +74,140 @@
                 font-size: 14px;
             }
 
+            /* 구분선 스타일 */
+            .divider {
+                display: flex;
+                align-items: center;
+                text-align: center;
+                margin: 30px 0;
+            }
+            .divider::before,
+            .divider::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .divider span {
+                padding: 0 15px;
+                color: #999;
+                font-size: 14px;
+            }
+
+            /* 소셜 로그인 버튼 스타일 - 공식 브랜딩 가이드라인 준수 */
+            .social-login {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .btn-social {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                padding: 0 20px;
+                height: 52px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border: none;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+                /* 애니메이션 초기 상태 */
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            /* 순차적 등장 애니메이션 */
+            .btn-social.animate {
+                animation: slideUp 0.5s ease forwards;
+            }
+            .btn-social:nth-child(1).animate {
+                animation-delay: 0.1s;
+            }
+            .btn-social:nth-child(2).animate {
+                animation-delay: 0.2s;
+            }
+            .btn-social:nth-child(3).animate {
+                animation-delay: 0.3s;
+            }
+
+            @keyframes slideUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .btn-social:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+            .btn-social:active {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            /* 로고 아이콘 스타일 */
+            .btn-social .social-icon {
+                width: 22px;
+                height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .btn-social .social-icon svg {
+                width: 100%;
+                height: 100%;
+            }
+
+            /* 버튼 텍스트 */
+            .btn-social .social-text {
+                font-size: 15px;
+                line-height: 1;
+            }
+
+            /* Google 버튼 - 공식 브랜딩 가이드라인 */
+            .btn-google {
+                background-color: #ffffff;
+                color: #1f1f1f;
+                border: 1px solid #dadce0;
+                font-family: 'Roboto', -apple-system, sans-serif;
+                font-weight: 500;
+            }
+            .btn-google:hover {
+                background-color: #f8f9fa;
+                border-color: #c4c7c9;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            /* Naver 버튼 - 공식 브랜딩 가이드라인 (Green 권장) */
+            .btn-naver {
+                background-color: #03C75A;
+                color: #ffffff;
+                font-family: -apple-system, 'Malgun Gothic', sans-serif;
+                font-weight: 600;
+            }
+            .btn-naver:hover {
+                background-color: #02b351;
+                box-shadow: 0 8px 25px rgba(3, 199, 90, 0.35);
+            }
+
+            /* Kakao 버튼 - 공식 브랜딩 가이드라인 */
+            .btn-kakao {
+                background-color: #FEE500;
+                color: #191919;
+                font-family: -apple-system, 'Malgun Gothic', sans-serif;
+                font-weight: 500;
+            }
+            .btn-kakao:hover {
+                background-color: #fdd835;
+                box-shadow: 0 8px 25px rgba(254, 229, 0, 0.45);
+            }
+
             @media (max-width: 576px) {
                 .login-box {
                     padding: 40px 30px;
@@ -101,12 +235,77 @@
                 <button type="submit" class="btn btn-dark" id="loginBtn">로그인</button>
             </div>
             <div class="text-center">
-                <small>계정이 없으신가요? <a th:href="@{/user/signup}" class="link-text">회원가입</a></small>
+                <small>가게등록을 원하시나요? <a th:href="@{/user/signup}" class="link-text">회원가입</a></small>
             </div>
         </form>
+
+        <!-- 소셜 로그인 구분선 -->
+        <div class="divider">
+            <span>또는</span>
+        </div>
+
+        <!-- 소셜 로그인 버튼 - 공식 브랜딩 가이드라인 준수 -->
+        <div class="social-login">
+            <!-- Google 로그인 - 공식 가이드라인 -->
+            <a href="/oauth2/authorization/google" class="btn-social btn-google">
+                <span class="social-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                        <path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.565 24 12.255 24z"/>
+                        <path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 000 10.76l3.98-3.09z"/>
+                        <path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.69 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                    </svg>
+                </span>
+                <span class="social-text">Google로 로그인</span>
+            </a>
+
+            <!-- Naver 로그인 - 공식 가이드라인 (Green 버튼) -->
+            <a href="/oauth2/authorization/naver" class="btn-social btn-naver">
+                <span class="social-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#FFFFFF" d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
+                    </svg>
+                </span>
+                <span class="social-text">네이버 로그인</span>
+            </a>
+
+            <!-- Kakao 로그인 - 공식 가이드라인 -->
+            <a href="/oauth2/authorization/kakao" class="btn-social btn-kakao">
+                <span class="social-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#191919" d="M12 3C5.925 3 1 6.925 1 11.5c0 2.925 1.875 5.5 4.75 7.05l-.975 3.625c-.075.275.225.5.475.35l4.35-2.875c.775.125 1.575.2 2.4.2 6.075 0 11-3.925 11-8.75S18.075 3 12 3z"/>
+                    </svg>
+                </span>
+                <span class="social-text">카카오 로그인</span>
+            </a>
+        </div>
     </div>
 
     <script>
+        // OAuth2 에러 메시지 처리 및 애니메이션
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const message = urlParams.get('message');
+
+            // error 파라미터가 있고 message가 있으면 에러 표시
+            if (error && message) {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = decodeURIComponent(message);
+                errorDiv.style.display = 'block';
+
+                // URL에서 에러 파라미터 제거 (새로고침 시 에러 메시지 사라지도록)
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+
+            // 소셜 로그인 버튼 애니메이션 트리거
+            setTimeout(() => {
+                document.querySelectorAll('.btn-social').forEach(btn => {
+                    btn.classList.add('animate');
+                });
+            }, 300);
+        });
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 

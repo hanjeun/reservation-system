@@ -5,9 +5,7 @@
       layout:decorate="~{layouts/main-layout}">
 <head>
     <meta charset="UTF-8">
-    <!-- Flatpickr CSS (로컬) -->
-    <link rel="stylesheet" th:href="@{/vendor/flatpickr/flatpickr.min.css}">
-    <link rel="stylesheet" th:href="@{/vendor/flatpickr/airbnb.css}">
+    <!-- Flatpickr CSS는 main-layout에서 로드됨 -->
     <th:block layout:fragment="custom-css">
         <style>
             .store-detail-wrapper {
@@ -275,298 +273,8 @@
                 color: #B3B3B3;
             }
 
-            /* Flatpickr 커스텀 스타일 */
-            .flatpickr-input {
-                background-image: none !important;
-            }
+            /* Flatpickr 커스텀 스타일은 /css/flatpickr-custom.css에서 통합 관리 */
 
-            .flatpickr-calendar {
-                border-radius: 20px !important;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.2) !important;
-                border: none !important;
-                padding: 20px !important;
-                width: 340px !important;
-                font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
-                background: white !important;
-                overflow: hidden;
-            }
-
-            .flatpickr-calendar.arrowTop:before,
-            .flatpickr-calendar.arrowTop:after {
-                display: none !important;
-            }
-
-            .flatpickr-months {
-                padding: 0 8px 16px 8px !important;
-                border-bottom: 1px solid #f0f0f0;
-                margin-bottom: 12px;
-            }
-
-            .flatpickr-months .flatpickr-month {
-                height: 40px !important;
-            }
-
-            .flatpickr-current-month {
-                font-size: 18px !important;
-                font-weight: 700 !important;
-                color: #1a1a2e !important;
-                padding-top: 8px !important;
-            }
-
-            .flatpickr-current-month .flatpickr-monthDropdown-months {
-                font-weight: 700 !important;
-                font-size: 18px !important;
-            }
-
-            .flatpickr-months .flatpickr-prev-month,
-            .flatpickr-months .flatpickr-next-month {
-                padding: 8px !important;
-                width: 36px !important;
-                height: 36px !important;
-                border-radius: 50% !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                transition: all 0.2s ease !important;
-            }
-
-            .flatpickr-months .flatpickr-prev-month:hover,
-            .flatpickr-months .flatpickr-next-month:hover {
-                background: #f0f0f0 !important;
-            }
-
-            .flatpickr-months .flatpickr-prev-month svg,
-            .flatpickr-months .flatpickr-next-month svg {
-                width: 14px !important;
-                height: 14px !important;
-                stroke: #667eea !important;
-                stroke-width: 3 !important;
-            }
-
-            .flatpickr-weekdays {
-                padding: 8px 4px !important;
-                width: 100%;
-            }
-
-            .flatpickr-weekdaycontainer {
-                display: flex;
-                width: 100%;
-            }
-
-            .flatpickr-weekday {
-                flex: 1;
-                font-size: 12px !important;
-                font-weight: 600 !important;
-                color: #9ca3af !important;
-                text-transform: uppercase !important;
-                text-align: center;
-            }
-
-            .flatpickr-innerContainer {
-                display: flex;
-                justify-content: center;
-            }
-
-            .flatpickr-rContainer {
-                width: 100%;
-            }
-
-            .flatpickr-days {
-                width: 100% !important;
-            }
-
-            .dayContainer {
-                width: 100% !important;
-                min-width: 100% !important;
-                max-width: 100% !important;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: flex-start;
-                padding: 0 4px;
-            }
-
-            .flatpickr-day {
-                flex: 0 0 calc(100% / 7) !important;
-                max-width: calc(100% / 7) !important;
-                height: 42px !important;
-                line-height: 42px !important;
-                border-radius: 10px !important;
-                font-weight: 500 !important;
-                font-size: 14px !important;
-                color: #374151 !important;
-                margin: 0 !important;
-                transition: all 0.15s ease !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                box-sizing: border-box !important;
-            }
-
-            .flatpickr-day:hover {
-                background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%) !important;
-                border-color: transparent !important;
-            }
-
-            .flatpickr-day.selected,
-            .flatpickr-day.selected:hover {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-                border-color: transparent !important;
-                color: white !important;
-                font-weight: 600 !important;
-                box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4) !important;
-            }
-
-            .flatpickr-day.today {
-                border: 2px solid #667eea !important;
-                background: transparent !important;
-            }
-
-            .flatpickr-day.today:hover {
-                background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%) !important;
-            }
-
-            .flatpickr-day.today.selected {
-                border-color: transparent !important;
-            }
-
-            .flatpickr-day.prevMonthDay,
-            .flatpickr-day.nextMonthDay {
-                color: #d1d5db !important;
-            }
-
-            .flatpickr-day.flatpickr-disabled {
-                color: #e5e7eb !important;
-            }
-
-            /* 시간 선택기 스타일 */
-            .flatpickr-time {
-                border-top: 1px solid #f0f0f0 !important;
-                margin-top: 16px !important;
-                padding-top: 16px !important;
-                max-height: 60px !important;
-            }
-
-            .flatpickr-time input {
-                font-size: 24px !important;
-                font-weight: 700 !important;
-                color: #1a1a2e !important;
-            }
-
-            .flatpickr-time input:hover,
-            .flatpickr-time input:focus {
-                background: #f8f9ff !important;
-            }
-
-            .numInputWrapper {
-                border-radius: 12px !important;
-                overflow: hidden;
-            }
-
-            .numInputWrapper:hover {
-                background: #f8f9ff !important;
-            }
-
-            .numInputWrapper span.arrowUp,
-            .numInputWrapper span.arrowDown {
-                border: none !important;
-                opacity: 0;
-                transition: opacity 0.2s ease !important;
-            }
-
-            .numInputWrapper:hover span.arrowUp,
-            .numInputWrapper:hover span.arrowDown {
-                opacity: 1;
-            }
-
-            .numInputWrapper span.arrowUp:after {
-                border-bottom-color: #667eea !important;
-            }
-
-            .numInputWrapper span.arrowDown:after {
-                border-top-color: #667eea !important;
-            }
-
-            .flatpickr-time .flatpickr-time-separator {
-                font-size: 24px !important;
-                font-weight: 700 !important;
-                color: #667eea !important;
-            }
-
-            .flatpickr-am-pm {
-                border-radius: 10px !important;
-                font-weight: 600 !important;
-                font-size: 14px !important;
-                color: #667eea !important;
-                transition: all 0.2s ease !important;
-            }
-
-            .flatpickr-am-pm:hover {
-                background: #f0f0ff !important;
-            }
-
-            /* 모바일 대응 */
-            @media (max-width: 768px) {
-                .flatpickr-calendar {
-                    width: 100% !important;
-                    max-width: 320px !important;
-                    padding: 16px !important;
-                }
-
-                .flatpickr-day {
-                    height: 38px !important;
-                    line-height: 38px !important;
-                    font-size: 13px !important;
-                }
-            }
-
-            /* 날짜/시간 입력 필드 아이콘 */
-            .datetime-field-wrapper {
-                position: relative;
-            }
-
-            .datetime-field-wrapper .select-field {
-                padding-right: 48px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .datetime-field-wrapper .select-field:hover {
-                border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
-            }
-
-            .datetime-field-wrapper .select-field.active,
-            .datetime-field-wrapper .select-field:focus {
-                border-color: #667eea;
-                box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-            }
-
-            .datetime-field-wrapper .field-icon {
-                position: absolute;
-                right: 16px;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 20px;
-                height: 20px;
-                color: #667eea;
-                pointer-events: none;
-                transition: all 0.3s ease;
-            }
-
-            .datetime-field-wrapper:hover .field-icon {
-                color: #764ba2;
-                transform: translateY(-50%) scale(1.1);
-            }
-
-            /* altInput 스타일 (Flatpickr가 생성하는 보이는 입력 필드) */
-            .flatpickr-input[readonly] {
-                cursor: pointer !important;
-                background: white !important;
-            }
-
-            input.flatpickr-input.form-control + input {
-                background: white !important;
-            }
 
             .btn-reserve {
                 width: 100%;
@@ -1109,6 +817,18 @@
                                   style="min-height: 80px; resize: vertical; font-family: inherit;"></textarea>
                     </div>
 
+                    <!-- 노쇼 방지금 안내 -->
+                    <div id="depositInfo" style="display: none; background: #fff8e6; border: 1px solid #ffc107; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <span style="font-size: 20px;">💳</span>
+                            <span style="font-weight: 600; color: #1E1E1E;">노쇼 방지금 안내</span>
+                        </div>
+                        <p style="font-size: 14px; color: #666; margin: 0; line-height: 1.5;">
+                            이 가게는 <strong id="depositAmount" style="color: #667eea;">0원</strong>의 노쇼 방지금이 있습니다.<br>
+                            예약 시 카카오페이로 결제되며, 정상 방문 시 전액 환불됩니다.
+                        </p>
+                    </div>
+
                     <button class="btn-reserve" onclick="makeReservation()">
                         예약하기
                     </button>
@@ -1220,15 +940,17 @@
 </div>
 
 <th:block layout:fragment="custom-script">
-    <!-- Flatpickr JS -->
-    <!-- Flatpickr JS (로컬) -->
-    <script th:src="@{/vendor/flatpickr/flatpickr.min.js}"></script>
-    <script th:src="@{/vendor/flatpickr/ko.js}"></script>
+    <!-- Flatpickr JS는 main-layout.html에서 공통 로드됨 -->
     
     <script th:inline="javascript">
         const storeId = /*[[${store.id}]]*/ 0;
         const openTime = /*[[${store.openTime}]]*/ null;
         const closeTime = /*[[${store.closeTime}]]*/ null;
+        const noShowDeposit = /*[[${store.noShowDeposit}]]*/ 0;
+        const storeName = /*[[${store.name}]]*/ '가게';
+        const fullRefundDays = /*[[${store.fullRefundDays}]]*/ 3;
+        const partialRefundDays = /*[[${store.partialRefundDays}]]*/ 1;
+        const partialRefundRate = /*[[${store.partialRefundRate}]]*/ 50;
 
         // Flatpickr 인스턴스
         let datePicker = null;
@@ -1249,7 +971,35 @@
             loadReviews();
             checkEditMode();
             checkReviewMode();
+            showDepositInfo();
         });
+
+        // 노쇼 방지금 정보 표시
+        function showDepositInfo() {
+            if (noShowDeposit && noShowDeposit > 0) {
+                document.getElementById('depositInfo').style.display = 'block';
+                document.getElementById('depositAmount').textContent =
+                    new Intl.NumberFormat('ko-KR').format(noShowDeposit) + '원';
+
+                // 환불 정책 정보 추가
+                const refundPolicyHtml = `
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ffc107;">
+                        <div style="font-size: 13px; color: #666;">
+                            <strong>📋 환불 정책</strong>
+                            <ul style="margin: 8px 0 0 0; padding-left: 20px; line-height: 1.6;">
+                                <li>예약일 <strong>${fullRefundDays}일 전</strong>까지: <span style="color: #28a745;">100% 전액 환불</span></li>
+                                <li>예약일 <strong>${partialRefundDays}일 전</strong>까지: <span style="color: #ffc107;">${partialRefundRate}% 환불</span></li>
+                                <li>그 이후: <span style="color: #dc3545;">환불 불가</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('depositInfo').insertAdjacentHTML('beforeend', refundPolicyHtml);
+
+                // 버튼 텍스트 변경
+                document.querySelector('.btn-reserve').textContent = '예약 및 결제하기';
+            }
+        }
 
         // Flatpickr 날짜/시간 선택기 초기화
         function initDateTimePickers() {
@@ -1559,8 +1309,14 @@
             })
             .then(data => {
                 console.log(isEditMode ? '예약 수정 성공:' : '예약 성공:', data);
-                alert(isEditMode ? '예약이 수정되었습니다!' : '예약이 완료되었습니다!');
-                window.location.href = '/user/mypage';
+
+                // 노쇼 방지금이 있고, 새 예약인 경우 결제 진행
+                if (!isEditMode && noShowDeposit && noShowDeposit > 0) {
+                    processPayment(data);
+                } else {
+                    alert(isEditMode ? '예약이 수정되었습니다!' : '예약이 완료되었습니다!');
+                    window.location.href = '/user/mypage';
+                }
             })
             .catch(error => {
                 console.error(isEditMode ? '예약 수정 실패:' : '예약 실패:', error);
@@ -1575,6 +1331,46 @@
         let reviewReservationId = null;
         let editingReviewId = null;
         let currentUserId = null;
+
+        // 결제 처리
+        async function processPayment(reservation) {
+            try {
+                // 사용자 정보 가져오기
+                const user = await window.UserState.getUser();
+
+                const paymentOptions = {
+                    reservationId: reservation.id,
+                    amount: noShowDeposit,
+                    productName: `${storeName} 예약 노쇼방지금`,
+                    buyerName: user.name || '고객',
+                    buyerEmail: user.email || '',
+                    buyerTel: user.phone || ''
+                };
+
+                console.log('결제 요청:', paymentOptions);
+
+                const result = await payWithKakaoPay(paymentOptions);
+
+                if (result.success) {
+                    alert('예약 및 결제가 완료되었습니다!');
+                    window.location.href = '/user/mypage';
+                }
+            } catch (error) {
+                console.error('결제 실패:', error);
+
+                // 결제 실패/취소 시 예약도 취소
+                try {
+                    await window.fetchWithAuth(`/api/reservations/${reservation.id}/cancel`, {
+                        method: 'PATCH'
+                    });
+                    console.log('예약 취소 완료');
+                } catch (cancelError) {
+                    console.error('예약 취소 실패:', cancelError);
+                }
+
+                alert('결제가 취소되어 예약이 완료되지 않았습니다.\n다시 시도해주세요.');
+            }
+        }
 
         // 현재 사용자 ID 가져오기
         async function getCurrentUserId() {
@@ -1904,6 +1700,11 @@
             }
         });
     </script>
+
+    <!-- 포트원 SDK -->
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <!-- 결제 모듈 -->
+    <script th:src="@{/js/payment.js}"></script>
 </th:block>
 </body>
 </html>

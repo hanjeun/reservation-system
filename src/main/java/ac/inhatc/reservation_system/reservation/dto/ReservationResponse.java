@@ -29,6 +29,11 @@ public class ReservationResponse {
     private String specialRequest;
     private String rejectionReason;
     
+    // 결제 관련 필드
+    private Boolean depositPaid;
+    private Integer depositAmount;
+    private Integer noShowDeposit;  // 가게의 노쇼방지금 설정 금액
+    
     public static ReservationResponse from(Reservation reservation) {
         return ReservationResponse.builder()
                 .id(reservation.getId())
@@ -44,6 +49,9 @@ public class ReservationResponse {
                 .status(reservation.getStatus().name())
                 .specialRequest(reservation.getSpecialRequest())
                 .rejectionReason(reservation.getRejectionReason())
+                .depositPaid(reservation.getDepositPaid())
+                .depositAmount(reservation.getDepositAmount())
+                .noShowDeposit(reservation.getStore().getNoShowDeposit())
                 .build();
     }
 }

@@ -29,6 +29,13 @@ public class StoreResponse {
     private LocalTime closeTime;
     private Double rating;
     private Integer reviewCount;
+    private Integer noShowDeposit;  // 노쇼 방지금
+    
+    // ========== 환불 정책 ==========
+    private Integer fullRefundDays;     // 전액 환불 가능 일수
+    private Integer partialRefundDays;  // 부분 환불 가능 일수
+    private Integer partialRefundRate;  // 부분 환불 비율 (%)
+    
     private LocalDateTime createdAt;
 
     public static StoreResponse from(Store store) {
@@ -46,6 +53,10 @@ public class StoreResponse {
                 .closeTime(store.getCloseTime())
                 .rating(store.getRating())
                 .reviewCount(store.getReviewCount())
+                .noShowDeposit(store.getNoShowDeposit())
+                .fullRefundDays(store.getFullRefundDays())
+                .partialRefundDays(store.getPartialRefundDays())
+                .partialRefundRate(store.getPartialRefundRate())
                 .createdAt(store.getCreatedAt())
                 .build();
     }

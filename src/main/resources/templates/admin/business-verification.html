@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='사업자 인증 관리', currentPage='admin-business'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .admin-container {
+                min-height: 100vh;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+                padding: 40px 20px;
+            }
+
+            .admin-header {
+                max-width: 1200px;
+                margin: 0 auto 30px;
+            }
+
+            .admin-header h1 {
+                font-size: 32px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .admin-header p {
+                color: #666;
+            }
+
+            /* 탭 스타일 */
+            .tab-container {
+                max-width: 1200px;
+                margin: 0 auto 20px;
+                display: flex;
+                gap: 10px;
+                background: white;
+                padding: 10px;
+                border-radius: 12px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            }
+
+            .tab-btn {
+                padding: 12px 24px;
+                border: none;
+                background: transparent;
+                color: #666;
+                font-size: 15px;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s;
+                position: relative;
+            }
+
+            .tab-btn:hover {
+                background: #f5f5f5;
+            }
+
+            .tab-btn.active {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+            }
+
+            .tab-btn .badge {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                background: #e53e3e;
+                color: white;
+                font-size: 11px;
+                padding: 2px 6px;
+                border-radius: 10px;
+                min-width: 18px;
+            }
+
+            /* 카드 리스트 */
+            .card-list {
+                max-width: 1200px;
+                margin: 0 auto;
+                display: grid;
+                gap: 20px;
+            }
+
+            .verification-card {
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                overflow: hidden;
+                transition: transform 0.3s, box-shadow 0.3s;
+            }
+
+            .verification-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            }
+
+            .card-header {
+                padding: 20px 24px;
+                border-bottom: 1px solid #f0f0f0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .applicant-info h3 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 4px;
+            }
+
+            .applicant-info p {
+                font-size: 14px;
+                color: #666;
+            }
+
+            .status-badge {
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            .status-pending {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            .status-approved {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .status-rejected {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            .card-body {
+                padding: 24px;
+                display: grid;
+                grid-template-columns: 200px 1fr;
+                gap: 24px;
+            }
+
+            .license-image-container {
+                width: 200px;
+                height: 280px;
+                border-radius: 12px;
+                overflow: hidden;
+                border: 2px solid #e0e0e0;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .license-image-container:hover {
+                border-color: #667eea;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .license-image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .business-details {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .detail-item {
+                display: flex;
+                gap: 12px;
+            }
+
+            .detail-label {
+                width: 100px;
+                font-weight: 600;
+                color: #666;
+                flex-shrink: 0;
+            }
+
+            .detail-value {
+                color: #333;
+            }
+
+            .card-footer {
+                padding: 16px 24px;
+                background: #f9f9f9;
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .btn-approve {
+                padding: 10px 24px;
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-approve:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+
+            .btn-reject {
+                padding: 10px 24px;
+                background: linear-gradient(135deg, #dc3545 0%, #e53e3e 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-reject:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+            }
+
+            /* 이미지 모달 */
+            .image-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .image-modal.show {
+                display: flex;
+            }
+
+            .image-modal img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 8px;
+            }
+
+            .modal-close {
+                position: absolute;
+                top: 20px;
+                right: 30px;
+                font-size: 40px;
+                color: white;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .modal-close:hover {
+                transform: scale(1.1);
+            }
+
+            /* 거절 사유 모달 */
+            .reject-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 9998;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .reject-modal.show {
+                display: flex;
+            }
+
+            .reject-modal-content {
+                background: white;
+                padding: 30px;
+                border-radius: 16px;
+                width: 100%;
+                max-width: 500px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            }
+
+            .reject-modal-content h3 {
+                margin-bottom: 20px;
+                font-size: 20px;
+                color: #333;
+            }
+
+            .reject-modal-content textarea {
+                width: 100%;
+                height: 120px;
+                padding: 14px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+                font-size: 15px;
+                resize: none;
+                margin-bottom: 20px;
+            }
+
+            .reject-modal-content textarea:focus {
+                border-color: #667eea;
+                outline: none;
+            }
+
+            .reject-modal-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+
+            .btn-cancel {
+                padding: 10px 24px;
+                background: #e0e0e0;
+                color: #333;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            /* 빈 상태 */
+            .empty-state {
+                text-align: center;
+                padding: 80px 20px;
+                background: white;
+                border-radius: 16px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .empty-state .icon {
+                font-size: 64px;
+                margin-bottom: 20px;
+            }
+
+            .empty-state h3 {
+                font-size: 20px;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .empty-state p {
+                color: #666;
+            }
+
+            /* 로딩 */
+            .loading {
+                text-align: center;
+                padding: 60px;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 4px solid #e0e0e0;
+                border-top-color: #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+
+            /* 페이지네이션 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 30px;
+            }
+
+            .pagination button {
+                padding: 10px 16px;
+                border: 1px solid #e0e0e0;
+                background: white;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .pagination button:hover:not(:disabled) {
+                border-color: #667eea;
+                color: #667eea;
+            }
+
+            .pagination button.active {
+                background: #667eea;
+                color: white;
+                border-color: #667eea;
+            }
+
+            .pagination button:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            @media (max-width: 768px) {
+                .card-body {
+                    grid-template-columns: 1fr;
+                }
+
+                .license-image-container {
+                    width: 100%;
+                    height: 200px;
+                }
+
+                .tab-container {
+                    flex-wrap: wrap;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="admin-container" layout:fragment="content">
+    <div class="admin-header">
+        <h1>🏢 사업자 인증 관리</h1>
+        <p>사업자 등록 신청을 검토하고 승인/거절할 수 있습니다.</p>
+    </div>
+
+    <!-- 탭 -->
+    <div class="tab-container">
+        <button class="tab-btn active" data-status="PENDING" onclick="changeTab(this)">
+            대기중
+            <span class="badge" id="pendingBadge" style="display: none;">0</span>
+        </button>
+        <button class="tab-btn" data-status="APPROVED" onclick="changeTab(this)">승인됨</button>
+        <button class="tab-btn" data-status="REJECTED" onclick="changeTab(this)">거절됨</button>
+        <button class="tab-btn" data-status="" onclick="changeTab(this)">전체</button>
+    </div>
+
+    <!-- 로딩 -->
+    <div class="loading" id="loadingState">
+        <div class="loading-spinner"></div>
+        <p>불러오는 중...</p>
+    </div>
+
+    <!-- 빈 상태 -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="icon">📋</div>
+        <h3>인증 요청이 없습니다</h3>
+        <p>현재 조건에 맞는 인증 요청이 없습니다.</p>
+    </div>
+
+    <!-- 카드 리스트 -->
+    <div class="card-list" id="cardList"></div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination" id="pagination"></div>
+
+    <!-- 이미지 확대 모달 -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <span class="modal-close">&times;</span>
+        <img id="modalImage" src="" alt="사업자 등록증">
+    </div>
+
+    <!-- 거절 사유 모달 -->
+    <div class="reject-modal" id="rejectModal">
+        <div class="reject-modal-content">
+            <h3>❌ 거절 사유 입력</h3>
+            <textarea id="rejectReason" placeholder="거절 사유를 입력해주세요. (필수)"></textarea>
+            <div class="reject-modal-buttons">
+                <button class="btn-cancel" onclick="closeRejectModal()">취소</button>
+                <button class="btn-reject" onclick="confirmReject()">거절하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        let currentStatus = 'PENDING';
+        let currentPage = 0;
+        let rejectTargetId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVerifications();
+            loadPendingCount();
+        });
+
+        // 대기중 개수 로드
+        function loadPendingCount() {
+            window.fetchWithAuth('/api/business-verification/admin/pending-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('pendingBadge');
+                    if (data.success && data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'inline';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                });
+        }
+
+        // 탭 변경
+        function changeTab(btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentStatus = btn.dataset.status;
+            currentPage = 0;
+            loadVerifications();
+        }
+
+        // 목록 로드
+        function loadVerifications() {
+            const loading = document.getElementById('loadingState');
+            const empty = document.getElementById('emptyState');
+            const cardList = document.getElementById('cardList');
+
+            loading.style.display = 'block';
+            empty.style.display = 'none';
+            cardList.innerHTML = '';
+
+            let url = `/api/business-verification/admin/list?page=${currentPage}&size=10`;
+            if (currentStatus) {
+                url += `&status=${currentStatus}`;
+            }
+
+            window.fetchWithAuth(url)
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
+
+                    if (!data.success || data.data.length === 0) {
+                        empty.style.display = 'block';
+                        return;
+                    }
+
+                    renderCards(data.data);
+                    renderPagination(data.totalPages, data.currentPage);
+                })
+                .catch(error => {
+                    loading.style.display = 'none';
+                    console.error('Error:', error);
+                    alert('목록을 불러오는데 실패했습니다.');
+                });
+        }
+
+        // 카드 렌더링
+        function renderCards(verifications) {
+            const cardList = document.getElementById('cardList');
+            cardList.innerHTML = verifications.map(v => `
+                <div class="verification-card">
+                    <div class="card-header">
+                        <div class="applicant-info">
+                            <h3>${v.memberName}</h3>
+                            <p>${v.memberEmail}</p>
+                        </div>
+                        <span class="status-badge status-${v.status.toLowerCase()}">${v.statusDisplayName}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="license-image-container" onclick="openImageModal('${v.licenseImageUrl}')">
+                            <img src="${v.licenseImageUrl}" alt="사업자 등록증">
+                        </div>
+                        <div class="business-details">
+                            <div class="detail-item">
+                                <span class="detail-label">상호명</span>
+                                <span class="detail-value">${v.businessName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">사업자번호</span>
+                                <span class="detail-value">${v.businessNumber || '-'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">신청일</span>
+                                <span class="detail-value">${formatDate(v.createdAt)}</span>
+                            </div>
+                            ${v.memo ? `
+                            <div class="detail-item">
+                                <span class="detail-label">메모</span>
+                                <span class="detail-value">${v.memo}</span>
+                            </div>
+                            ` : ''}
+                            ${v.status === 'REJECTED' && v.rejectionReason ? `
+                            <div class="detail-item">
+                                <span class="detail-label">거절 사유</span>
+                                <span class="detail-value" style="color: #dc3545;">${v.rejectionReason}</span>
+                            </div>
+                            ` : ''}
+                            ${v.processedAt ? `
+                            <div class="detail-item">
+                                <span class="detail-label">처리일</span>
+                                <span class="detail-value">${formatDate(v.processedAt)} (${v.processedByName})</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${v.status === 'PENDING' ? `
+                    <div class="card-footer">
+                        <button class="btn-reject" onclick="openRejectModal(${v.id})">거절</button>
+                        <button class="btn-approve" onclick="approveVerification(${v.id})">승인</button>
+                    </div>
+                    ` : ''}
+                    ${v.status === 'APPROVED' ? `
+                    <div class="card-footer">
+                        <button class="btn-reject" onclick="revokeBusinessRole(${v.memberId}, '${v.memberName}')">사업자 자격 취소</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 페이지네이션 렌더링
+        function renderPagination(totalPages, current) {
+            const pagination = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = `<button ${current === 0 ? 'disabled' : ''} onclick="goToPage(${current - 1})">이전</button>`;
+
+            for (let i = 0; i < totalPages; i++) {
+                html += `<button class="${i === current ? 'active' : ''}" onclick="goToPage(${i})">${i + 1}</button>`;
+            }
+
+            html += `<button ${current === totalPages - 1 ? 'disabled' : ''} onclick="goToPage(${current + 1})">다음</button>`;
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadVerifications();
+        }
+
+        // 승인
+        function approveVerification(id) {
+            if (!confirm('이 사업자 인증을 승인하시겠습니까?')) return;
+
+            window.fetchWithAuth(`/api/business-verification/admin/${id}/approve`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('승인되었습니다.');
+                    loadVerifications();
+                    loadPendingCount();
+                } else {
+                    alert(data.message || '승인에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('승인 처리 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 거절 모달 열기
+        function openRejectModal(id) {
+            rejectTargetId = id;
+            document.getElementById('rejectReason').value = '';
+            document.getElementById('rejectModal').classList.add('show');
+        }
+
+        // 거절 모달 닫기
+        function closeRejectModal() {
+            rejectTargetId = null;
+            document.getElementById('rejectModal').classList.remove('show');
+        }
+
+        // 거절 확인
+        function confirmReject() {
+            const reason = document.getElementById('rejectReason').value.trim();
+            if (!reason) {
+                alert('거절 사유를 입력해주세요.');
+                return;
+            }
+
+            window.fetchWithAuth(`/api/business-verification/admin/${rejectTargetId}/reject`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('거절되었습니다.');
+                    closeRejectModal();
+                    loadVerifications();
+                    loadPendingCount();
+                } else {
+                    alert(data.message || '거절에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('거절 처리 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 이미지 모달
+        function openImageModal(imageUrl) {
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('imageModal').classList.add('show');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('show');
+        }
+
+        // 날짜 포맷
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeImageModal();
+                closeRejectModal();
+            }
+        });
+
+        // 사업자 자격 취소 (관리자)
+        function revokeBusinessRole(memberId, memberName) {
+            if (!confirm(`${memberName}님의 사업자 자격을 취소하시겠습니까?\n\n해당 회원은 일반 사용자로 전환됩니다.`)) return;
+
+            window.fetchWithAuth(`/api/business-verification/admin/${memberId}/revoke`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('사업자 자격이 취소되었습니다.');
+                    loadVerifications();
+                } else {
+                    alert(data.message || '자격 취소에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('처리 중 오류가 발생했습니다.');
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

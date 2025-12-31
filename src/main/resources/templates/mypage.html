@@ -529,6 +529,66 @@
                     grid-template-columns: 1fr;
                 }
             }
+
+            /* 모달 스타일 */
+            .modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 16px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 24px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .modal-header h3 {
+                font-size: 20px;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #666;
+                transition: all 0.3s;
+            }
+
+            .modal-close:hover {
+                color: #e53e3e;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .modal-footer {
+                padding: 16px 24px;
+                border-top: 1px solid #e0e0e0;
+            }
         </style>
     </th:block>
 </head>
@@ -582,10 +642,75 @@
             </div>
 
             <div id="reservation-manage" class="tab-content">
+                <!-- 검색 폼 -->
+                <div class="search-section" style="margin-bottom: 24px;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;">
+                        <!-- 가게 선택 -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">가게 선택</label>
+                            <select id="searchStoreSelect" class="search-input" style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                                <option value="">전체 가게</option>
+                            </select>
+                        </div>
+                        <!-- 키워드 검색 -->
+                        <div style="flex: 2; min-width: 250px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">검색어</label>
+                            <input type="text" id="searchKeyword" class="search-input" placeholder="고객명, 이메일, 전화번호 검색"
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        <!-- 상태 필터 -->
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">예약 상태</label>
+                            <select id="searchStatus" class="search-input" style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                                <option value="">전체</option>
+                                <option value="PENDING">대기중</option>
+                                <option value="CONFIRMED">승인됨</option>
+                                <option value="COMPLETED">이용완료</option>
+                                <option value="CANCELLED">취소됨</option>
+                                <option value="REJECTED">거절됨</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 날짜 필터 -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-top: 12px;">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">시작일</label>
+                            <input type="date" id="searchStartDate" class="search-input"
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">종료일</label>
+                            <input type="date" id="searchEndDate" class="search-input"
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="searchReservations()" class="btn btn-edit" style="padding: 10px 20px;">
+                                🔍 검색
+                            </button>
+                            <button onclick="resetSearch()" class="btn" style="padding: 10px 20px; background: #e0e0e0; color: #333;">
+                                초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="reservationManageContent">
                     <div class="empty-state">
                         <div class="empty-icon">📋</div>
                         <div class="empty-text">예약 관리 목록을 불러오는 중...</div>
+                    </div>
+                </div>
+
+                <!-- 페이징 -->
+                <div id="paginationContainer" style="display: none; margin-top: 24px; text-align: center;">
+                    <div style="display: inline-flex; gap: 8px; align-items: center;">
+                        <button id="prevPageBtn" onclick="changePage(-1)" class="btn" style="padding: 8px 16px; background: #e0e0e0; color: #333;">
+                            ◀ 이전
+                        </button>
+                        <span id="pageInfo" style="font-size: 14px; color: #666; padding: 0 16px;">1 / 1</span>
+                        <button id="nextPageBtn" onclick="changePage(1)" class="btn" style="padding: 8px 16px; background: #e0e0e0; color: #333;">
+                            다음 ▶
+                        </button>
                     </div>
                 </div>
             </div>
@@ -617,6 +742,22 @@
                         <button class="account-card-button btn-primary" id="notificationBtn" onclick="toggleNotifications()">알림 켜기</button>
                     </div>
 
+                    <!-- 사업자 인증 카드 (일반 사용자에게만 표시) -->
+                    <div class="account-card" id="businessVerificationCard" style="display: none;">
+                        <div class="account-card-icon">🏢</div>
+                        <div class="account-card-title" id="businessCardTitle">사업자 인증</div>
+                        <div class="account-card-description" id="businessCardDesc">사업자 인증을 받으면 가게를 등록하고 관리할 수 있습니다</div>
+                        <button class="account-card-button btn-primary" id="businessVerificationBtn" onclick="openBusinessVerificationModal()">인증 신청하기</button>
+                    </div>
+
+                    <!-- 사업자 자격 포기 카드 (사업자에게만 표시) -->
+                    <div class="account-card" id="businessResignCard" style="display: none; border-color: #fff3cd;">
+                        <div class="account-card-icon">🏢</div>
+                        <div class="account-card-title">사업자 자격 포기</div>
+                        <div class="account-card-description">사업자 자격을 포기하면 일반 사용자로 전환됩니다. 등록한 가게는 유지됩니다.</div>
+                        <button class="account-card-button" style="background: #ffc107; color: #000;" onclick="resignBusinessRole()">자격 포기하기</button>
+                    </div>
+
                     <!-- 계정 삭제 카드 -->
                     <div class="account-card danger">
                         <div class="account-card-icon">🗑️</div>
@@ -626,12 +767,67 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 사업자 인증 모달 -->
+            <div class="modal-overlay" id="businessVerificationModal" style="display: none;">
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h3>🏢 사업자 인증 신청</h3>
+                        <button class="modal-close" onclick="closeBusinessVerificationModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="business-notice" style="background: #fff3cd; padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 13px; color: #856404; line-height: 1.6;">
+                            <strong>※ 안내:</strong> 관리자 승인 후 사업자 기능(가게 등록 등)을 이용하실 수 있습니다.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600;">상호명 <span style="color: #e74c3c;">*</span></label>
+                            <input type="text" class="form-control" id="modalBusinessName" placeholder="상호명을 입력하세요" style="padding: 12px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600;">사업자 등록번호</label>
+                            <input type="text" class="form-control" id="modalBusinessNumber" placeholder="000-00-00000 (선택사항)" style="padding: 12px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600;">사업자 등록증 <span style="color: #e74c3c;">*</span></label>
+                            <div id="modalUploadArea" style="border: 2px dashed #ccc; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; background: #f9f9f9;" onclick="document.getElementById('modalLicenseImage').click()">
+                                <div style="font-size: 48px; margin-bottom: 12px;">📄</div>
+                                <div style="font-size: 14px; color: #666;">클릭하여 사업자 등록증을 업로드하세요</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 8px;">(JPG, PNG, PDF / 최대 10MB)</div>
+                                <div id="modalFileName" style="display: none; font-size: 14px; color: #155724; font-weight: 600; margin-top: 8px;"></div>
+                            </div>
+                            <input type="file" id="modalLicenseImage" accept="image/*,.pdf" style="display: none;" onchange="handleModalFileSelect(this)">
+                            <div id="modalPreview" style="display: none; margin-top: 16px; text-align: center;">
+                                <img id="modalPreviewImage" src="" alt="미리보기" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #e0e0e0;">
+                                <br>
+                                <button type="button" style="margin-top: 10px; padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;" onclick="removeModalFile()">파일 삭제</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-weight: 600;">추가 메모</label>
+                            <textarea class="form-control" id="modalBusinessMemo" rows="2" placeholder="추가로 전달할 내용이 있다면 입력하세요 (선택사항)" style="padding: 12px; border-radius: 8px; border: 2px solid #e0e0e0;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <button class="btn" style="padding: 12px 24px; background: #e0e0e0; color: #333; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="closeBusinessVerificationModal()">취소</button>
+                        <button class="btn btn-primary" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="submitBusinessVerification()">신청하기</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <th:block layout:fragment="custom-script">
     <script>
+        // ===== 검색 관련 변수 =====
+        let currentPage = 0;
+        let totalPages = 0;
+        let myStoresList = []; // 내 가게 목록 캐시
+
         // 탭 전환
         function switchTab(tabName) {
             // 모든 탭 비활성화
@@ -668,11 +864,19 @@
                     const myStoresTab = document.getElementById('tab-my-stores');
                     const reservationsTab = document.getElementById('tab-reservations');
                     const reservationManageTab = document.getElementById('tab-reservation-manage');
+                    const businessVerificationCard = document.getElementById('businessVerificationCard');
+                    const businessResignCard = document.getElementById('businessResignCard');
 
                     if (role === 'BUSINESS' || role === 'ADMIN') {
                         // 사업자나 관리자인 경우 "내 가게", "예약 관리" 탭 표시
                         myStoresTab.style.display = 'block';
                         reservationManageTab.style.display = 'block';
+                        businessVerificationCard.style.display = 'none'; // 사업자 인증 카드 숨김
+
+                        // 사업자인 경우 자격 포기 카드 표시 (관리자는 제외)
+                        if (role === 'BUSINESS') {
+                            businessResignCard.style.display = 'flex';
+                        }
 
                         // 기본 활성화 탭을 "예약 관리"로 변경
                         reservationsTab.classList.remove('active');
@@ -687,6 +891,8 @@
                         // 일반 사용자인 경우 "내 가게", "예약 관리" 탭 숨김
                         myStoresTab.style.display = 'none';
                         reservationManageTab.style.display = 'none';
+                        businessVerificationCard.style.display = 'flex'; // 사업자 인증 카드 표시
+                        businessResignCard.style.display = 'none'; // 사업자 자격 포기 카드 숨김
 
                         // 기본 활성화 탭을 "예약 내역"으로 설정
                         reservationsTab.classList.add('active');
@@ -694,6 +900,9 @@
 
                         // 예약 내역 로드
                         loadReservations();
+
+                        // 사업자 인증 상태 로드
+                        loadBusinessVerificationStatus();
                     }
                 })
                 .catch(error => {
@@ -879,6 +1088,10 @@
 
         // 예약 관리 로드 (사업자용)
         function loadReservationManage() {
+            // 내 가게 목록 로드 (검색 드롭다운용)
+            loadMyStoresForSearch();
+
+            // 전체 예약 로드
             window.fetchWithAuth('/api/reservations/store-reservations')
                 .then(response => {
                     if (!response.ok) throw new Error('예약 목록을 불러올 수 없습니다');
@@ -886,6 +1099,7 @@
                 })
                 .then(reservations => {
                     displayReservations(reservations, 'reservationManageContent', true);
+                    document.getElementById('paginationContainer').style.display = 'none';
                 })
                 .catch(error => {
                     console.error('예약 관리 로드 실패:', error);
@@ -896,6 +1110,124 @@
                         </div>
                     `;
                 });
+        }
+
+        // 내 가게 목록 로드 (검색 드롭다운용)
+        function loadMyStoresForSearch() {
+            window.fetchWithAuth('/api/stores/my')
+                .then(response => {
+                    if (!response.ok) return [];
+                    return response.json();
+                })
+                .then(stores => {
+                    myStoresList = stores;
+                    const select = document.getElementById('searchStoreSelect');
+                    select.innerHTML = '<option value="">전체 가게</option>';
+                    stores.forEach(store => {
+                        select.innerHTML += `<option value="${store.id}">${store.name}</option>`;
+                    });
+                })
+                .catch(error => {
+                    console.error('가게 목록 로드 실패:', error);
+                });
+        }
+
+        // 예약 검색
+        function searchReservations() {
+            const storeId = document.getElementById('searchStoreSelect').value;
+            const keyword = document.getElementById('searchKeyword').value.trim();
+            const status = document.getElementById('searchStatus').value;
+            const startDate = document.getElementById('searchStartDate').value;
+            const endDate = document.getElementById('searchEndDate').value;
+
+            // 가게가 선택되지 않으면 전체 조회
+            if (!storeId) {
+                // 전체 가게에서 검색 (각 가게별로 검색 후 합치기)
+                if (myStoresList.length === 0) {
+                    alert('등록된 가게가 없습니다.');
+                    return;
+                }
+
+                // 첫 번째 가게로 검색 (전체 검색은 기존 API 사용)
+                if (!keyword && !status && !startDate && !endDate) {
+                    loadReservationManage();
+                    return;
+                }
+
+                // 필터가 있으면 첫 번째 가게 기준으로 검색
+                searchReservationsWithParams(myStoresList[0].id, keyword, status, startDate, endDate, 0);
+                return;
+            }
+
+            searchReservationsWithParams(storeId, keyword, status, startDate, endDate, 0);
+        }
+
+        // 파라미터로 예약 검색
+        function searchReservationsWithParams(storeId, keyword, status, startDate, endDate, page) {
+            currentPage = page;
+
+            let url = `/api/reservations/store/${storeId}/search?page=${page}&size=10`;
+            if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+            if (status) url += `&status=${status}`;
+            if (startDate) url += `&startDate=${startDate}`;
+            if (endDate) url += `&endDate=${endDate}`;
+
+            window.fetchWithAuth(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('검색에 실패했습니다');
+                    return response.json();
+                })
+                .then(data => {
+                    totalPages = data.totalPages;
+                    displayReservations(data.content, 'reservationManageContent', true);
+                    updatePagination(data);
+                })
+                .catch(error => {
+                    console.error('검색 실패:', error);
+                    alert('검색에 실패했습니다.');
+                });
+        }
+
+        // 페이징 UI 업데이트
+        function updatePagination(pageData) {
+            const container = document.getElementById('paginationContainer');
+
+            if (pageData.totalPages <= 1) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            document.getElementById('pageInfo').textContent = `${pageData.number + 1} / ${pageData.totalPages}`;
+            document.getElementById('prevPageBtn').disabled = pageData.first;
+            document.getElementById('nextPageBtn').disabled = pageData.last;
+        }
+
+        // 페이지 변경
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage < 0 || newPage >= totalPages) return;
+
+            const storeId = document.getElementById('searchStoreSelect').value;
+            const keyword = document.getElementById('searchKeyword').value.trim();
+            const status = document.getElementById('searchStatus').value;
+            const startDate = document.getElementById('searchStartDate').value;
+            const endDate = document.getElementById('searchEndDate').value;
+
+            if (storeId) {
+                searchReservationsWithParams(storeId, keyword, status, startDate, endDate, newPage);
+            }
+        }
+
+        // 검색 초기화
+        function resetSearch() {
+            document.getElementById('searchStoreSelect').value = '';
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('searchStatus').value = '';
+            document.getElementById('searchStartDate').value = '';
+            document.getElementById('searchEndDate').value = '';
+            currentPage = 0;
+            loadReservationManage();
         }
 
         // 예약 목록 표시
@@ -1289,6 +1621,217 @@
 
             // TODO: 실제 알림 설정 API 호출
             console.log('알림 설정:', notificationsEnabled);
+        }
+
+        // ===== 사업자 인증 관련 함수들 =====
+
+        // 사업자 인증 상태 로드
+        function loadBusinessVerificationStatus() {
+            window.fetchWithAuth('/api/business-verification/my-status')
+                .then(response => response.json())
+                .then(data => {
+                    const card = document.getElementById('businessVerificationCard');
+                    const title = document.getElementById('businessCardTitle');
+                    const desc = document.getElementById('businessCardDesc');
+                    const btn = document.getElementById('businessVerificationBtn');
+
+                    // 취소 버튼 (없으면 생성)
+                    let cancelBtn = document.getElementById('businessCancelBtn');
+                    if (!cancelBtn) {
+                        cancelBtn = document.createElement('button');
+                        cancelBtn.id = 'businessCancelBtn';
+                        cancelBtn.className = 'account-card-button';
+                        cancelBtn.style.cssText = 'background: #e0e0e0; color: #333; margin-top: 8px;';
+                        cancelBtn.textContent = '신청 취소';
+                        cancelBtn.onclick = cancelBusinessVerification;
+                        btn.parentNode.insertBefore(cancelBtn, btn.nextSibling);
+                    }
+                    cancelBtn.style.display = 'none'; // 기본 숨김
+
+                    if (data.hasRequest && data.data) {
+                        const status = data.data.status;
+
+                        if (status === 'PENDING') {
+                            title.textContent = '사업자 인증 심사중';
+                            desc.textContent = '관리자가 인증 요청을 검토 중입니다. 승인되면 사업자 기능을 이용하실 수 있습니다.';
+                            btn.textContent = '심사 대기중';
+                            btn.disabled = true;
+                            btn.style.background = '#ffc107';
+                            btn.style.color = '#000';
+                            // 취소 버튼 표시
+                            cancelBtn.style.display = 'block';
+                        } else if (status === 'REJECTED') {
+                            title.textContent = '사업자 인증 거절됨';
+                            desc.innerHTML = `거절 사유: <span style="color: #e53e3e;">${data.data.rejectionReason || '사유 없음'}</span><br>다시 신청하실 수 있습니다.`;
+                            btn.textContent = '다시 신청하기';
+                            btn.disabled = false;
+                            btn.style.background = '';
+                            btn.style.color = '';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('사업자 인증 상태 로드 실패:', error);
+                });
+        }
+
+        // 사업자 인증 신청 취소
+        function cancelBusinessVerification() {
+            if (!confirm('사업자 인증 신청을 취소하시겠습니까?')) return;
+
+            window.fetchWithAuth('/api/business-verification/cancel', {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('사업자 인증 신청이 취소되었습니다.');
+                    // UI 초기화
+                    const title = document.getElementById('businessCardTitle');
+                    const desc = document.getElementById('businessCardDesc');
+                    const btn = document.getElementById('businessVerificationBtn');
+                    const cancelBtn = document.getElementById('businessCancelBtn');
+
+                    title.textContent = '사업자 인증';
+                    desc.textContent = '사업자 인증을 받으면 가게를 등록하고 관리할 수 있습니다';
+                    btn.textContent = '인증 신청하기';
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    if (cancelBtn) cancelBtn.style.display = 'none';
+                } else {
+                    alert(data.message || '취소에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('취소 실패:', error);
+                alert('취소 처리 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 사업자 자격 포기
+        function resignBusinessRole() {
+            if (!confirm('정말로 사업자 자격을 포기하시겠습니까?\n\n일반 사용자로 전환되며, 다시 사업자가 되려면 재인증이 필요합니다.')) return;
+
+            window.fetchWithAuth('/api/business-verification/resign', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('사업자 자격이 포기되었습니다.\n일반 사용자로 전환됩니다.');
+                    // UserState 캐시 초기화 후 페이지 새로고침
+                    window.UserState.clearUser();
+                    window.location.reload();
+                } else {
+                    alert(data.message || '자격 포기에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('자격 포기 실패:', error);
+                alert('처리 중 오류가 발생했습니다.');
+            });
+        }
+
+        // 사업자 인증 모달 열기
+        function openBusinessVerificationModal() {
+            document.getElementById('businessVerificationModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 사업자 인증 모달 닫기
+        function closeBusinessVerificationModal() {
+            document.getElementById('businessVerificationModal').style.display = 'none';
+            document.body.style.overflow = '';
+            // 폼 초기화
+            document.getElementById('modalBusinessName').value = '';
+            document.getElementById('modalBusinessNumber').value = '';
+            document.getElementById('modalBusinessMemo').value = '';
+            removeModalFile();
+        }
+
+        // 모달 파일 선택 처리
+        function handleModalFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('파일 크기는 10MB 이하여야 합니다.');
+                input.value = '';
+                return;
+            }
+
+            const uploadArea = document.getElementById('modalUploadArea');
+            const fileName = document.getElementById('modalFileName');
+            fileName.textContent = file.name;
+            fileName.style.display = 'block';
+            uploadArea.style.borderColor = '#28a745';
+            uploadArea.style.background = '#d4edda';
+
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('modalPreviewImage').src = e.target.result;
+                    document.getElementById('modalPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('modalPreview').style.display = 'none';
+            }
+        }
+
+        // 모달 파일 삭제
+        function removeModalFile() {
+            document.getElementById('modalLicenseImage').value = '';
+            document.getElementById('modalFileName').style.display = 'none';
+            const uploadArea = document.getElementById('modalUploadArea');
+            uploadArea.style.borderColor = '#ccc';
+            uploadArea.style.background = '#f9f9f9';
+            document.getElementById('modalPreview').style.display = 'none';
+        }
+
+        // 사업자 인증 신청
+        function submitBusinessVerification() {
+            const businessName = document.getElementById('modalBusinessName').value.trim();
+            const businessNumber = document.getElementById('modalBusinessNumber').value.trim();
+            const memo = document.getElementById('modalBusinessMemo').value.trim();
+            const licenseImage = document.getElementById('modalLicenseImage').files[0];
+
+            if (!businessName) {
+                alert('상호명을 입력해주세요.');
+                document.getElementById('modalBusinessName').focus();
+                return;
+            }
+
+            if (!licenseImage) {
+                alert('사업자 등록증을 업로드해주세요.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('businessName', businessName);
+            formData.append('businessNumber', businessNumber);
+            formData.append('memo', memo);
+            formData.append('licenseImage', licenseImage);
+
+            window.fetchWithAuth('/api/business-verification/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('사업자 인증 신청이 완료되었습니다.\n관리자 승인 후 사업자 기능을 이용하실 수 있습니다.');
+                    closeBusinessVerificationModal();
+                    loadBusinessVerificationStatus();
+                } else {
+                    alert(data.message || '인증 신청에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('사업자 인증 신청 실패:', error);
+                alert('인증 신청 중 오류가 발생했습니다.');
+            });
         }
 
         // 페이지 로드 시 실행

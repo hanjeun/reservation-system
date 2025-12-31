@@ -1,8 +1,10 @@
 package ac.inhatc.reservation_system.reservation.service;
 
 import ac.inhatc.reservation_system.member.entity.Member;
+import ac.inhatc.reservation_system.payment.service.PaymentService;
 import ac.inhatc.reservation_system.reservation.dto.ReservationCreateRequest;
 import ac.inhatc.reservation_system.reservation.dto.ReservationResponse;
+import ac.inhatc.reservation_system.reservation.dto.ReservationSearchDto;
 import ac.inhatc.reservation_system.reservation.dto.ReservationUpdateRequest;
 import ac.inhatc.reservation_system.reservation.entity.Reservation;
 import ac.inhatc.reservation_system.reservation.repository.ReservationRepository;
@@ -12,6 +14,10 @@ import ac.inhatc.reservation_system.store.repository.StoreRepository;
 import ac.inhatc.reservation_system.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +26,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final StoreRepository storeRepository;
     private final ReviewRepository reviewRepository;
+    private final PaymentService paymentService;
+
+    public ReservationService(
+            ReservationRepository reservationRepository,
+            StoreRepository storeRepository,
+            ReviewRepository reviewRepository,
+            @Lazy PaymentService paymentService) {
+        this.reservationRepository = reservationRepository;
+        this.storeRepository = storeRepository;
+        this.reviewRepository = reviewRepository;
+        this.paymentService = paymentService;
+    }
 
     /**
      * 예약 생성
@@ -49,6 +66,9 @@ public class ReservationService {
             throw new IllegalArgumentException("예약 날짜/시간은 현재 이후여야 합니다.");
         }
 
+        // 노쇼방지금 금액 설정
+        Integer depositAmount = store.getNoShowDeposit() != null ? store.getNoShowDeposit() : 0;
+
         // 예약 생성
         Reservation reservation = Reservation.builder()
                 .member(member)
@@ -58,6 +78,8 @@ public class ReservationService {
                 .guestCount(request.getGuestCount())
                 .specialRequest(request.getSpecialRequest())
                 .status(Reservation.ReservationStatus.PENDING)
+                .depositAmount(depositAmount)
+                .depositPaid(false)
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -171,6 +193,17 @@ public class ReservationService {
             throw new IllegalArgumentException("이미 취소된 예약입니다.");
         }
 
+        // 결제된 예약이면 환불 처리
+        if (reservation.getDepositPaid() != null && reservation.getDepositPaid()) {
+            try {
+                paymentService.refundByReservationCancel(id);
+                log.info("💳 환불 처리 완료: reservationId={}", id);
+            } catch (Exception e) {
+                log.error("💳 환불 처리 실패: reservationId={}, error={}", id, e.getMessage());
+                // 환불 실패해도 예약 취소는 진행
+            }
+        }
+
         // 예약 상태를 취소로 변경
         reservation.setStatus(Reservation.ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
@@ -229,6 +262,52 @@ public class ReservationService {
         return reservations.stream()
                 .map(ReservationResponse::from)
                 .collect(Collectors.toList());
+    }
+    
+    /**
+     * 예약 검색 (사업자용 - 페이징)
+     */
+    @Transactional(readOnly = true)
+    public Page<ReservationResponse> searchReservations(Long storeId, ReservationSearchDto searchDto, Member owner) {
+        log.info("🔍 예약 검색: storeId={}, keyword={}, status={}", storeId, searchDto.getKeyword(), searchDto.getStatus());
+        
+        // 가게 조회 및 소유자 확인
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        
+        if (!store.getOwner().getId().equals(owner.getId())) {
+            throw new IllegalArgumentException("본인 가게의 예약만 검색할 수 있습니다.");
+        }
+        
+        Pageable pageable = PageRequest.of(searchDto.getPage(), searchDto.getSize());
+        Page<Reservation> reservations;
+        
+        String keyword = searchDto.getKeyword();
+        String status = searchDto.getStatus();
+        
+        // 검색 조건에 따라 분기
+        if (keyword != null && !keyword.trim().isEmpty() && status != null && !status.trim().isEmpty()) {
+            // 키워드 + 상태 검색
+            Reservation.ReservationStatus reservationStatus = Reservation.ReservationStatus.valueOf(status);
+            reservations = reservationRepository.searchByKeywordAndStatus(store, keyword, reservationStatus, pageable);
+        } else if (keyword != null && !keyword.trim().isEmpty()) {
+            // 키워드만 검색
+            reservations = reservationRepository.searchByKeyword(store, keyword, pageable);
+        } else if (status != null && !status.trim().isEmpty()) {
+            // 상태만 검색
+            Reservation.ReservationStatus reservationStatus = Reservation.ReservationStatus.valueOf(status);
+            reservations = reservationRepository.searchByStatus(store, reservationStatus, pageable);
+        } else if (searchDto.getStartDate() != null && searchDto.getEndDate() != null) {
+            // 날짜 범위 검색
+            reservations = reservationRepository.searchByDateRange(store, searchDto.getStartDate(), searchDto.getEndDate(), pageable);
+        } else {
+            // 전체 조회
+            reservations = reservationRepository.findByStoreOrderByReservationDateDescReservationTimeDesc(store, pageable);
+        }
+        
+        log.info("✅ 예약 검색 완료: {}개", reservations.getTotalElements());
+        
+        return reservations.map(ReservationResponse::from);
     }
     
     /**
@@ -292,24 +371,35 @@ public class ReservationService {
     }
     
     /**
-     * 예약 취소 (사업자용 - 승인된 예약도 취소 가능)
+     * 예약 취소 (사업자용 - 승인된 예약도 취소 가능, 전액 환불)
      */
     @Transactional
     public void cancelReservationByOwner(Long id, Member owner) {
         log.info("❌ 사업자 예약 취소: reservationId={}, ownerId={}", id, owner.getId());
-        
+
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
-        
+
         // 가게 소유자 확인
         if (!reservation.getStore().getOwner().getId().equals(owner.getId())) {
             throw new IllegalArgumentException("본인 가게의 예약만 취소할 수 있습니다.");
         }
-        
+
         // 이미 취소/거절된 예약인지 확인
         if (reservation.getStatus() == Reservation.ReservationStatus.CANCELLED ||
             reservation.getStatus() == Reservation.ReservationStatus.REJECTED) {
             throw new IllegalArgumentException("이미 취소되거나 거절된 예약입니다.");
+        }
+
+        // 결제된 예약이면 전액 환불 처리 (사업자 취소는 고객 과실이 아니므로)
+        if (reservation.getDepositPaid() != null && reservation.getDepositPaid()) {
+            try {
+                paymentService.refundFullByOwnerCancel(id);
+                log.info("💳 사업자 취소로 인한 전액 환불 완료: reservationId={}", id);
+            } catch (Exception e) {
+                log.error("💳 환불 처리 실패: reservationId={}, error={}", id, e.getMessage());
+                throw new RuntimeException("환불 처리에 실패했습니다: " + e.getMessage());
+            }
         }
         
         reservation.setStatus(Reservation.ReservationStatus.CANCELLED);
@@ -342,5 +432,31 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         log.info("✅ 이용완료 처리 완료: reservationId={}", id);
+    }
+
+    /**
+     * 노쇼 처리 (사업자용)
+     */
+    @Transactional
+    public void markNoShow(Long id, Member owner) {
+        log.info("⚠️ 노쇼 처리: reservationId={}, ownerId={}", id, owner.getId());
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+
+        // 가게 소유자 확인
+        if (!reservation.getStore().getOwner().getId().equals(owner.getId())) {
+            throw new IllegalArgumentException("본인 가게의 예약만 노쇼 처리할 수 있습니다.");
+        }
+
+        // 승인된 상태인지 확인
+        if (reservation.getStatus() != Reservation.ReservationStatus.CONFIRMED) {
+            throw new IllegalArgumentException("승인된 예약만 노쇼 처리할 수 있습니다.");
+        }
+
+        reservation.setStatus(Reservation.ReservationStatus.NO_SHOW);
+        reservationRepository.save(reservation);
+
+        log.info("✅ 노쇼 처리 완료: reservationId={}", id);
     }
 }

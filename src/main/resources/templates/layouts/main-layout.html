@@ -15,10 +15,23 @@
     <link rel="stylesheet" th:href="@{/css/header.css}"/>
     <link rel="stylesheet" th:href="@{/css/footer.css}"/>
 
+    <!-- Flatpickr Date/Time Picker -->
+    <link rel="stylesheet" th:href="@{/vendor/flatpickr/flatpickr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/flatpickr-custom.css}"/>
+
     <!-- Token Refresh 유틸리티 - 모든 페이지에서 사용 가능 -->
     <script th:src="@{/js/auth/token-refresh.js}"></script>
     <!-- User State 관리 - 사용자 정보 전역 캐싱 -->
     <script th:src="@{/js/auth/user-state.js}"></script>
+
+    <!-- 포트원 결제 SDK -->
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+    <!-- 결제 유틸리티 -->
+    <script th:src="@{/js/payment.js}"></script>
+
+    <!-- Flatpickr Date/Time Picker -->
+    <script th:src="@{/vendor/flatpickr/flatpickr.min.js}"></script>
+    <script th:src="@{/vendor/flatpickr/ko.js}"></script>
 
     <style>
         /* ========================================

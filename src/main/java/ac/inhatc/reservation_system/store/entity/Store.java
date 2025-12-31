@@ -80,6 +80,27 @@ public class Store {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    // 노쇼 방지금 (0원이면 무료, null이면 설정 안함)
+    @Column(name = "no_show_deposit")
+    @Builder.Default
+    private Integer noShowDeposit = 0;
+
+    // ========== 환불 정책 ==========
+    // 전액 환불 가능 일수 (예약일 N일 전까지 전액 환불)
+    @Column(name = "full_refund_days")
+    @Builder.Default
+    private Integer fullRefundDays = 3;
+
+    // 부분 환불 가능 일수 (예약일 N일 전까지 부분 환불)
+    @Column(name = "partial_refund_days")
+    @Builder.Default
+    private Integer partialRefundDays = 1;
+
+    // 부분 환불 비율 (퍼센트, 예: 50 = 50%)
+    @Column(name = "partial_refund_rate")
+    @Builder.Default
+    private Integer partialRefundRate = 50;
+
     // 키워드 편의 메서드
     public List<String> getKeywordList() {
         if (keywords == null || keywords.trim().isEmpty()) {

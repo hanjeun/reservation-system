@@ -3,16 +3,19 @@ package ac.inhatc.reservation_system.reservation.controller;
 import ac.inhatc.reservation_system.member.entity.Member;
 import ac.inhatc.reservation_system.reservation.dto.ReservationCreateRequest;
 import ac.inhatc.reservation_system.reservation.dto.ReservationResponse;
+import ac.inhatc.reservation_system.reservation.dto.ReservationSearchDto;
 import ac.inhatc.reservation_system.reservation.dto.ReservationUpdateRequest;
 import ac.inhatc.reservation_system.reservation.service.ReservationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -56,7 +59,7 @@ public class ReservationApiController {
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
-        
+
         if (member == null) {
             return ResponseEntity.status(401).build();
         }
@@ -75,7 +78,7 @@ public class ReservationApiController {
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
-        
+
         if (member == null) {
             return ResponseEntity.status(401).build();
         }
@@ -99,7 +102,7 @@ public class ReservationApiController {
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
-        
+
         if (member == null) {
             return ResponseEntity.status(401).build();
         }
@@ -124,7 +127,7 @@ public class ReservationApiController {
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
-        
+
         if (member == null) {
             return ResponseEntity.status(401).build();
         }
@@ -149,7 +152,7 @@ public class ReservationApiController {
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
-        
+
         if (member == null) {
             return ResponseEntity.status(401).build();
         }
@@ -188,6 +191,51 @@ public class ReservationApiController {
         log.info("📋 가게 예약 목록 조회: memberId={}", member.getId());
         List<ReservationResponse> reservations = reservationService.getStoreReservations(member);
         return ResponseEntity.ok(reservations);
+    }
+
+    /**
+     * 예약 검색 (사업자용 - 페이징)
+     */
+    @GetMapping("/store/{storeId}/search")
+    public ResponseEntity<Page<ReservationResponse>> searchReservations(
+            @PathVariable Long storeId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            jakarta.servlet.http.HttpServletRequest httpRequest
+    ) {
+        Member member = (Member) httpRequest.getAttribute("authenticatedUser");
+
+        if (member == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        // 사업자 권한 체크
+        if (!member.isBusiness() && !member.isAdmin()) {
+            return ResponseEntity.status(403).build();
+        }
+
+        log.info("🔍 예약 검색 요청: storeId={}, keyword={}, status={}", storeId, keyword, status);
+
+        ReservationSearchDto searchDto = ReservationSearchDto.builder()
+                .keyword(keyword)
+                .status(status)
+                .startDate(startDate)
+                .endDate(endDate)
+                .page(page)
+                .size(size)
+                .build();
+
+        try {
+            Page<ReservationResponse> reservations = reservationService.searchReservations(storeId, searchDto, member);
+            return ResponseEntity.ok(reservations);
+        } catch (IllegalArgumentException e) {
+            log.error("❌ 예약 검색 실패: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /**
@@ -309,6 +357,36 @@ public class ReservationApiController {
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             log.error("❌ 이용완료 처리 실패: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * 노쇼 처리 (사업자용)
+     */
+    @PatchMapping("/{id}/no-show")
+    public ResponseEntity<Void> markNoShow(
+            @PathVariable Long id,
+            jakarta.servlet.http.HttpServletRequest httpRequest
+    ) {
+        Member member = (Member) httpRequest.getAttribute("authenticatedUser");
+
+        if (member == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        // 사업자 권한 체크
+        if (!member.isBusiness() && !member.isAdmin()) {
+            return ResponseEntity.status(403).build();
+        }
+
+        log.info("⚠️ 노쇼 처리 요청: reservationId={}, memberId={}", id, member.getId());
+
+        try {
+            reservationService.markNoShow(id, member);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            log.error("❌ 노쇼 처리 실패: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

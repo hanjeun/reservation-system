@@ -1,6 +1,7 @@
 package ac.inhatc.reservation_system.reservation.entity;
 
 import ac.inhatc.reservation_system.member.entity.Member;
+import ac.inhatc.reservation_system.payment.entity.Payment;
 import ac.inhatc.reservation_system.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.*;
@@ -63,6 +64,20 @@ public class Reservation {
     @Column(name = "rejection_reason", length = 500)
     private String rejectionReason;
 
+    // 결제 정보 (양방향 관계)
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Payment payment;
+
+    // 노쇼 방지금 결제 여부
+    @Column(name = "deposit_paid")
+    @Builder.Default
+    private Boolean depositPaid = false;
+
+    // 노쇼 방지금 금액
+    @Column(name = "deposit_amount")
+    @Builder.Default
+    private Integer depositAmount = 0;
+
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -76,6 +91,13 @@ public class Reservation {
         CONFIRMED,  // 승인됨 (사업자가 승인)
         COMPLETED,  // 이용완료 (사업자가 이용완료 처리)
         REJECTED,   // 거절됨 (사업자가 거절)
-        CANCELLED   // 취소됨 (사용자 또는 사업자가 취소)
+        CANCELLED,  // 취소됨 (사용자 또는 사업자가 취소)
+        NO_SHOW     // 노쇼 (고객이 방문하지 않음)
+    }
+
+    // 결제 완료 처리
+    public void markDepositPaid(Integer amount) {
+        this.depositPaid = true;
+        this.depositAmount = amount;
     }
 }

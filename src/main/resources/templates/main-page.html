@@ -8,76 +8,247 @@
     <th:block layout:fragment="custom-css">
         <style>
             .main-wrapper {
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf3 100%);
                 min-height: calc(100vh - 200px);
-                padding-bottom: 40px;
+                padding-bottom: 80px;
+                overflow-x: hidden;
             }
+
+            /* Scroll Animation Classes */
+            .scroll-animate {
+                opacity: 0;
+                transform: translateY(60px);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .scroll-animate.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .scroll-animate-left {
+                opacity: 0;
+                transform: translateX(-60px);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .scroll-animate-left.visible {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .scroll-animate-right {
+                opacity: 0;
+                transform: translateX(60px);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .scroll-animate-right.visible {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .scroll-animate-scale {
+                opacity: 0;
+                transform: scale(0.9);
+                transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .scroll-animate-scale.visible {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            /* Stagger delay classes */
+            .delay-1 { transition-delay: 0.1s; }
+            .delay-2 { transition-delay: 0.2s; }
+            .delay-3 { transition-delay: 0.3s; }
+            .delay-4 { transition-delay: 0.4s; }
+
+            /* Hero Section */
             .hero-section {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                padding: 120px 24px 80px;
-                gap: 40px;
+                padding: 140px 24px 100px;
+                gap: 48px;
+                min-height: 80vh;
             }
+
             .hero-title {
-                font-weight: 700;
-                font-size: clamp(36px, 8vw, 72px);
-                line-height: 1.2;
-                letter-spacing: -0.03em;
+                font-weight: 800;
+                font-size: clamp(40px, 10vw, 80px);
+                line-height: 1.1;
+                letter-spacing: -0.04em;
                 text-align: center;
-                color: #667eea;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
                 margin: 0;
             }
+
             .hero-subtitle {
                 font-weight: 400;
-                font-size: clamp(20px, 4vw, 32px);
-                line-height: 1.2;
+                font-size: clamp(18px, 4vw, 28px);
+                line-height: 1.4;
                 text-align: center;
-                color: #555;
+                color: #666;
                 margin: 0;
             }
+
             .search-form {
                 display: flex;
                 gap: 12px;
                 width: 100%;
-                max-width: 500px;
+                max-width: 560px;
                 padding: 0 20px;
             }
+
             .search-input {
                 flex: 1;
-                padding: 14px 20px;
+                padding: 18px 24px;
                 border: 2px solid #e0e0e0;
-                border-radius: 12px;
-                font-size: 16px;
+                border-radius: 16px;
+                font-size: 17px;
                 color: #1E1E1E;
                 background-color: #FFFFFF;
                 transition: all 0.3s;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             }
+
             .search-input:focus {
                 outline: none;
                 border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
             }
+
             .search-input::placeholder {
                 color: #B3B3B3;
             }
+
             .search-button {
-                padding: 14px 24px;
-                border-radius: 12px;
+                padding: 18px 32px;
+                border-radius: 16px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 border: none;
                 color: #FFFFFF;
-                font-size: 16px;
+                font-size: 17px;
                 font-weight: 600;
                 white-space: nowrap;
                 cursor: pointer;
                 transition: all 0.3s;
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
             }
+
             .search-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
             }
+
+            /* Features Section */
+            .features-section {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 80px 20px;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 60px;
+            }
+
+            .section-title {
+                font-size: clamp(28px, 5vw, 42px);
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 16px;
+            }
+
+            .section-subtitle {
+                font-size: 18px;
+                color: #666;
+            }
+
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 32px;
+            }
+
+            .feature-card {
+                background: white;
+                border-radius: 24px;
+                padding: 40px 32px;
+                text-align: center;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+                transition: all 0.4s;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            }
+
+            .feature-icon {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 24px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 36px;
+            }
+
+            .feature-title {
+                font-size: 22px;
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 12px;
+            }
+
+            .feature-description {
+                font-size: 15px;
+                color: #666;
+                line-height: 1.6;
+            }
+
+            /* Stats Section */
+            .stats-section {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 80px 20px;
+                margin: 60px 0;
+            }
+
+            .stats-container {
+                max-width: 1000px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+            }
+
+            .stat-item {
+                text-align: center;
+                color: white;
+            }
+
+            .stat-value {
+                font-size: clamp(40px, 8vw, 56px);
+                font-weight: 800;
+                line-height: 1;
+                margin-bottom: 8px;
+            }
+
+            .stat-label {
+                font-size: 16px;
+                opacity: 0.9;
+            }
+
+            /* Newsletter Section */
             .newsletter-section {
                 display: flex;
                 flex-direction: column;
@@ -86,30 +257,33 @@
                 padding: 80px 24px;
                 gap: 32px;
                 background-color: white;
-                border-radius: 24px;
-                margin: 40px 20px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                border-radius: 32px;
+                margin: 60px 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.08);
                 max-width: 800px;
                 margin-left: auto;
                 margin-right: auto;
             }
+
             .newsletter-heading {
                 font-weight: 700;
-                font-size: clamp(20px, 4vw, 28px);
-                line-height: 1.2;
+                font-size: clamp(24px, 5vw, 32px);
+                line-height: 1.3;
                 letter-spacing: -0.02em;
                 text-align: center;
-                color: #667eea;
+                color: #333;
                 margin: 0;
             }
+
             .newsletter-subheading {
                 font-weight: 400;
-                font-size: clamp(16px, 3vw, 20px);
-                line-height: 1.2;
+                font-size: clamp(16px, 3vw, 18px);
+                line-height: 1.4;
                 text-align: center;
                 color: #666;
                 margin: 0;
             }
+
             .newsletter-form {
                 display: flex;
                 gap: 12px;
@@ -117,27 +291,31 @@
                 max-width: 500px;
                 padding: 0 20px;
             }
+
             .newsletter-input {
                 flex: 1;
-                padding: 14px 20px;
+                padding: 16px 24px;
                 border: 2px solid #e0e0e0;
-                border-radius: 12px;
+                border-radius: 14px;
                 font-size: 16px;
                 color: #1E1E1E;
                 background-color: #FFFFFF;
                 transition: all 0.3s;
             }
+
             .newsletter-input:focus {
                 outline: none;
                 border-color: #667eea;
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
             }
+
             .newsletter-input::placeholder {
                 color: #B3B3B3;
             }
+
             .newsletter-button {
-                padding: 14px 24px;
-                border-radius: 12px;
+                padding: 16px 28px;
+                border-radius: 14px;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 border: none;
                 color: #FFFFFF;
@@ -147,9 +325,65 @@
                 cursor: pointer;
                 transition: all 0.3s;
             }
+
             .newsletter-button:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+                box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            }
+
+            /* CTA Section */
+            .cta-section {
+                max-width: 1000px;
+                margin: 0 auto 60px;
+                padding: 0 20px;
+            }
+
+            .cta-card {
+                background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+                border-radius: 32px;
+                padding: 60px 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                flex-wrap: wrap;
+            }
+
+            .cta-content {
+                flex: 1;
+                min-width: 280px;
+            }
+
+            .cta-title {
+                font-size: clamp(24px, 4vw, 32px);
+                font-weight: 700;
+                color: #333;
+                margin-bottom: 12px;
+            }
+
+            .cta-description {
+                font-size: 16px;
+                color: #666;
+                line-height: 1.6;
+            }
+
+            .cta-button {
+                padding: 18px 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 16px;
+                font-size: 18px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .cta-button:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
             }
 
             @media (max-width: 768px) {
@@ -159,35 +393,193 @@
                 .search-button, .newsletter-button {
                     width: 100%;
                 }
+                .hero-section {
+                    padding: 100px 24px 60px;
+                    min-height: auto;
+                }
+                .cta-card {
+                    text-align: center;
+                    justify-content: center;
+                }
             }
         </style>
     </th:block>
 </head>
 <body>
 <div class="main-wrapper" layout:fragment="content">
+    <!-- Hero Section -->
     <div class="hero-section">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <div class="scroll-animate" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
             <h1 class="hero-title">지금 예약하세요</h1>
-            <p class="hero-subtitle">언제든 어디든</p>
+            <p class="hero-subtitle">언제든, 어디서든, 쉽고 빠르게</p>
         </div>
 
-        <form class="search-form" action="/store/stores" method="get">
-            <input type="text" name="keyword" class="search-input" placeholder="예) 서울 맛집" aria-label="검색어 입력" required>
+        <form class="search-form scroll-animate delay-2" action="/store/stores" method="get">
+            <input type="text" name="keyword" class="search-input" placeholder="예) 서울 맛집, 강남 카페" aria-label="검색어 입력" required>
             <button class="search-button" type="submit">검색하기</button>
         </form>
     </div>
 
-    <div class="newsletter-section">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-            <h2 class="newsletter-heading">최근 트렌드가 궁금하다면?</h2>
-            <p class="newsletter-subheading">뉴스레터 구독하기</p>
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="section-header scroll-animate">
+            <h2 class="section-title">왜 우리 서비스인가요?</h2>
+            <p class="section-subtitle">편리하고 스마트한 예약 경험을 제공합니다</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card scroll-animate delay-1">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">쉬운 검색</h3>
+                <p class="feature-description">원하는 가게를 빠르게 찾아보세요. 카테고리별, 지역별 필터링을 지원합니다.</p>
+            </div>
+
+            <div class="feature-card scroll-animate delay-2">
+                <div class="feature-icon">📅</div>
+                <h3 class="feature-title">간편한 예약</h3>
+                <p class="feature-description">클릭 몇 번으로 예약 완료! 실시간으로 가능한 시간을 확인하세요.</p>
+            </div>
+
+            <div class="feature-card scroll-animate delay-3">
+                <div class="feature-icon">⭐</div>
+                <h3 class="feature-title">신뢰할 수 있는 리뷰</h3>
+                <p class="feature-description">실제 방문자들의 솔직한 후기를 확인하고 현명한 선택을 하세요.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item scroll-animate delay-1">
+                <div class="stat-value">500+</div>
+                <div class="stat-label">등록된 가게</div>
+            </div>
+            <div class="stat-item scroll-animate delay-2">
+                <div class="stat-value">10K+</div>
+                <div class="stat-label">완료된 예약</div>
+            </div>
+            <div class="stat-item scroll-animate delay-3">
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">평균 만족도</div>
+            </div>
+            <div class="stat-item scroll-animate delay-4">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label">고객 지원</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <div class="cta-card scroll-animate-scale">
+            <div class="cta-content">
+                <h3 class="cta-title">내 가게도 등록하고 싶다면?</h3>
+                <p class="cta-description">사업자 회원으로 가입하고 더 많은 고객을 만나보세요. 간단한 등록 절차로 바로 시작할 수 있습니다.</p>
+            </div>
+            <a href="/store/register" class="cta-button">가게 등록하기</a>
+        </div>
+    </div>
+
+    <!-- Newsletter Section -->
+    <div class="newsletter-section scroll-animate">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <h2 class="newsletter-heading">🎉 최신 트렌드를 놓치지 마세요</h2>
+            <p class="newsletter-subheading">뉴스레터를 구독하고 특별한 혜택을 받아보세요</p>
         </div>
 
         <form class="newsletter-form">
             <input type="email" class="newsletter-input" placeholder="you@example.com" aria-label="이메일 입력">
-            <button class="newsletter-button" type="button">보내기</button>
+            <button class="newsletter-button" type="button">구독하기</button>
         </form>
     </div>
 </div>
+
+<th:block layout:fragment="custom-script">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer for scroll animations
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -100px 0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Optional: unobserve after animation
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all scroll-animate elements
+            const animatedElements = document.querySelectorAll('.scroll-animate, .scroll-animate-left, .scroll-animate-right, .scroll-animate-scale');
+            animatedElements.forEach(el => observer.observe(el));
+
+            // Animate stats numbers
+            const statValues = document.querySelectorAll('.stat-value');
+            const statsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateValue(entry.target);
+                        statsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            statValues.forEach(stat => statsObserver.observe(stat));
+
+            function animateValue(element) {
+                const text = element.textContent;
+                const hasPlus = text.includes('+');
+                const hasK = text.includes('K');
+                const isDecimal = text.includes('.');
+
+                let endValue;
+                if (hasK) {
+                    endValue = parseInt(text.replace(/[^0-9]/g, ''));
+                } else if (isDecimal) {
+                    endValue = parseFloat(text);
+                } else {
+                    endValue = parseInt(text.replace(/[^0-9]/g, ''));
+                }
+
+                let startValue = 0;
+                const duration = 2000;
+                const startTime = performance.now();
+
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // Easing function
+                    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+
+                    let currentValue;
+                    if (isDecimal) {
+                        currentValue = (startValue + (endValue - startValue) * easeOutQuart).toFixed(1);
+                    } else {
+                        currentValue = Math.floor(startValue + (endValue - startValue) * easeOutQuart);
+                    }
+
+                    let displayValue = currentValue;
+                    if (hasK) displayValue += 'K';
+                    if (hasPlus) displayValue += '+';
+
+                    element.textContent = displayValue;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(update);
+                    }
+                }
+
+                requestAnimationFrame(update);
+            }
+        });
+    </script>
+</th:block>
 </body>
 </html>

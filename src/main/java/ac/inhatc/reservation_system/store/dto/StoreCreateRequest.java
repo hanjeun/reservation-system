@@ -30,4 +30,17 @@ public class StoreCreateRequest {
     
     // 상세 이미지 파일들
     private List<MultipartFile> detailImages = new ArrayList<>();
+    
+    // 노쇼 방지금 (0원이면 무료)
+    private Integer noShowDeposit = 0;
+    
+    // ========== 환불 정책 ==========
+    // 전액 환불 가능 일수 (예약일 N일 전까지 전액 환불)
+    private Integer fullRefundDays = 3;
+    
+    // 부분 환불 가능 일수 (예약일 N일 전까지 부분 환불)
+    private Integer partialRefundDays = 1;
+    
+    // 부분 환불 비율 (퍼센트, 예: 50 = 50%)
+    private Integer partialRefundRate = 50;
 }

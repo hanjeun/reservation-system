@@ -3,6 +3,7 @@ package ac.inhatc.reservation_system.config.controller;
 import ac.inhatc.reservation_system.config.jwt.JwtProperties;
 import ac.inhatc.reservation_system.config.jwt.TokenProvider;
 import ac.inhatc.reservation_system.config.jwt.repository.RefreshTokenRepository;
+import ac.inhatc.reservation_system.member.entity.AuthProvider;
 import ac.inhatc.reservation_system.member.entity.Member;
 import ac.inhatc.reservation_system.member.repository.MemberRepository;
 import jakarta.servlet.http.Cookie;
@@ -39,6 +40,21 @@ public class AuthApiController {
 
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+            // OAuth 사용자가 일반 로그인을 시도하는 경우
+            if (member.isOAuthUser()) {
+                String providerName = member.getProvider().name();
+                return ResponseEntity.status(401).body(Map.of(
+                    "error", providerName + " 계정으로 가입된 사용자입니다. " + providerName + " 로그인을 이용해주세요."
+                ));
+            }
+
+            // 비밀번호가 없는 경우 (OAuth로만 가입한 경우)
+            if (member.getPassword() == null) {
+                return ResponseEntity.status(401).body(Map.of(
+                    "error", "소셜 로그인으로 가입된 계정입니다. 소셜 로그인을 이용해주세요."
+                ));
+            }
 
             if (!passwordEncoder.matches(password, member.getPassword())) {
                 return ResponseEntity.status(401).body(Map.of("error", "비밀번호가 일치하지 않습니다."));

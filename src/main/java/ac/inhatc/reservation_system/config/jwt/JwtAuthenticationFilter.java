@@ -49,11 +49,14 @@ public class JwtAuthenticationFilter implements Filter {
                 // 토큰에서 사용자 정보 추출
                 Member member = tokenProvider.getMemberFromToken(token);
                 
+                // 실제 사용자 역할로 권한 설정 (USER → ROLE_USER, ADMIN → ROLE_ADMIN 등)
+                String role = "ROLE_" + member.getRole().name();
+                
                 // SecurityContext에 인증 정보 설정
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                     member, 
                     token, 
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                    Collections.singletonList(new SimpleGrantedAuthority(role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 
@@ -108,12 +111,17 @@ public class JwtAuthenticationFilter implements Filter {
                requestURI.startsWith("/images/") ||
                requestURI.startsWith("/uploads/") ||
                requestURI.startsWith("/vendor/") ||
+               requestURI.startsWith("/oauth2/") ||           // OAuth2 인증 시작
+               requestURI.startsWith("/login/oauth2/") ||     // OAuth2 콜백
+               requestURI.equals("/favicon.ico") ||
+               requestURI.equals("/favicon.svg") ||
                requestURI.equals("/") ||
                requestURI.equals("/main") ||
                requestURI.equals("/user/login") ||
                requestURI.equals("/user/signup") ||
                requestURI.equals("/customer-service/policy") ||
                requestURI.startsWith("/api/auth/") ||
+               requestURI.startsWith("/api/email/") ||
                requestURI.equals("/api/token");
     }
 }

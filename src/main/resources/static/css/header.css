@@ -50,8 +50,11 @@
     color: #FFFFFF;
     font-size: 15px;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-pill::after {
@@ -94,8 +97,11 @@
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .btn-login:hover {
@@ -114,8 +120,11 @@
     font-size: 15px;
     font-weight: 600;
     text-decoration: none;
-    display: inline-block;
-    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .btn-signup:hover {

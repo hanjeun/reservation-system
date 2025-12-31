@@ -62,6 +62,11 @@
                 transform: translateY(-2px);
                 box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
             }
+            .btn-dark:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
             .link-text {
                 color: #667eea;
                 font-weight: 600;
@@ -129,9 +134,269 @@
                 opacity: 0.8;
             }
 
+            /* 사업자 인증 섹션 */
+            .business-verification-section {
+                display: none;
+                margin-top: 20px;
+                padding: 24px;
+                background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+                border: 2px solid #ffc107;
+                border-radius: 16px;
+                animation: slideDown 0.3s ease;
+            }
+
+            .business-verification-section.show {
+                display: block;
+            }
+
+            .business-section-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .business-section-header h4 {
+                font-size: 16px;
+                font-weight: 600;
+                color: #856404;
+                margin: 0;
+            }
+
+            .business-section-header .info-icon {
+                font-size: 20px;
+            }
+
+            .business-notice {
+                background: white;
+                padding: 12px 16px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-size: 13px;
+                color: #666;
+                line-height: 1.6;
+            }
+
+            .business-notice strong {
+                color: #e74c3c;
+            }
+
+            .license-upload-area {
+                border: 2px dashed #ccc;
+                border-radius: 12px;
+                padding: 30px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s;
+                background: white;
+                margin-bottom: 16px;
+            }
+
+            .license-upload-area:hover {
+                border-color: #667eea;
+                background: #f8f9ff;
+            }
+
+            .license-upload-area.has-file {
+                border-color: #28a745;
+                background: #d4edda;
+            }
+
+            .license-upload-area .upload-icon {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+
+            .license-upload-area .upload-text {
+                font-size: 14px;
+                color: #666;
+            }
+
+            .license-upload-area .file-name {
+                font-size: 14px;
+                color: #155724;
+                font-weight: 600;
+                margin-top: 8px;
+            }
+
+            .license-preview {
+                display: none;
+                margin-top: 16px;
+                text-align: center;
+            }
+
+            .license-preview.show {
+                display: block;
+            }
+
+            .license-preview img {
+                max-width: 100%;
+                max-height: 200px;
+                border-radius: 8px;
+                border: 2px solid #e0e0e0;
+            }
+
+            .remove-license-btn {
+                margin-top: 10px;
+                padding: 8px 16px;
+                background: #dc3545;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            /* 이메일 인증 스타일 */
+            .email-verification-group {
+                position: relative;
+            }
+
+            .email-input-wrapper {
+                display: flex;
+                gap: 10px;
+            }
+
+            .email-input-wrapper .form-control {
+                flex: 1;
+            }
+
+            .btn-send-code {
+                padding: 14px 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: all 0.3s;
+            }
+
+            .btn-send-code:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            .btn-send-code:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .verification-code-section {
+                display: none;
+                margin-top: 16px;
+                padding: 20px;
+                background: #f8f9ff;
+                border-radius: 12px;
+                border: 2px solid #e8ebff;
+            }
+
+            .verification-code-section.show {
+                display: block;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .code-input-wrapper {
+                display: flex;
+                gap: 10px;
+            }
+
+            .code-input {
+                flex: 1;
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                letter-spacing: 8px;
+                padding: 14px;
+            }
+
+            .btn-verify-code {
+                padding: 14px 24px;
+                background: #28a745;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .btn-verify-code:hover:not(:disabled) {
+                background: #218838;
+            }
+
+            .btn-verify-code:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .timer {
+                text-align: center;
+                margin-top: 12px;
+                font-size: 14px;
+                color: #666;
+            }
+
+            .timer.warning {
+                color: #e74c3c;
+            }
+
+            .verification-status {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 12px;
+                padding: 12px;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+
+            .verification-status.success {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .verification-status.error {
+                background: #f8d7da;
+                color: #721c24;
+            }
+
+            .verified-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 8px 16px;
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                margin-top: 12px;
+            }
+
             @media (max-width: 576px) {
                 .signup-box {
                     padding: 40px 30px;
+                }
+                .email-input-wrapper, .code-input-wrapper {
+                    flex-direction: column;
+                }
+                .code-input {
+                    letter-spacing: 4px;
                 }
             }
         </style>
@@ -144,6 +409,7 @@
         <form th:action="@{/user/signup}" th:object="${memberDto}" method="post" id="signupForm">
             <input type="hidden" id="memberId" name="memberId" value="">
             <input type="hidden" id="isEditMode" name="isEditMode" value="false">
+            <input type="hidden" id="emailVerified" name="emailVerified" value="false">
 
             <div class="alert alert-danger" role="alert" th:if="${#fields.hasGlobalErrors()}">
                 <div th:each="err : ${#fields.globalErrors()}" th:text="${err}"></div>
@@ -155,10 +421,34 @@
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
             </div>
 
-            <div class="mb-4">
+            <!-- 이메일 + 인증 -->
+            <div class="mb-4 email-verification-group">
                 <label for="email" class="form-label">이메일</label>
-                <input type="email" th:field="*{email}" th:errorclass="is-invalid" class="form-control" id="email" placeholder="example@email.com" required>
+                <div class="email-input-wrapper">
+                    <input type="email" th:field="*{email}" th:errorclass="is-invalid" class="form-control" id="email" placeholder="example@email.com" required>
+                    <button type="button" class="btn-send-code" id="sendCodeBtn" onclick="sendVerificationCode()">
+                        인증코드 발송
+                    </button>
+                </div>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+                <!-- 인증 코드 입력 섹션 -->
+                <div class="verification-code-section" id="verificationSection">
+                    <label class="form-label">인증 코드 입력</label>
+                    <div class="code-input-wrapper">
+                        <input type="text" class="form-control code-input" id="verificationCode" maxlength="6" placeholder="000000">
+                        <button type="button" class="btn-verify-code" id="verifyCodeBtn" onclick="verifyCode()">
+                            확인
+                        </button>
+                    </div>
+                    <div class="timer" id="timer">남은 시간: 5:00</div>
+                    <div class="verification-status" id="verificationStatus" style="display: none;"></div>
+                </div>
+
+                <!-- 인증 완료 표시 -->
+                <div class="verified-badge" id="verifiedBadge" style="display: none;">
+                    ✓ 이메일 인증 완료
+                </div>
             </div>
 
             <div class="mb-4">
@@ -192,6 +482,52 @@
                         <div class="role-description">가게 등록 및 관리</div>
                     </label>
                 </div>
+
+                <!-- 사업자 인증 정보 입력 섹션 -->
+                <div class="business-verification-section" id="businessSection">
+                    <div class="business-section-header">
+                        <span class="info-icon">📋</span>
+                        <h4>사업자 인증 정보</h4>
+                    </div>
+                    <div class="business-notice">
+                        <strong>※ 안내:</strong> 사업자로 가입 시 먼저 일반 사용자로 가입되며,
+                        관리자 승인 후 사업자 기능(가게 등록 등)을 이용하실 수 있습니다.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">상호명 <span style="color: #e74c3c;">*</span></label>
+                        <input type="text" class="form-control" id="businessName" placeholder="상호명을 입력하세요">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">사업자 등록번호</label>
+                        <input type="text" class="form-control" id="businessNumber" placeholder="000-00-00000 (선택사항)">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">사업자 등록증 <span style="color: #e74c3c;">*</span></label>
+                        <div class="license-upload-area" id="uploadArea" onclick="document.getElementById('licenseImage').click()">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">클릭하여 사업자 등록증을 업로드하세요</div>
+                            <div class="upload-text" style="font-size: 12px; color: #999; margin-top: 8px;">
+                                (JPG, PNG, PDF / 최대 10MB)
+                            </div>
+                            <div class="file-name" id="fileName" style="display: none;"></div>
+                        </div>
+                        <input type="file" id="licenseImage" accept="image/*,.pdf" style="display: none;" onchange="handleFileSelect(this)">
+
+                        <div class="license-preview" id="licensePreview">
+                            <img id="previewImage" src="" alt="미리보기">
+                            <br>
+                            <button type="button" class="remove-license-btn" onclick="removeLicenseFile()">파일 삭제</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">추가 메모</label>
+                        <textarea class="form-control" id="businessMemo" rows="2" placeholder="추가로 전달할 내용이 있다면 입력하세요 (선택사항)"></textarea>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3 form-check" id="termsCheckbox">
@@ -202,7 +538,7 @@
             </div>
 
             <div class="d-grid mb-4">
-                <button type="submit" class="btn btn-dark" id="submitBtn">가입하기</button>
+                <button type="submit" class="btn btn-dark" id="submitBtn" disabled>가입하기</button>
             </div>
 
             <div class="text-center">
@@ -214,6 +550,10 @@
 
 <th:block layout:fragment="custom-script">
     <script>
+        let timerInterval = null;
+        let remainingTime = 300; // 5분
+        let isEmailVerified = false;
+
         // 페이지 로드 시 수정 모드 확인
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -223,15 +563,168 @@
             if (isEdit && memberId) {
                 enableEditMode(memberId);
             }
+
+            // 숫자만 입력 가능하도록
+            document.getElementById('verificationCode').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
         });
+
+        // 인증 코드 발송
+        async function sendVerificationCode() {
+            const email = document.getElementById('email').value.trim();
+            const sendBtn = document.getElementById('sendCodeBtn');
+
+            if (!email) {
+                alert('이메일을 입력해주세요.');
+                return;
+            }
+
+            if (!email.match(/^[A-Za-z0-9+_.-]+@(.+)$/)) {
+                alert('올바른 이메일 형식이 아닙니다.');
+                return;
+            }
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = '발송 중...';
+
+            try {
+                const response = await fetch('/api/email/send-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('인증 코드가 발송되었습니다. 이메일을 확인해주세요.');
+                    showVerificationSection();
+                    startTimer();
+                    document.getElementById('email').readOnly = true;
+                } else {
+                    alert(data.message || '인증 코드 발송에 실패했습니다.');
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '인증코드 발송';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('인증 코드 발송 중 오류가 발생했습니다.');
+                sendBtn.disabled = false;
+                sendBtn.textContent = '인증코드 발송';
+            }
+        }
+
+        // 인증 코드 섹션 표시
+        function showVerificationSection() {
+            document.getElementById('verificationSection').classList.add('show');
+            document.getElementById('verificationCode').focus();
+        }
+
+        // 타이머 시작
+        function startTimer() {
+            remainingTime = 300;
+            updateTimerDisplay();
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                remainingTime--;
+                updateTimerDisplay();
+
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    showStatus('인증 코드가 만료되었습니다. 다시 요청해주세요.', 'error');
+                    document.getElementById('sendCodeBtn').disabled = false;
+                    document.getElementById('sendCodeBtn').textContent = '재발송';
+                    document.getElementById('email').readOnly = false;
+                }
+            }, 1000);
+        }
+
+        // 타이머 표시 업데이트
+        function updateTimerDisplay() {
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `남은 시간: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (remainingTime <= 60) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        }
+
+        // 인증 코드 검증
+        async function verifyCode() {
+            const email = document.getElementById('email').value.trim();
+            const code = document.getElementById('verificationCode').value.trim();
+            const verifyBtn = document.getElementById('verifyCodeBtn');
+
+            if (!code || code.length !== 6) {
+                alert('6자리 인증 코드를 입력해주세요.');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = '확인 중...';
+
+            try {
+                const response = await fetch('/api/email/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, code: code })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    isEmailVerified = true;
+                    document.getElementById('emailVerified').value = 'true';
+                    clearInterval(timerInterval);
+
+                    // UI 업데이트
+                    document.getElementById('verificationSection').style.display = 'none';
+                    document.getElementById('verifiedBadge').style.display = 'inline-flex';
+                    document.getElementById('sendCodeBtn').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+
+                    showStatus('이메일 인증이 완료되었습니다!', 'success');
+                } else {
+                    showStatus(data.message || '인증 코드가 일치하지 않습니다.', 'error');
+                    verifyBtn.disabled = false;
+                    verifyBtn.textContent = '확인';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('인증 처리 중 오류가 발생했습니다.', 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = '확인';
+            }
+        }
+
+        // 상태 메시지 표시
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('verificationStatus');
+            statusElement.textContent = message;
+            statusElement.className = 'verification-status ' + type;
+            statusElement.style.display = 'flex';
+        }
 
         // 수정 모드 활성화
         function enableEditMode(memberId) {
+            isEmailVerified = true; // 수정 모드에서는 이메일 인증 스킵
+
             // 페이지 제목 변경
             document.getElementById('pageTitle').textContent = '계정 수정';
             document.getElementById('submitBtn').textContent = '수정하기';
+            document.getElementById('submitBtn').disabled = false;
             document.getElementById('loginLink').style.display = 'none';
             document.getElementById('termsCheckbox').style.display = 'none';
+
+            // 이메일 인증 섹션 숨기기
+            document.querySelector('.email-verification-group').querySelector('.btn-send-code').style.display = 'none';
 
             // 비밀번호 필수 해제
             document.getElementById('password').removeAttribute('required');
@@ -255,6 +748,7 @@
             .then(data => {
                 document.getElementById('name').value = data.name || '';
                 document.getElementById('email').value = data.email || '';
+                document.getElementById('email').readOnly = true;
 
                 // 역할 설정
                 const roleButtons = document.querySelectorAll('.role-btn');
@@ -335,7 +829,152 @@
 
             // 해당 라디오 버튼 체크
             element.querySelector('input[type="radio"]').checked = true;
+
+            // 사업자 선택 시 인증 섹션 표시
+            const businessSection = document.getElementById('businessSection');
+            if (roleValue === 'BUSINESS') {
+                businessSection.classList.add('show');
+            } else {
+                businessSection.classList.remove('show');
+            }
         }
+
+        // 파일 선택 처리
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // 파일 크기 체크 (10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('파일 크기는 10MB 이하여야 합니다.');
+                input.value = '';
+                return;
+            }
+
+            // 파일명 표시
+            const uploadArea = document.getElementById('uploadArea');
+            const fileName = document.getElementById('fileName');
+            fileName.textContent = file.name;
+            fileName.style.display = 'block';
+            uploadArea.classList.add('has-file');
+
+            // 이미지 미리보기 (이미지 파일인 경우)
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('licensePreview').classList.add('show');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('licensePreview').classList.remove('show');
+            }
+        }
+
+        // 파일 삭제
+        function removeLicenseFile() {
+            document.getElementById('licenseImage').value = '';
+            document.getElementById('fileName').style.display = 'none';
+            document.getElementById('uploadArea').classList.remove('has-file');
+            document.getElementById('licensePreview').classList.remove('show');
+        }
+
+        // 폼 제출 처리 (사업자 인증 포함)
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const isEditMode = document.getElementById('isEditMode').value === 'true';
+            const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+            // 이메일 인증 확인 (수정 모드가 아닐 때만)
+            if (!isEditMode && !isEmailVerified) {
+                alert('이메일 인증을 완료해주세요.');
+                return;
+            }
+
+            // 사업자 선택 시 추가 검증
+            if (selectedRole === 'BUSINESS') {
+                const businessName = document.getElementById('businessName').value.trim();
+                const licenseImage = document.getElementById('licenseImage').files[0];
+
+                if (!businessName) {
+                    alert('상호명을 입력해주세요.');
+                    document.getElementById('businessName').focus();
+                    return;
+                }
+
+                if (!licenseImage) {
+                    alert('사업자 등록증을 업로드해주세요.');
+                    return;
+                }
+            }
+
+            // 기본 회원가입 먼저 처리 (사업자도 USER로 가입)
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // 사업자 선택해도 USER로 먼저 가입
+            if (selectedRole === 'BUSINESS') {
+                formData.set('role', 'USER');
+            }
+
+            try {
+                // 1. 회원가입 처리
+                const signupResponse = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (signupResponse.redirected) {
+                    // 회원가입 성공 시
+                    if (selectedRole === 'BUSINESS') {
+                        // 2. 로그인 처리
+                        const email = document.getElementById('email').value;
+                        const password = document.getElementById('password').value;
+
+                        const loginResponse = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password }),
+                            credentials: 'include'
+                        });
+
+                        if (loginResponse.ok) {
+                            // 3. 사업자 인증 신청
+                            const businessFormData = new FormData();
+                            businessFormData.append('businessName', document.getElementById('businessName').value.trim());
+                            businessFormData.append('businessNumber', document.getElementById('businessNumber').value.trim());
+                            businessFormData.append('memo', document.getElementById('businessMemo').value.trim());
+                            businessFormData.append('licenseImage', document.getElementById('licenseImage').files[0]);
+
+                            const verifyResponse = await window.fetchWithAuth('/api/business-verification/submit', {
+                                method: 'POST',
+                                body: businessFormData
+                            });
+
+                            const verifyData = await verifyResponse.json();
+
+                            if (verifyData.success) {
+                                alert('회원가입이 완료되었습니다!\n\n사업자 인증 신청이 접수되었습니다.\n관리자 승인 후 사업자 기능을 이용하실 수 있습니다.');
+                            } else {
+                                alert('회원가입은 완료되었으나 사업자 인증 신청에 실패했습니다.\n마이페이지에서 다시 신청해주세요.');
+                            }
+                        }
+                        window.location.href = '/';
+                    } else {
+                        // 일반 사용자는 바로 리다이렉트
+                        window.location.href = signupResponse.url;
+                    }
+                } else {
+                    // 회원가입 실패
+                    const html = await signupResponse.text();
+                    document.body.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('회원가입 처리 중 오류가 발생했습니다.');
+            }
+        });
     </script>
 </th:block>
 </body>
