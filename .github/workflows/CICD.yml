@@ -2,9 +2,9 @@ name: CICD
 
 on:
   push:
-    branches: [ \"main\" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ \"main\" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -44,24 +44,24 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w \"%{http_code}\" \"http://${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}/env\")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s \"http://${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}/env\")
+            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}/env")
           else
             CURRENT_UPSTREAM=green
           fi
           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
-            echo \"CURRENT_PORT=8080\" >> $GITHUB_ENV
-            echo \"STOPPED_PORT=8081\" >> $GITHUB_ENV
-            echo \"TARGET_UPSTREAM=green\" >> $GITHUB_ENV
+            echo "CURRENT_PORT=8080" >> $GITHUB_ENV
+            echo "STOPPED_PORT=8081" >> $GITHUB_ENV
+            echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
           elif [ $CURRENT_UPSTREAM = green ]; then
-            echo \"CURRENT_PORT=8081\" >> $GITHUB_ENV
-            echo \"STOPPED_PORT=8080\" >> $GITHUB_ENV
-            echo \"TARGET_UPSTREAM=blue\" >> $GITHUB_ENV
+            echo "CURRENT_PORT=8081" >> $GITHUB_ENV
+            echo "STOPPED_PORT=8080" >> $GITHUB_ENV
+            echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           else
-            echo \"error\"
+            echo "error"
             exit 1
           fi
 
@@ -91,13 +91,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker exec -i nginxserver bash -c 'echo \"set \\$service_url ${{ env.TARGET_UPSTREAM }};\" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
+            sudo docker exec -i nginxserver bash -c 'echo "set \$service_url ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/service-env.inc && nginx -s reload'
 
       - name: Stop current server
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
-          host: ${{ secrets.LIVE_SERVER_IP }}
+          host: ${{ secrets.RESERVATION_SYSTEM_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
