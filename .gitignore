@@ -40,7 +40,6 @@ out/
 uploads/
 
 ### 환경변수 파일 (보안) ###
-.env
 .env.local
 application-secret.yml
 **/application-secret.yml
