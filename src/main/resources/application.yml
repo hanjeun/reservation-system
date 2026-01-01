@@ -51,7 +51,7 @@ spring:
 
 server:
   port: 8080
-  serverAddress: 15.165.103.103.nip.io
+  serverAddress: hktech.kr
   env: blue
 
 serverName: blue_server
@@ -67,15 +67,15 @@ spring:
       client:
         registration:
           google:
-            redirect-uri: http://15.165.103.103.nip.io/login/oauth2/code/google
+            redirect-uri: https://hktech.kr/login/oauth2/code/google
           naver:
-            redirect-uri: http://15.165.103.103.nip.io/login/oauth2/code/naver
+            redirect-uri: https://hktech.kr/login/oauth2/code/naver
           kakao:
-            redirect-uri: http://15.165.103.103.nip.io/login/oauth2/code/kakao
+            redirect-uri: https://hktech.kr/login/oauth2/code/kakao
 
 server:
   port: 8080
-  serverAddress: 15.165.103.103.nip.io
+  serverAddress: hktech.kr
   env: green
 
 serverName: green_server
