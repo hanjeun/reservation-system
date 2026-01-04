@@ -1,81 +1,18 @@
+# ============================================
+# 프로필 설정
+# ============================================
+# local  : 로컬 개발 환경 (localhost MySQL)
+# blue   : 배포 환경 (Blue 서버)
+# green  : 배포 환경 (Green 서버)
+# ============================================
+
 spring:
   application:
     name: reservation-system
+    
   profiles:
     active: local
     group:
       local: common, secret
-      blue: common, secret
-      green: common, secret
-
----
-spring:
-  config:
-    activate:
-      on-profile: local
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-          naver:
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
-          kakao:
-            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
-
-server:
-  port: 8080
-  serverAddress: localhost
-  env: local
-
-serverName: local_server
-
----
-spring:
-  config:
-    activate:
-      on-profile: blue
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/google
-          naver:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/naver
-          kakao:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/kakao
-
-server:
-  port: 8080
-  serverAddress: hktech.kr
-  env: blue
-
-serverName: blue_server
-
----
-spring:
-  config:
-    activate:
-      on-profile: green
-
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/google
-          naver:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/naver
-          kakao:
-            redirect-uri: https://reservation.hktech.kr/login/oauth2/code/kakao
-
-server:
-  port: 8080
-  serverAddress: hktech.kr
-  env: green
-
-serverName: green_server
+      blue: common, prod, secret
+      green: common, prod, secret

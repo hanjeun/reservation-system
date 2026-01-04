@@ -273,20 +273,37 @@
     .flatpickr-calendar {
         padding: 12px !important;
         border-radius: 12px !important;
+        width: calc(100vw - 24px) !important;
+        max-width: 320px !important;
     }
-    
+
     .flatpickr-day {
-        max-width: 34px !important;
-        height: 34px !important;
-        line-height: 34px !important;
-        font-size: 13px !important;
+        max-width: 38px !important;
+        height: 38px !important;
+        line-height: 38px !important;
+        font-size: 14px !important;
+        margin: 1px !important;
     }
-    
+
     .flatpickr-time input {
         font-size: 20px !important;
     }
-    
+
     .flatpickr-time .flatpickr-time-separator {
         font-size: 20px !important;
+    }
+
+    .flatpickr-current-month {
+        font-size: 16px !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .flatpickr-weekday {
+        font-size: 11px !important;
     }
 }

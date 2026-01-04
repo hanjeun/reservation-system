@@ -19,6 +19,8 @@
     <link rel="stylesheet" th:href="@{/vendor/flatpickr/flatpickr.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/flatpickr-custom.css}"/>
 
+    <!-- 모바일 반응형 CSS -->
+
     <!-- Token Refresh 유틸리티 - 모든 페이지에서 사용 가능 -->
     <script th:src="@{/js/auth/token-refresh.js}"></script>
     <!-- User State 관리 - 사용자 정보 전역 캐싱 -->
@@ -143,6 +145,28 @@
         @media (max-width: 768px) {
             body {
                 font-size: 14px;
+            }
+
+            /* 모바일 전체 최적화 */
+            * {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* 터치 디바이스에서 호버 효과 비활성화 */
+            @media (hover: none) {
+                *:hover {
+                    transform: none !important;
+                }
+            }
+
+            /* 부드러운 스크롤 비활성화 (성능) */
+            html {
+                scroll-behavior: auto;
+            }
+
+            /* 애니메이션 성능 최적화 */
+            .btn, button, a, input, select, textarea {
+                transition-duration: 0.15s !important;
             }
         }
 

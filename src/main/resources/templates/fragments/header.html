@@ -12,7 +12,20 @@
         </svg>
     </a>
 
-    <nav class="header-nav">
+    <!-- 햄버거 메뉴 버튼 (모바일용) -->
+    <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- 모바일 메뉴 오버레이 -->
+    <div class="mobile-menu-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+
+    <nav class="header-nav" id="headerNav">
+        <!-- 모바일 메뉴 닫기 버튼 -->
+        <button class="mobile-close-btn" onclick="toggleMobileMenu()">✕</button>
+
         <!-- 로그인 필요 메뉴 (비로그인 시 숨김) -->
         <a class="nav-pill auth-required" th:classappend="${currentPage=='store-register'} ? 'active'" th:href="@{/store/register}" id="menuStoreRegister" style="display:none;">가게등록</a>
         <a class="nav-pill auth-required" th:classappend="${currentPage=='store-promotion'} ? 'active'" th:href="@{/store/promotion}" id="menuStorePromotion" style="display:none;">홍보하기</a>
@@ -38,6 +51,20 @@
     </div>
 
     <script>
+        // 모바일 메뉴 토글
+        function toggleMobileMenu() {
+            const nav = document.getElementById('headerNav');
+            const overlay = document.getElementById('mobileOverlay');
+            const hamburger = document.getElementById('hamburgerBtn');
+
+            nav.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('active');
+
+            // 스크롤 방지
+            document.body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+        }
+
         // 페이지 로드 시 인증 상태 확인 - UserState 사용
         (async function checkAuth() {
             const currentPath = window.location.pathname;

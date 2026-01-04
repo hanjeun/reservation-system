@@ -513,20 +513,94 @@
             }
 
             @media (max-width: 768px) {
+                .mypage-wrapper {
+                    padding: 20px 12px;
+                }
+
                 .mypage-header {
-                    padding: 32px 24px;
+                    padding: 24px 16px;
+                    border-radius: 16px;
+                }
+
+                .mypage-title {
+                    font-size: 24px;
+                    margin-bottom: 20px;
                 }
 
                 .tabs {
                     flex-wrap: wrap;
                 }
 
+                .tab {
+                    padding: 12px 8px;
+                    font-size: 14px;
+                }
+
                 .tab-content {
-                    padding: 24px;
+                    padding: 20px 16px;
                 }
 
                 .stores-grid {
                     grid-template-columns: 1fr;
+                }
+
+                .reservations-list {
+                    grid-template-columns: 1fr;
+                }
+
+                .account-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .account-card {
+                    aspect-ratio: auto;
+                    padding: 24px;
+                }
+
+                /* 검색 섹션 모바일 최적화 */
+                .search-section {
+                    margin-bottom: 16px !important;
+                }
+
+                .search-section > div {
+                    gap: 8px !important;
+                }
+
+                .search-input {
+                    padding: 8px 10px !important;
+                    font-size: 13px !important;
+                }
+
+                .info-card {
+                    padding: 16px;
+                }
+
+                .info-label {
+                    font-size: 12px;
+                }
+
+                .info-value {
+                    font-size: 16px;
+                }
+
+                /* 버튼 모바일 최적화 */
+                .btn {
+                    padding: 8px 12px;
+                    font-size: 13px;
+                }
+
+                /* 모달 모바일 최적화 */
+                .modal-content {
+                    border-radius: 12px;
+                    margin: 10px;
+                }
+
+                .modal-header {
+                    padding: 16px;
+                }
+
+                .modal-body {
+                    padding: 16px;
                 }
             }
 
@@ -675,19 +749,19 @@
                     <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-top: 12px;">
                         <div style="flex: 1; min-width: 150px;">
                             <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">시작일</label>
-                            <input type="date" id="searchStartDate" class="search-input"
-                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                            <input type="text" id="searchStartDate" class="search-input flatpickr-input" placeholder="연도-월-일"
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; cursor: pointer;">
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="display: block; font-size: 14px; font-weight: 600; color: #666; margin-bottom: 6px;">종료일</label>
-                            <input type="date" id="searchEndDate" class="search-input"
-                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                            <input type="text" id="searchEndDate" class="search-input flatpickr-input" placeholder="연도-월-일"
+                                   style="width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; cursor: pointer;">
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <button onclick="searchReservations()" class="btn btn-edit" style="padding: 10px 20px;">
-                                🔍 검색
+                            <button onclick="searchReservations()" class="btn btn-edit" style="padding: 10px 24px; border-radius: 10px;">
+                                검색
                             </button>
-                            <button onclick="resetSearch()" class="btn" style="padding: 10px 20px; background: #e0e0e0; color: #333;">
+                            <button onclick="resetSearch()" class="btn" style="padding: 10px 20px; background: #e0e0e0; color: #333; border-radius: 10px;">
                                 초기화
                             </button>
                         </div>
@@ -1837,6 +1911,23 @@
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
             loadUserInfo(); // 사용자 정보를 먼저 로드 (역할에 따라 탭 표시 결정)
+
+            // Flatpickr 초기화 - 예약 관리 날짜 검색
+            if (typeof flatpickr !== 'undefined') {
+                flatpickr("#searchStartDate", {
+                    locale: "ko",
+                    dateFormat: "Y-m-d",
+                    allowInput: true,
+                    disableMobile: true
+                });
+
+                flatpickr("#searchEndDate", {
+                    locale: "ko",
+                    dateFormat: "Y-m-d",
+                    allowInput: true,
+                    disableMobile: true
+                });
+            }
         });
     </script>
 </th:block>
