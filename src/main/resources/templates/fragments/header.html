@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
+    <title>Header</title>
 </head>
 <body>
 <header class="header-custom" th:fragment="header(currentPage)">
@@ -12,41 +13,35 @@
         </svg>
     </a>
 
-    <!-- 햄버거 메뉴 버튼 (모바일용) -->
     <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileMenu()">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
-    <!-- 모바일 메뉴 오버레이 -->
     <div class="mobile-menu-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
 
     <nav class="header-nav" id="headerNav">
-        <!-- 모바일 메뉴 닫기 버튼 -->
         <button class="mobile-close-btn" onclick="toggleMobileMenu()">✕</button>
 
-        <!-- 로그인 필요 메뉴 (비로그인 시 숨김) -->
         <a class="nav-pill auth-required" th:classappend="${currentPage=='store-register'} ? 'active'" th:href="@{/store/register}" id="menuStoreRegister" style="display:none;">가게등록</a>
         <a class="nav-pill auth-required" th:classappend="${currentPage=='store-promotion'} ? 'active'" th:href="@{/store/promotion}" id="menuStorePromotion" style="display:none;">홍보하기</a>
         <a class="nav-pill auth-required" th:classappend="${currentPage=='community'} ? 'active'" th:href="@{/community}" id="menuCommunity" style="display:none;">커뮤니티</a>
         <a class="nav-pill auth-required" th:classappend="${currentPage=='notice'} ? 'active'" th:href="@{/customer-service/notice}" id="menuNotice" style="display:none;">공지사항</a>
         <a class="nav-pill auth-required" th:classappend="${currentPage=='inquiry'} ? 'active'" th:href="@{/customer-service/inquiry}" id="menuInquiry" style="display:none;">문의하기</a>
-        <!-- 공개 메뉴 (항상 표시) -->
         <a class="nav-pill" th:classappend="${currentPage=='policy'} ? 'active'" th:href="@{/customer-service/policy}">정책</a>
-        <!-- 관리자 메뉴 -->
         <a class="nav-pill" th:classappend="${currentPage=='admin-inquiry'} ? 'active'" th:href="@{/customer-service/admin/inquiry}" id="menuAdminInquiry" style="display:none;">문의관리</a>
         <a class="nav-pill" th:classappend="${currentPage=='admin-business'} ? 'active'" th:href="@{/admin/business-verification}" id="menuAdminBusiness" style="display:none;">사업자인증</a>
     </nav>
 
-    <div class="header-auth" id="authButtons" style="visibility: hidden;">
-        <div id="loggedOut" style="display: none; align-items: center; gap: 12px;">
-            <a class="btn-login" th:href="@{/user/login}">로그인</a>
-            <a class="btn-signup" th:href="@{/user/signup}">가입하기</a>
+    <div class="header-auth" id="authButtons" style="visibility: hidden; display: flex; flex-direction: row; align-items: center; gap: 6px;">
+        <div id="loggedOut" style="display: none; flex-direction: row; align-items: center; gap: 6px;">
+            <a class="btn-login" th:href="@{/user/login}" style="white-space: nowrap;">로그인</a>
+            <a class="btn-signup" th:href="@{/user/signup}" style="white-space: nowrap;">가입하기</a>
         </div>
-        <div id="loggedIn" style="display: none; align-items: center; gap: 12px;">
-            <a class="btn-login" th:href="@{/user/mypage}">마이페이지</a>
-            <button type="button" class="btn-signup" onclick="handleLogout()">로그아웃</button>
+        <div id="loggedIn" style="display: none; flex-direction: row; align-items: center; gap: 6px;">
+            <a class="btn-login" th:href="@{/user/mypage}" style="white-space: nowrap;">마이페이지</a>
+            <button type="button" class="btn-signup" onclick="handleLogout()" style="white-space: nowrap;">로그아웃</button>
         </div>
     </div>
 
@@ -69,6 +64,10 @@
         (async function checkAuth() {
             const currentPath = window.location.pathname;
             const publicPages = ['/user/login', '/user/signup'];
+
+            // ⭐ 수정 완료: 시작 시 두 버튼 그룹을 모두 숨겨 동시 표시 방지
+            document.getElementById('loggedOut').style.display = 'none';
+            document.getElementById('loggedIn').style.display = 'none';
 
             // 비로그인 상태 UI 설정 함수
             function showLoggedOutUI() {

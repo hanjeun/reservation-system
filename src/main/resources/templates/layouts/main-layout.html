@@ -20,6 +20,7 @@
     <link rel="stylesheet" th:href="@{/css/flatpickr-custom.css}"/>
 
     <!-- 모바일 반응형 CSS -->
+    <link rel="stylesheet" th:href="@{/css/responsive.css}"/>
 
     <!-- Token Refresh 유틸리티 - 모든 페이지에서 사용 가능 -->
     <script th:src="@{/js/auth/token-refresh.js}"></script>
@@ -89,7 +90,7 @@
             background-color: #FFFFFF;
             color: #1E1E1E;
             line-height: 1.6;
-            overflow-x: hidden; /* 가로 스크롤 방지 */
+            overflow-x: clip; /* 가로 스크롤 방지 (sticky 호환) */
         }
 
         /* Main 컨텐츠 영역 - 남은 공간을 모두 차지하도록 */

@@ -47,7 +47,8 @@
             .image-slider {
                 position: relative;
                 width: 100%;
-                height: 500px;
+                aspect-ratio: 1 / 1;
+                max-height: 500px;
                 overflow: hidden;
                 border-radius: 16px;
             }
@@ -271,6 +272,28 @@
 
             .select-field option:disabled {
                 color: #B3B3B3;
+            }
+
+            /* 날짜/시간 필드 래퍼 - 아이콘 내부 배치 */
+            .datetime-field-wrapper {
+                position: relative;
+                display: flex;
+                align-items: center;
+            }
+
+            .datetime-field-wrapper .select-field {
+                padding-right: 44px;
+            }
+
+            .datetime-field-wrapper .field-icon {
+                position: absolute;
+                right: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 20px !important;
+                height: 20px !important;
+                color: #999;
+                pointer-events: none;
             }
 
             /* Flatpickr 커스텀 스타일은 /css/flatpickr-custom.css에서 통합 관리 */
@@ -776,7 +799,7 @@
                         <div class="datetime-field-wrapper">
                             <input type="text" class="select-field" id="reservationDate" 
                                    placeholder="날짜를 선택해주세요" readonly>
-                            <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="field-icon" style="width: 24px; height: 24px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
@@ -787,7 +810,7 @@
                         <div class="datetime-field-wrapper">
                             <input type="text" class="select-field" id="reservationTime"
                                    placeholder="시간을 선택해주세요" readonly>
-                            <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="field-icon" style="width: 24px; height: 24px; flex-shrink: 0;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>

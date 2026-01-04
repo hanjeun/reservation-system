@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      th:with="title='결제 결과', currentPage='payment'"
+      layout:decorate="~{layouts/main-layout}">
+<head>
+    <meta charset="UTF-8">
+    <th:block layout:fragment="custom-css">
+        <style>
+            .payment-result-wrapper {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: calc(100vh - 200px);
+                padding: 40px 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .result-container {
+                background: white;
+                border-radius: 24px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+                padding: 48px;
+                max-width: 500px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .result-icon {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 24px;
+                font-size: 40px;
+            }
+
+            .result-icon.success {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+            }
+
+            .result-icon.fail {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                color: white;
+            }
+
+            .result-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: #1e1e1e;
+                margin-bottom: 12px;
+            }
+
+            .result-message {
+                font-size: 16px;
+                color: #666;
+                margin-bottom: 32px;
+                line-height: 1.6;
+            }
+
+            .payment-info {
+                background: #f8f9fa;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 32px;
+                text-align: left;
+            }
+
+            .payment-info-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .payment-info-row:last-child {
+                border-bottom: none;
+            }
+
+            .payment-info-label {
+                color: #666;
+                font-size: 14px;
+            }
+
+            .payment-info-value {
+                color: #1e1e1e;
+                font-weight: 600;
+                font-size: 14px;
+            }
+
+            .result-buttons {
+                display: flex;
+                gap: 12px;
+                justify-content: center;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: all 0.3s;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-secondary {
+                background: #f3f4f6;
+                color: #374151;
+                border: none;
+                padding: 14px 28px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: all 0.3s;
+            }
+
+            .btn-secondary:hover {
+                background: #e5e7eb;
+            }
+
+            @media (max-width: 768px) {
+                .payment-result-wrapper {
+                    padding: 20px 12px;
+                }
+
+                .result-container {
+                    padding: 32px 20px;
+                }
+
+                .result-icon {
+                    width: 64px;
+                    height: 64px;
+                    font-size: 32px;
+                }
+
+                .result-title {
+                    font-size: 20px;
+                }
+
+                .result-message {
+                    font-size: 14px;
+                }
+
+                .result-buttons {
+                    flex-direction: column;
+                }
+
+                .btn-primary,
+                .btn-secondary {
+                    width: 100%;
+                }
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="payment-result-wrapper" layout:fragment="content">
+    <div class="result-container">
+        <!-- 성공 -->
+        <th:block th:if="${success}">
+            <div class="result-icon success">✓</div>
+            <h1 class="result-title">결제 완료</h1>
+            <p class="result-message" th:text="${message}">결제가 완료되었습니다.</p>
+
+            <div class="payment-info" th:if="${payment != null}">
+                <div class="payment-info-row">
+                    <span class="payment-info-label">결제 금액</span>
+                    <span class="payment-info-value" th:text="${#numbers.formatInteger(payment.amount, 0, 'COMMA')} + '원'">0원</span>
+                </div>
+                <div class="payment-info-row" th:if="${payment.productName != null}">
+                    <span class="payment-info-label">상품명</span>
+                    <span class="payment-info-value" th:text="${payment.productName}">-</span>
+                </div>
+                <div class="payment-info-row" th:if="${payment.paidAt != null}">
+                    <span class="payment-info-label">결제 일시</span>
+                    <span class="payment-info-value" th:text="${#temporals.format(payment.paidAt, 'yyyy-MM-dd HH:mm')}">-</span>
+                </div>
+            </div>
+
+            <div class="result-buttons">
+                <a th:href="@{/mypage}" class="btn-primary">마이페이지</a>
+                <a th:href="@{/stores}" class="btn-secondary">가게 목록</a>
+            </div>
+        </th:block>
+
+        <!-- 실패 -->
+        <th:block th:unless="${success}">
+            <div class="result-icon fail">✕</div>
+            <h1 class="result-title">결제 실패</h1>
+            <p class="result-message" th:text="${message}">결제가 취소되었거나 실패했습니다.</p>
+
+            <div class="result-buttons">
+                <a th:href="@{/stores}" class="btn-primary">다시 예약하기</a>
+                <a th:href="@{/}" class="btn-secondary">홈으로</a>
+            </div>
+        </th:block>
+    </div>
+</div>
+</body>
+</html>
