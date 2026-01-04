@@ -1,6 +1,7 @@
-﻿/* ========================================
-   HEADER CSS (理쒖쥌 ?섏젙 踰꾩쟾)
+/* ========================================
+   HEADER CSS
    ======================================== */
+
 .header-custom {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 20px 48px;
@@ -40,7 +41,7 @@
     align-items: center;
 }
 
-/* 狩??섏젙 ?꾨즺: header-auth ?먯껜瑜?Flex 而⑦뀒?대꼫濡??ㅼ젙 */
+/* header-auth Flex 컨테이너 */
 .header-auth {
     display: flex;
     flex-direction: row;
@@ -50,7 +51,6 @@
     flex-shrink: 0;
 }
 
-/* header-auth ?대???div - display??JavaScript媛 ?쒖뼱 (flex ?먮뒗 none) */
 .header-auth > div {
     flex-direction: row;
     align-items: center;
@@ -152,7 +152,7 @@
 }
 
 /* ========================================
-   ?꾨쾭嫄?硫붾돱 踰꾪듉
+   햄버거 메뉴 버튼
    ======================================== */
 .hamburger-btn {
     display: none;
@@ -234,7 +234,7 @@
 }
 
 /* ========================================
-   紐⑤컮??諛섏쓳??(768px ?댄븯)
+   모바일 반응형 (768px 이하)
    ======================================== */
 @media (max-width: 768px) {
     .header-custom {
@@ -258,19 +258,18 @@
         height: 36px;
     }
 
-    /* header-auth 컨테이너 - 가로 정렬 강제 */
+    /* header-auth 컨테이너 - 가로 정렬 */
     .header-auth {
         order: 2;
         margin-left: auto;
-        
         flex-direction: row !important;
         align-items: center;
         flex-wrap: nowrap !important;
         justify-content: flex-end;
-        gap: 4px;
+        gap: 6px;
     }
 
-    /* header-auth 내부 div - JavaScript가 display 제어 */
+    /* header-auth 내부 div */
     .header-auth > div[style*="flex"] {
         flex-direction: row !important;
         flex-wrap: nowrap !important;
@@ -336,200 +335,9 @@
     .header-logo:hover {
         transform: none;
     }
-
-    /* ============================================
-       ?꾩뿭 紐⑤컮??諛섏쓳??CSS (湲고? 而댄룷?뚰듃)
-       ============================================ */
-    .mypage-wrapper,
-    .page-wrapper,
-    .store-detail-wrapper,
-    .promotion-wrapper {
-        padding: 16px 12px !important;
-    }
-
-    .mypage-header {
-        padding: 20px 16px !important;
-        margin-bottom: 16px !important;
-    }
-
-    .mypage-title {
-        font-size: 22px !important;
-        margin-bottom: 16px !important;
-    }
-
-    .user-info-section {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
-    }
-
-    .info-card {
-        padding: 14px !important;
-    }
-
-    .info-label {
-        font-size: 12px !important;
-    }
-
-    .info-value {
-        font-size: 15px !important;
-    }
-
-    .tabs {
-        
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        border-bottom: 1px solid #e0e0e0;
-    }
-
-    .tabs::-webkit-scrollbar {
-        display: none;
-    }
-
-    .tab {
-        padding: 12px 16px !important;
-        font-size: 14px !important;
-        white-space: nowrap !important;
-        flex-shrink: 0 !important;
-    }
-
-    .tab-content {
-        padding: 16px !important;
-    }
-
-    .filter-row,
-    .search-filters > div,
-    [style*="display: flex"][style*="gap"] {
-        flex-direction: column !important;
-    }
-
-    .filter-item,
-    .filter-group {
-        width: 100% !important;
-        min-width: 0 !important;
-    }
-
-    .date-filter,
-    .date-range {
-        
-        flex-direction: row !important;
-        gap: 8px !important;
-    }
-
-    .date-filter input,
-    .date-range input {
-        flex: 1 !important;
-        min-width: 0 !important;
-    }
-
-    .filter-buttons {
-        
-        flex-direction: row !important;
-        gap: 8px !important;
-        margin-top: 8px !important;
-    }
-
-    .filter-buttons button {
-        flex: 1 !important;
-        padding: 12px 16px !important;
-    }
-
-    .stores-grid,
-    .reservations-list,
-    .card-grid,
-    [style*="grid-template-columns"] {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-    }
-
-    .store-image,
-    .store-card-image,
-    .card-image {
-        aspect-ratio: 1 / 1 !important;
-        height: auto !important;
-        max-height: 250px !important;
-    }
-
-    .store-actions,
-    .card-actions {
-        
-        gap: 8px !important;
-    }
-
-    .store-actions .btn,
-    .card-actions .btn {
-        flex: 1 !important;
-        padding: 10px !important;
-        font-size: 13px !important;
-    }
-
-    .empty-state svg,
-    .empty-state img,
-    [class*="empty"] svg,
-    [class*="empty"] img {
-        width: 64px !important;
-        height: 64px !important;
-        max-width: 64px !important;
-    }
-
-    .store-header {
-        grid-template-columns: 1fr !important;
-        gap: 20px !important;
-        padding: 20px 16px !important;
-    }
-
-    .image-slider {
-        height: 250px !important;
-        aspect-ratio: 1 / 1 !important;
-    }
-
-    .store-name,
-    .store-detail-title {
-        font-size: 20px !important;
-    }
-
-    .field-icon,
-    .reservation-form svg,
-    svg[class*="icon"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        flex-shrink: 0 !important;
-    }
-
-    .reservation-form input,
-    .reservation-form select {
-        padding: 12px !important;
-        font-size: 16px !important;
-    }
-
-    input, select, textarea {
-        font-size: 16px !important;
-    }
-
-    .btn-reserve,
-    .reserve-btn {
-        width: 100% !important;
-        padding: 14px !important;
-        font-size: 15px !important;
-    }
-
-    .review-card {
-        padding: 14px !important;
-    }
-
-    .reviews-section {
-        padding: 16px !important;
-    }
-
-    .modal-content {
-        width: 95% !important;
-        margin: 10px !important;
-        padding: 20px 16px !important;
-    }
 }
 
-/* ?묒? 紐⑤컮??(480px ?댄븯) */
+/* 작은 모바일 (480px 이하) */
 @media (max-width: 480px) {
     .header-custom {
         padding: 14px 16px;
@@ -537,140 +345,17 @@
 
     .btn-login,
     .btn-signup {
-        padding: 8px 14px;
-        font-size: 13px;
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
     .header-logo svg {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
     }
 
     .hamburger-btn {
-        width: 44px;
-        height: 44px;
-    }
-
-    .mypage-header {
-        padding: 16px 12px !important;
-    }
-
-    .mypage-title {
-        font-size: 20px !important;
-    }
-
-    .tab {
-        padding: 10px 12px !important;
-        font-size: 13px !important;
-    }
-
-    .tab-content {
-        padding: 12px !important;
-    }
-
-    .info-card {
-        padding: 12px !important;
-    }
-
-    .store-image,
-    .card-image {
-        max-height: 200px !important;
-    }
-
-    .filter-buttons button {
-        padding: 10px 12px !important;
-        font-size: 13px !important;
+        width: 40px;
+        height: 40px;
     }
 }
-
-/* ========================================
-   怨듯넻 移대뱶 而댄룷?뚰듃 (?뺤궗媛곹삎 湲곕컲)
-   ======================================== */
-.card-square {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.card-square-image {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    background: #f3f4f6;
-}
-
-.card-square-content {
-    padding: 16px;
-}
-
-/* ========================================
-   怨듯넻 ?꾪꽣 而댄룷?뚰듃
-   ======================================== */
-.filter-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin-bottom: 16px;
-}
-
-.filter-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: nowrap;
-}
-
-.filter-item {
-    flex: 1;
-    min-width: 120px;
-}
-
-.filter-item label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #666;
-    margin-bottom: 6px;
-}
-
-.filter-item input,
-.filter-item select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.filter-buttons button {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.btn-search {
-    background: #667eea;
-    color: white;
-    border: none;
-}
-
-.btn-reset {
-    background: #f3f4f6;
-    color: #666;
-    border: 1px solid #e0e0e0;
-}
-
-
-
-

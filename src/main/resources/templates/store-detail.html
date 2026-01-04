@@ -714,23 +714,200 @@
             }
 
             @media (max-width: 768px) {
+                .store-detail-wrapper {
+                    padding: 16px 12px;
+                }
+
                 .store-header {
                     grid-template-columns: 1fr;
-                    gap: 32px;
-                    padding: 32px;
+                    gap: 24px;
+                    padding: 20px 16px;
                 }
 
                 .store-name {
-                    font-size: 32px;
+                    font-size: 24px;
                 }
 
                 .store-description {
-                    font-size: 18px;
+                    font-size: 16px;
+                }
+
+                .image-slider {
+                    aspect-ratio: 1 / 1;
+                    max-height: 300px;
+                }
+
+                .store-details-section,
+                .reviews-section {
+                    padding: 24px 16px;
+                    border-radius: 16px;
+                }
+
+                .section-title {
+                    font-size: 20px;
+                }
+
+                .reviews-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+
+                .reviews-grid {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+
+                .review-card {
+                    padding: 16px;
+                }
+
+                /* 리뷰 모달 반응형 */
+                .review-modal {
+                    width: calc(100% - 24px);
+                    max-width: none;
+                    margin: 12px;
+                    padding: 24px 20px;
+                    border-radius: 16px;
+                    max-height: calc(100vh - 24px);
+                }
+
+                .review-modal-title {
+                    font-size: 20px;
+                    margin-bottom: 24px;
+                }
+
+                .rating-select {
+                    gap: 4px;
+                }
+
+                .rating-star {
+                    width: 32px;
+                    height: 32px;
+                }
+
+                .review-form-field {
+                    margin-bottom: 16px;
+                }
+
+                .review-form-label {
+                    font-size: 13px;
+                    margin-bottom: 6px;
+                }
+
+                .review-form-input {
+                    padding: 12px 14px;
+                    font-size: 16px;
+                }
+
+                .review-form-textarea {
+                    min-height: 100px;
+                }
+
+                .review-modal-actions {
+                    margin-top: 24px;
+                    gap: 10px;
+                }
+
+                .btn-modal {
+                    padding: 12px;
+                    font-size: 15px;
                 }
 
                 .flatpickr-calendar {
                     width: 100% !important;
                     max-width: 300px !important;
+                }
+
+                /* 슬라이더 버튼 */
+                .slider-btn {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 18px;
+                }
+
+                .slider-btn-prev {
+                    left: 8px;
+                }
+
+                .slider-btn-next {
+                    right: 8px;
+                }
+
+                /* 찜하기 버튼 */
+                .favorite-btn {
+                    width: 40px;
+                    height: 40px;
+                    top: 12px;
+                    right: 12px;
+                }
+
+                .favorite-btn svg {
+                    width: 20px;
+                    height: 20px;
+                }
+
+                .favorite-count {
+                    top: 12px;
+                    right: 60px;
+                    padding: 6px 12px;
+                    font-size: 12px;
+                }
+
+                /* 예약 폼 */
+                .select-field {
+                    padding: 12px 14px;
+                    font-size: 16px;
+                }
+
+                .btn-reserve {
+                    padding: 14px;
+                    font-size: 15px;
+                }
+
+                /* 노쇼 방지금 안내 */
+                #depositInfo {
+                    padding: 14px;
+                }
+
+                #depositInfo p {
+                    font-size: 13px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .store-detail-wrapper {
+                    padding: 12px 8px;
+                }
+
+                .store-header {
+                    padding: 16px 12px;
+                }
+
+                .store-name {
+                    font-size: 20px;
+                }
+
+                .store-description {
+                    font-size: 14px;
+                }
+
+                .image-slider {
+                    max-height: 250px;
+                }
+
+                .store-details-section,
+                .reviews-section {
+                    padding: 20px 14px;
+                }
+
+                .review-modal {
+                    padding: 20px 16px;
+                }
+
+                .rating-star {
+                    width: 28px;
+                    height: 28px;
                 }
             }
         </style>
@@ -1367,19 +1544,18 @@
                     productName: `${storeName} 예약 노쇼방지금`,
                     buyerName: user.name || '고객',
                     buyerEmail: user.email || '',
-                    buyerTel: user.phone || ''
+                    buyerTel: user.phone || '',
+                    redirectToResult: true  // 결과 페이지로 자동 리다이렉트
                 };
 
                 console.log('결제 요청:', paymentOptions);
 
-                const result = await payWithKakaoPay(paymentOptions);
+                // payment.js의 payWithKakaoPay가 결과 페이지로 리다이렉트 처리함
+                await payWithKakaoPay(paymentOptions);
 
-                if (result.success) {
-                    alert('예약 및 결제가 완료되었습니다!');
-                    window.location.href = '/user/mypage';
-                }
+                // 리다이렉트되므로 여기까지 도달하지 않음
             } catch (error) {
-                console.error('결제 실패:', error);
+                console.error('결제 처리 중 오류:', error);
 
                 // 결제 실패/취소 시 예약도 취소
                 try {
@@ -1391,7 +1567,8 @@
                     console.error('예약 취소 실패:', cancelError);
                 }
 
-                alert('결제가 취소되어 예약이 완료되지 않았습니다.\n다시 시도해주세요.');
+                // payment.js에서 이미 결과 페이지로 리다이렉트하므로
+                // 여기서는 추가 처리하지 않음
             }
         }
 

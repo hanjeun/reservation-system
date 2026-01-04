@@ -39,12 +39,21 @@ async function initPortone() {
  * @param {string} options.buyerName - 구매자 이름
  * @param {string} options.buyerEmail - 구매자 이메일
  * @param {string} options.buyerTel - 구매자 전화번호
+ * @param {boolean} options.redirectToResult - 결과 페이지로 리다이렉트 여부 (기본: true)
  * @returns {Promise} 결제 결과
  */
 async function requestPayment(options) {
     await initPortone();
 
-    const { reservationId, amount, productName, buyerName, buyerEmail, buyerTel } = options;
+    const { 
+        reservationId, 
+        amount, 
+        productName, 
+        buyerName, 
+        buyerEmail, 
+        buyerTel,
+        redirectToResult = true  // 기본적으로 결과 페이지로 이동
+    } = options;
 
     try {
         // 1. 서버에서 결제 준비 (merchant_uid 생성)
@@ -101,35 +110,81 @@ async function requestPayment(options) {
 
                         if (verifyResponse.ok) {
                             const verifyData = await verifyResponse.json();
-                            resolve({
-                                success: true,
-                                message: '결제가 완료되었습니다.',
-                                data: verifyData
-                            });
+                            
+                            // 결과 페이지로 리다이렉트
+                            if (redirectToResult) {
+                                const resultUrl = `/payment/result?success=true` +
+                                    `&merchant_uid=${encodeURIComponent(response.merchant_uid)}` +
+                                    `&reservation_id=${reservationId}` +
+                                    `&message=${encodeURIComponent('결제가 완료되었습니다.')}` +
+                                    `&reason=${encodeURIComponent('노쇼 방지금이 결제되었습니다. 정상 방문 시 전액 환불됩니다.')}`;
+                                window.location.href = resultUrl;
+                            } else {
+                                resolve({
+                                    success: true,
+                                    message: '결제가 완료되었습니다.',
+                                    data: verifyData
+                                });
+                            }
+                        } else {
+                            const errorText = await verifyResponse.text();
+                            
+                            if (redirectToResult) {
+                                const resultUrl = `/payment/failed` +
+                                    `?merchant_uid=${encodeURIComponent(response.merchant_uid)}` +
+                                    `&error_msg=${encodeURIComponent('결제 검증에 실패했습니다.')}`;
+                                window.location.href = resultUrl;
+                            } else {
+                                reject({
+                                    success: false,
+                                    message: '결제 검증에 실패했습니다.'
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        if (redirectToResult) {
+                            const resultUrl = `/payment/failed` +
+                                `?merchant_uid=${encodeURIComponent(response.merchant_uid)}` +
+                                `&error_msg=${encodeURIComponent('결제 검증 중 오류가 발생했습니다.')}`;
+                            window.location.href = resultUrl;
                         } else {
                             reject({
                                 success: false,
-                                message: '결제 검증에 실패했습니다.'
+                                message: '결제 검증 중 오류가 발생했습니다.',
+                                error: error
                             });
                         }
-                    } catch (error) {
-                        reject({
-                            success: false,
-                            message: '결제 검증 중 오류가 발생했습니다.',
-                            error: error
-                        });
                     }
                 } else {
                     // 결제 실패 또는 취소
-                    reject({
-                        success: false,
-                        message: response.error_msg || '결제가 취소되었습니다.'
-                    });
-
+                    const errorMsg = response.error_msg || '결제가 취소되었습니다.';
+                    const isCancelled = errorMsg.includes('취소') || errorMsg.includes('cancel');
+                    
                     // 서버에서 결제 취소 처리
                     window.fetchWithAuth(`/api/payment/cancel/${prepareData.merchantUid}`, {
                         method: 'POST'
-                    });
+                    }).catch(err => console.log('결제 취소 처리:', err));
+
+                    if (redirectToResult) {
+                        if (isCancelled) {
+                            const resultUrl = `/payment/cancelled` +
+                                `?merchant_uid=${encodeURIComponent(prepareData.merchantUid)}` +
+                                `&reason=${encodeURIComponent(errorMsg)}`;
+                            window.location.href = resultUrl;
+                        } else {
+                            const resultUrl = `/payment/failed` +
+                                `?merchant_uid=${encodeURIComponent(prepareData.merchantUid)}` +
+                                `&error_msg=${encodeURIComponent(errorMsg)}` +
+                                (response.error_code ? `&error_code=${encodeURIComponent(response.error_code)}` : '');
+                            window.location.href = resultUrl;
+                        }
+                    } else {
+                        reject({
+                            success: false,
+                            message: errorMsg,
+                            isCancelled: isCancelled
+                        });
+                    }
                 }
             });
         });

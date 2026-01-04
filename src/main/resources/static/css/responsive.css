@@ -4,109 +4,70 @@
    ============================================ */
 
 /* ========================================
-   공통 카드 컴포넌트 (정사각형 기반)
+   공통 유틸리티
    ======================================== */
-.card-square {
-    background: white;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
 
-.card-square-image {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    background: #f3f4f6;
-}
-
-.card-square-content {
-    padding: 16px;
+/* iOS 줌 방지 - 최소 16px 폰트 */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
 }
 
 /* ========================================
-   공통 필터 컴포넌트
+   태블릿 (1024px 이하)
    ======================================== */
-.filter-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 16px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    margin-bottom: 16px;
-}
+@media (max-width: 1024px) {
+    /* 가게 목록 필터 메뉴 숨김 */
+    .filter-menu {
+        display: none;
+    }
 
-.filter-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
+    .store-list-container {
+        flex-direction: column;
+    }
 
-.filter-item {
-    flex: 1;
-    min-width: 120px;
-}
-
-.filter-item label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: #666;
-    margin-bottom: 6px;
-}
-
-.filter-item input,
-.filter-item select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-.filter-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.filter-buttons button {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.btn-search {
-    background: #667eea;
-    color: white;
-    border: none;
-}
-
-.btn-reset {
-    background: #f3f4f6;
-    color: #666;
-    border: 1px solid #e0e0e0;
+    /* 그리드 2열 */
+    .stores-grid,
+    .reservations-list,
+    .account-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
 }
 
 /* ========================================
    모바일 (768px 이하)
    ======================================== */
 @media (max-width: 768px) {
-    /* 페이지 래퍼 */
+    /* --- 페이지 래퍼 --- */
     .mypage-wrapper,
     .page-wrapper,
     .store-detail-wrapper,
-    .promotion-wrapper {
+    .promotion-wrapper,
+    .store-list-wrapper {
         padding: 16px 12px !important;
     }
 
-    /* 마이페이지 헤더 */
+    /* --- 컨테이너 --- */
+    .mypage-container,
+    .store-list-container,
+    .store-detail-container {
+        padding: 0;
+    }
+
+    /* --- 헤더 섹션 --- */
     .mypage-header {
         padding: 20px 16px !important;
         margin-bottom: 16px !important;
+        border-radius: 16px !important;
     }
 
     .mypage-title {
@@ -114,13 +75,26 @@
         margin-bottom: 16px !important;
     }
 
+    /* --- 사용자 정보 카드 (스와이프) --- */
     .user-info-section {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
+        display: flex !important;
+        gap: 12px !important;
+        overflow-x: auto !important;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 4px 12px !important;
+    }
+
+    .user-info-section::-webkit-scrollbar {
+        display: none;
     }
 
     .info-card {
-        padding: 14px !important;
+        flex: 0 0 85% !important;
+        min-width: 0 !important;
+        padding: 20px !important;
+        scroll-snap-align: start;
     }
 
     .info-label {
@@ -128,15 +102,22 @@
     }
 
     .info-value {
-        font-size: 15px !important;
+        font-size: 16px !important;
     }
 
-    /* 탭 - 가로 스크롤 */
+    /* --- 탭 (가로 스크롤) --- */
+    .tabs-container {
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+
     .tabs {
         display: flex !important;
         overflow-x: auto !important;
+        flex-wrap: nowrap !important;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        scroll-snap-type: x mandatory;
         border-bottom: 1px solid #e0e0e0;
     }
 
@@ -145,158 +126,311 @@
     }
 
     .tab {
-        padding: 12px 16px !important;
+        padding: 14px 18px !important;
         font-size: 14px !important;
         white-space: nowrap !important;
-        flex-shrink: 0 !important;
+        flex: 0 0 auto !important;
+        scroll-snap-align: start;
     }
 
     .tab-content {
         padding: 16px !important;
     }
 
-    /* 필터 - 세로 배치 */
-    .filter-row,
-    .search-filters > div,
-    [style*="display: flex"][style*="gap"] {
-        flex-direction: column !important;
-    }
-
-    .filter-item,
-    .filter-group {
-        width: 100% !important;
-        min-width: 0 !important;
-    }
-
-    /* 날짜 필터 - 가로 배치 유지 */
-    .date-filter,
-    .date-range {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 8px !important;
-    }
-
-    .date-filter input,
-    .date-range input {
-        flex: 1 !important;
-        min-width: 0 !important;
-    }
-
-    /* 버튼 그룹 - 가로 배치 */
-    .filter-buttons {
-        display: flex !important;
-        flex-direction: row !important;
-        gap: 8px !important;
-        margin-top: 8px !important;
-    }
-
-    .filter-buttons button {
-        flex: 1 !important;
-        padding: 12px 16px !important;
-    }
-
-    /* 카드 그리드 - 1열 */
+    /* --- 그리드 (1열) --- */
     .stores-grid,
     .reservations-list,
-    .card-grid,
-    [style*="grid-template-columns"] {
+    .account-grid,
+    .reviews-grid {
         grid-template-columns: 1fr !important;
-        gap: 12px !important;
+        gap: 16px !important;
     }
 
-    /* 카드 이미지 - 정사각형 */
+    /* --- 카드 --- */
+    .store-card,
+    .reservation-card,
+    .account-card,
+    .review-card {
+        padding: 16px !important;
+        border-radius: 12px !important;
+    }
+
+    .account-card {
+        aspect-ratio: auto !important;
+    }
+
+    /* --- 카드 이미지 (정사각형) --- */
     .store-image,
     .store-card-image,
     .card-image {
         aspect-ratio: 1 / 1 !important;
         height: auto !important;
-        max-height: 250px !important;
+        max-height: 220px !important;
+        border-radius: 10px !important;
     }
 
-    /* 카드 액션 버튼 */
+    /* --- 카드 액션 버튼 --- */
     .store-actions,
-    .card-actions {
+    .card-actions,
+    .reservation-actions {
         display: flex !important;
         gap: 8px !important;
+        flex-wrap: wrap;
     }
 
     .store-actions .btn,
-    .card-actions .btn {
+    .card-actions .btn,
+    .reservation-actions .btn,
+    .btn-reservation {
         flex: 1 !important;
-        padding: 10px !important;
+        min-width: calc(50% - 4px);
+        padding: 10px 8px !important;
         font-size: 13px !important;
     }
 
-    /* 빈 상태 아이콘 */
-    .empty-state svg,
-    .empty-state img,
-    [class*="empty"] svg,
-    [class*="empty"] img {
-        width: 64px !important;
-        height: 64px !important;
-        max-width: 64px !important;
+    /* --- 검색/필터 --- */
+    .filter-bar {
+        flex-direction: column !important;
+        gap: 12px !important;
     }
 
-    /* 가게 상세 페이지 */
+    .search-filter {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .sort-filter {
+        width: 100% !important;
+    }
+
+    .sort-filter select {
+        width: 100%;
+    }
+
+    /* --- 빈 상태 --- */
+    .empty-state {
+        padding: 48px 16px !important;
+    }
+
+    .empty-state svg,
+    .empty-state img,
+    .empty-icon {
+        width: 56px !important;
+        height: 56px !important;
+        font-size: 56px !important;
+    }
+
+    .empty-text {
+        font-size: 15px !important;
+    }
+
+    /* --- 폼 요소 --- */
+    .form-field,
+    .filter-item {
+        width: 100% !important;
+    }
+
+    .select-field,
+    .form-input,
+    .filter-input {
+        padding: 12px 14px !important;
+    }
+
+    /* --- 버튼 --- */
+    .btn-reserve,
+    .btn-add-store,
+    .btn-submit {
+        width: 100% !important;
+        padding: 14px !important;
+        font-size: 15px !important;
+    }
+
+    /* --- 모달 공통 --- */
+    .modal-content,
+    .review-modal {
+        width: calc(100% - 24px) !important;
+        max-width: none !important;
+        margin: 12px !important;
+        padding: 24px 20px !important;
+        border-radius: 16px !important;
+        max-height: calc(100vh - 24px) !important;
+    }
+
+    .modal-title,
+    .review-modal-title {
+        font-size: 20px !important;
+    }
+
+    .modal-actions,
+    .review-modal-actions {
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+
+    .btn-modal {
+        flex: 1;
+        padding: 12px !important;
+        font-size: 15px !important;
+    }
+
+    /* --- 가게 상세 페이지 --- */
     .store-header {
         grid-template-columns: 1fr !important;
         gap: 20px !important;
         padding: 20px 16px !important;
     }
 
-    .image-slider {
-        height: 250px !important;
-        aspect-ratio: 1 / 1 !important;
+    .store-name {
+        font-size: 22px !important;
     }
 
-    .store-name,
-    .store-detail-title {
-        font-size: 20px !important;
-    }
-
-    /* 예약 폼 아이콘 */
-    .field-icon,
-    .reservation-form svg,
-    svg[class*="icon"] {
-        width: 20px !important;
-        height: 20px !important;
-        min-width: 20px !important;
-        flex-shrink: 0 !important;
-    }
-
-    .reservation-form input,
-    .reservation-form select {
-        padding: 12px !important;
-        font-size: 16px !important;
-    }
-
-    /* 폼 입력 - iOS 줌 방지 */
-    input, select, textarea {
-        font-size: 16px !important;
-    }
-
-    /* 예약 버튼 */
-    .btn-reserve,
-    .reserve-btn {
-        width: 100% !important;
-        padding: 14px !important;
+    .store-description {
         font-size: 15px !important;
     }
 
-    /* 리뷰 */
-    .review-card {
-        padding: 14px !important;
+    .image-slider {
+        aspect-ratio: 1 / 1 !important;
+        max-height: 280px !important;
     }
 
+    .slider-btn {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 18px !important;
+    }
+
+    .slider-btn-prev {
+        left: 8px !important;
+    }
+
+    .slider-btn-next {
+        right: 8px !important;
+    }
+
+    .favorite-btn {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .favorite-btn svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .store-details-section,
     .reviews-section {
+        padding: 24px 16px !important;
+        border-radius: 16px !important;
+        margin-top: 16px !important;
+    }
+
+    .section-title {
+        font-size: 18px !important;
+    }
+
+    .reviews-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    /* --- 리뷰 모달 --- */
+    .rating-select {
+        gap: 6px !important;
+    }
+
+    .rating-star {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .review-form-field {
+        margin-bottom: 16px !important;
+    }
+
+    .review-form-label {
+        font-size: 13px !important;
+    }
+
+    .review-form-input {
+        padding: 12px 14px !important;
+    }
+
+    .review-form-textarea {
+        min-height: 100px !important;
+    }
+
+    /* --- 결제 결과 페이지 --- */
+    .payment-result-wrapper {
+        padding: 20px 12px !important;
+    }
+
+    .result-container {
+        padding: 28px 20px !important;
+        border-radius: 16px !important;
+    }
+
+    .result-icon {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 28px !important;
+    }
+
+    .result-title {
+        font-size: 20px !important;
+    }
+
+    .result-message {
+        font-size: 14px !important;
+    }
+
+    .result-buttons {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .result-buttons a,
+    .result-buttons button {
+        width: 100% !important;
+    }
+
+    /* --- 커뮤니티 --- */
+    .community-wrapper {
+        padding: 16px 12px !important;
+    }
+
+    .post-card {
         padding: 16px !important;
     }
 
-    /* 모달 */
-    .modal-content {
-        width: 95% !important;
-        margin: 10px !important;
+    /* --- 고객센터 --- */
+    .customer-service-wrapper {
+        padding: 16px 12px !important;
+    }
+
+    .notice-card,
+    .inquiry-card {
+        padding: 16px !important;
+    }
+
+    /* --- 폼 페이지 (로그인, 회원가입) --- */
+    .auth-wrapper {
         padding: 20px 16px !important;
+    }
+
+    .auth-card {
+        padding: 28px 20px !important;
+        border-radius: 16px !important;
+    }
+
+    /* --- 사업자 인증 모달 --- */
+    .business-modal-content {
+        width: calc(100% - 24px) !important;
+        padding: 24px 20px !important;
     }
 }
 
@@ -304,6 +438,14 @@
    작은 모바일 (480px 이하)
    ======================================== */
 @media (max-width: 480px) {
+    /* 페이지 래퍼 */
+    .mypage-wrapper,
+    .store-detail-wrapper,
+    .store-list-wrapper {
+        padding: 12px 8px !important;
+    }
+
+    /* 헤더 */
     .mypage-header {
         padding: 16px 12px !important;
     }
@@ -312,8 +454,9 @@
         font-size: 20px !important;
     }
 
+    /* 탭 */
     .tab {
-        padding: 10px 12px !important;
+        padding: 12px 14px !important;
         font-size: 13px !important;
     }
 
@@ -321,17 +464,106 @@
         padding: 12px !important;
     }
 
+    /* 카드 */
     .info-card {
-        padding: 12px !important;
+        padding: 16px !important;
     }
 
+    .store-card,
+    .reservation-card {
+        padding: 14px !important;
+    }
+
+    /* 이미지 */
     .store-image,
-    .card-image {
+    .image-slider {
         max-height: 200px !important;
     }
 
-    .filter-buttons button {
-        padding: 10px 12px !important;
+    /* 버튼 */
+    .btn,
+    .btn-reservation {
+        padding: 10px 6px !important;
+        font-size: 12px !important;
+    }
+
+    /* 가게 상세 */
+    .store-header {
+        padding: 14px 10px !important;
+    }
+
+    .store-name {
+        font-size: 18px !important;
+    }
+
+    .store-description {
         font-size: 13px !important;
+    }
+
+    .store-details-section,
+    .reviews-section {
+        padding: 18px 12px !important;
+    }
+
+    /* 리뷰 모달 */
+    .review-modal {
+        padding: 20px 14px !important;
+    }
+
+    .rating-star {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    /* 결제 결과 */
+    .result-container {
+        padding: 24px 16px !important;
+    }
+
+    .result-icon {
+        width: 52px !important;
+        height: 52px !important;
+        font-size: 24px !important;
+    }
+
+    .result-title {
+        font-size: 18px !important;
+    }
+}
+
+/* ========================================
+   가로 모드 모바일
+   ======================================== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .image-slider {
+        max-height: 200px !important;
+    }
+
+    .store-image {
+        max-height: 180px !important;
+    }
+
+    .modal-content,
+    .review-modal {
+        max-height: 90vh !important;
+    }
+}
+
+/* ========================================
+   프린트
+   ======================================== */
+@media print {
+    .header,
+    .footer,
+    .tabs,
+    .btn,
+    .modal-overlay {
+        display: none !important;
+    }
+
+    .mypage-wrapper,
+    .store-detail-wrapper {
+        background: white !important;
+        padding: 0 !important;
     }
 }

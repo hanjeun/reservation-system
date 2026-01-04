@@ -21,34 +21,42 @@
                 border-radius: 24px;
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
                 padding: 48px;
-                max-width: 500px;
+                max-width: 520px;
                 width: 100%;
                 text-align: center;
             }
 
             .result-icon {
-                width: 80px;
-                height: 80px;
+                width: 88px;
+                height: 88px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin: 0 auto 24px;
-                font-size: 40px;
+                margin: 0 auto 28px;
+                font-size: 44px;
             }
 
             .result-icon.success {
                 background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                 color: white;
+                box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
             }
 
             .result-icon.fail {
                 background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
                 color: white;
+                box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+            }
+
+            .result-icon.cancel {
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                color: white;
+                box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
             }
 
             .result-title {
-                font-size: 24px;
+                font-size: 26px;
                 font-weight: 700;
                 color: #1e1e1e;
                 margin-bottom: 12px;
@@ -57,22 +65,24 @@
             .result-message {
                 font-size: 16px;
                 color: #666;
-                margin-bottom: 32px;
+                margin-bottom: 28px;
                 line-height: 1.6;
             }
 
+            /* 결제 정보 박스 */
             .payment-info {
                 background: #f8f9fa;
-                border-radius: 12px;
-                padding: 20px;
-                margin-bottom: 32px;
+                border-radius: 16px;
+                padding: 24px;
+                margin-bottom: 28px;
                 text-align: left;
             }
 
             .payment-info-row {
                 display: flex;
                 justify-content: space-between;
-                padding: 8px 0;
+                align-items: center;
+                padding: 12px 0;
                 border-bottom: 1px solid #e0e0e0;
             }
 
@@ -89,8 +99,52 @@
                 color: #1e1e1e;
                 font-weight: 600;
                 font-size: 14px;
+                text-align: right;
+                word-break: break-all;
             }
 
+            .payment-info-value.highlight {
+                color: #667eea;
+                font-size: 16px;
+            }
+
+            /* 사유 박스 */
+            .reason-box {
+                background: #fff8e6;
+                border: 1px solid #ffc107;
+                border-radius: 12px;
+                padding: 16px 20px;
+                margin-bottom: 28px;
+                text-align: left;
+            }
+
+            .reason-box.error {
+                background: #fff5f5;
+                border-color: #fc8181;
+            }
+
+            .reason-box-title {
+                font-size: 13px;
+                font-weight: 600;
+                color: #856404;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .reason-box.error .reason-box-title {
+                color: #c53030;
+            }
+
+            .reason-box-content {
+                font-size: 14px;
+                color: #1e1e1e;
+                line-height: 1.5;
+                word-break: break-word;
+            }
+
+            /* 버튼 영역 */
             .result-buttons {
                 display: flex;
                 gap: 12px;
@@ -107,13 +161,17 @@
                 font-weight: 600;
                 cursor: pointer;
                 text-decoration: none;
-                display: inline-block;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 transition: all 0.3s;
             }
 
             .btn-primary:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+                color: white;
+                text-decoration: none;
             }
 
             .btn-secondary {
@@ -126,21 +184,81 @@
                 font-weight: 600;
                 cursor: pointer;
                 text-decoration: none;
-                display: inline-block;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 transition: all 0.3s;
             }
 
             .btn-secondary:hover {
                 background: #e5e7eb;
+                color: #374151;
+                text-decoration: none;
             }
 
+            /* 모바일 반응형 */
             @media (max-width: 768px) {
                 .payment-result-wrapper {
                     padding: 20px 12px;
+                    min-height: calc(100vh - 160px);
                 }
 
                 .result-container {
                     padding: 32px 20px;
+                    border-radius: 20px;
+                }
+
+                .result-icon {
+                    width: 72px;
+                    height: 72px;
+                    font-size: 36px;
+                    margin-bottom: 24px;
+                }
+
+                .result-title {
+                    font-size: 22px;
+                }
+
+                .result-message {
+                    font-size: 14px;
+                    margin-bottom: 24px;
+                }
+
+                .payment-info {
+                    padding: 20px 16px;
+                    border-radius: 12px;
+                }
+
+                .payment-info-row {
+                    padding: 10px 0;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+
+                .payment-info-value {
+                    text-align: left;
+                }
+
+                .reason-box {
+                    padding: 14px 16px;
+                }
+
+                .result-buttons {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .btn-primary,
+                .btn-secondary {
+                    width: 100%;
+                    padding: 14px 20px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .result-container {
+                    padding: 28px 16px;
                 }
 
                 .result-icon {
@@ -153,17 +271,8 @@
                     font-size: 20px;
                 }
 
-                .result-message {
-                    font-size: 14px;
-                }
-
-                .result-buttons {
-                    flex-direction: column;
-                }
-
-                .btn-primary,
-                .btn-secondary {
-                    width: 100%;
+                .payment-info {
+                    padding: 16px 14px;
                 }
             }
         </style>
@@ -172,16 +281,17 @@
 <body>
 <div class="payment-result-wrapper" layout:fragment="content">
     <div class="result-container">
-        <!-- 성공 -->
+        <!-- 결제 성공 -->
         <th:block th:if="${success}">
             <div class="result-icon success">✓</div>
             <h1 class="result-title">결제 완료</h1>
-            <p class="result-message" th:text="${message}">결제가 완료되었습니다.</p>
+            <p class="result-message" th:text="${message != null ? message : '결제가 성공적으로 완료되었습니다.'}">결제가 완료되었습니다.</p>
 
+            <!-- 결제 정보 -->
             <div class="payment-info" th:if="${payment != null}">
                 <div class="payment-info-row">
                     <span class="payment-info-label">결제 금액</span>
-                    <span class="payment-info-value" th:text="${#numbers.formatInteger(payment.amount, 0, 'COMMA')} + '원'">0원</span>
+                    <span class="payment-info-value highlight" th:text="${#numbers.formatInteger(payment.amount, 0, 'COMMA')} + '원'">0원</span>
                 </div>
                 <div class="payment-info-row" th:if="${payment.productName != null}">
                     <span class="payment-info-label">상품명</span>
@@ -191,23 +301,69 @@
                     <span class="payment-info-label">결제 일시</span>
                     <span class="payment-info-value" th:text="${#temporals.format(payment.paidAt, 'yyyy-MM-dd HH:mm')}">-</span>
                 </div>
+                <div class="payment-info-row" th:if="${payment.pgProvider != null}">
+                    <span class="payment-info-label">결제 수단</span>
+                    <span class="payment-info-value" th:text="${payment.pgProvider == 'kakaopay' ? '카카오페이' : payment.pgProvider}">-</span>
+                </div>
+                <div class="payment-info-row" th:if="${payment.merchantUid != null}">
+                    <span class="payment-info-label">주문 번호</span>
+                    <span class="payment-info-value" th:text="${payment.merchantUid}">-</span>
+                </div>
+            </div>
+
+            <!-- 성공 사유/안내 -->
+            <div class="reason-box" th:if="${reason != null}">
+                <div class="reason-box-title">
+                    <span>ℹ️</span> 안내
+                </div>
+                <div class="reason-box-content" th:text="${reason}">-</div>
             </div>
 
             <div class="result-buttons">
-                <a th:href="@{/mypage}" class="btn-primary">마이페이지</a>
-                <a th:href="@{/stores}" class="btn-secondary">가게 목록</a>
+                <a th:href="@{/user/mypage}" class="btn-primary">마이페이지</a>
+                <a th:href="@{/store/stores}" class="btn-secondary">가게 목록</a>
             </div>
         </th:block>
 
-        <!-- 실패 -->
+        <!-- 결제 실패/취소 -->
         <th:block th:unless="${success}">
-            <div class="result-icon fail">✕</div>
-            <h1 class="result-title">결제 실패</h1>
-            <p class="result-message" th:text="${message}">결제가 취소되었거나 실패했습니다.</p>
+            <!-- 취소인 경우 -->
+            <th:block th:if="${isCancelled != null and isCancelled}">
+                <div class="result-icon cancel">!</div>
+                <h1 class="result-title">결제 취소</h1>
+                <p class="result-message" th:text="${message != null ? message : '결제가 취소되었습니다.'}">결제가 취소되었습니다.</p>
+            </th:block>
+
+            <!-- 실패인 경우 -->
+            <th:block th:if="${isCancelled == null or !isCancelled}">
+                <div class="result-icon fail">✕</div>
+                <h1 class="result-title">결제 실패</h1>
+                <p class="result-message" th:text="${message != null ? message : '결제 처리 중 문제가 발생했습니다.'}">결제가 실패했습니다.</p>
+            </th:block>
+
+            <!-- 실패/취소 정보 -->
+            <div class="payment-info" th:if="${merchantUid != null or errorCode != null}">
+                <div class="payment-info-row" th:if="${merchantUid != null}">
+                    <span class="payment-info-label">주문 번호</span>
+                    <span class="payment-info-value" th:text="${merchantUid}">-</span>
+                </div>
+                <div class="payment-info-row" th:if="${errorCode != null}">
+                    <span class="payment-info-label">오류 코드</span>
+                    <span class="payment-info-value" th:text="${errorCode}">-</span>
+                </div>
+            </div>
+
+            <!-- 실패/취소 사유 -->
+            <div class="reason-box error" th:if="${reason != null or errorMsg != null}">
+                <div class="reason-box-title">
+                    <span>⚠️</span> 사유
+                </div>
+                <div class="reason-box-content" th:text="${reason != null ? reason : errorMsg}">-</div>
+            </div>
 
             <div class="result-buttons">
-                <a th:href="@{/stores}" class="btn-primary">다시 예약하기</a>
-                <a th:href="@{/}" class="btn-secondary">홈으로</a>
+                <a th:href="@{/store/stores}" class="btn-primary">다시 예약하기</a>
+                <a th:href="@{/main}" class="btn-secondary">홈으로</a>
             </div>
         </th:block>
     </div>
