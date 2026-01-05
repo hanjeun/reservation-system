@@ -81,17 +81,37 @@ public class StoreApiController {
             @ModelAttribute StoreUpdateRequest request,
             HttpServletRequest httpRequest
     ) {
+        log.info("📝 가게 수정 요청 시작: storeId={}", id);
+
         Member member = (Member) httpRequest.getAttribute("authenticatedUser");
         if (member == null) {
+            log.warn("❌ 가게 수정 실패: 인증되지 않은 사용자");
             return ResponseEntity.status(401).build();
         }
-        
+
+        log.info("👤 인증된 사용자: memberId={}, email={}", member.getId(), member.getEmail());
+
         if (!member.isBusiness() && !member.isAdmin()) {
+            log.warn("❌ 가게 수정 실패: 권한 없음 (memberId={})", member.getId());
             return ResponseEntity.status(403).build();
         }
-        
-        StoreResponse store = storeService.updateStore(id, request, member);
-        return ResponseEntity.ok(store);
+
+        try {
+            log.info("📋 수정 요청 데이터: name={}, mainImage={}, detailImages={}",
+                request.getName(),
+                request.getMainImage() != null ? request.getMainImage().getOriginalFilename() : "없음",
+                request.getDetailImages() != null ? request.getDetailImages().size() + "개" : "없음");
+
+            StoreResponse store = storeService.updateStore(id, request, member);
+            log.info("✅ 가게 수정 성공: storeId={}", id);
+            return ResponseEntity.ok(store);
+        } catch (IllegalArgumentException e) {
+            log.error("❌ 가게 수정 실패 (IllegalArgumentException): storeId={}, message={}", id, e.getMessage());
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            log.error("❌ 가게 수정 실패 (Exception): storeId={}", id, e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @DeleteMapping("/{id}")

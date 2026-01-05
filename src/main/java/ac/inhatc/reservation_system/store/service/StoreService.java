@@ -122,71 +122,102 @@ public class StoreService {
      */
     @Transactional
     public StoreResponse updateStore(Long id, StoreUpdateRequest request, Member member) {
+        log.info("🔄 StoreService.updateStore 시작: storeId={}", id);
+        
         Store store = storeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    log.error("❌ 가게를 찾을 수 없음: storeId={}", id);
+                    return new IllegalArgumentException("가게를 찾을 수 없습니다.");
+                });
+        
+        log.info("📌 가게 조회 성공: storeId={}, ownerId={}", store.getId(), 
+            store.getOwner() != null ? store.getOwner().getId() : "null");
         
         if (store.getOwner() != null && !store.getOwner().getId().equals(member.getId())) {
+            log.error("❌ 권한 없음: storeOwnerId={}, requestMemberId={}", 
+                store.getOwner().getId(), member.getId());
             throw new IllegalArgumentException("가게를 수정할 권한이 없습니다.");
         }
         
-        if (request.getName() != null) store.setName(request.getName());
-        if (request.getDescription() != null) store.setDescription(request.getDescription());
-        if (request.getAddress() != null) store.setAddress(request.getAddress());
-        if (request.getPhone() != null) store.setPhone(request.getPhone());
-        if (request.getCategory() != null) store.setCategory(request.getCategory());
-        if (request.getNoShowDeposit() != null) store.setNoShowDeposit(request.getNoShowDeposit());
-        if (request.getFullRefundDays() != null) store.setFullRefundDays(request.getFullRefundDays());
-        if (request.getPartialRefundDays() != null) store.setPartialRefundDays(request.getPartialRefundDays());
-        if (request.getPartialRefundRate() != null) store.setPartialRefundRate(request.getPartialRefundRate());
-        
-        if (request.getKeywords() != null) {
-            store.setKeywordList(request.getKeywords());
-        }
-        
-        // 메인 이미지 처리
-        if (request.getMainImage() != null && !request.getMainImage().isEmpty()) {
-            // 새 이미지가 업로드된 경우: 기존 이미지 삭제 후 새 이미지 저장
-            if (store.getMainImageUrl() != null) {
-                fileStorageService.deleteFile(store.getMainImageUrl());
+        try {
+            if (request.getName() != null) store.setName(request.getName());
+            if (request.getDescription() != null) store.setDescription(request.getDescription());
+            if (request.getAddress() != null) store.setAddress(request.getAddress());
+            if (request.getPhone() != null) store.setPhone(request.getPhone());
+            if (request.getCategory() != null) store.setCategory(request.getCategory());
+            if (request.getNoShowDeposit() != null) store.setNoShowDeposit(request.getNoShowDeposit());
+            if (request.getFullRefundDays() != null) store.setFullRefundDays(request.getFullRefundDays());
+            if (request.getPartialRefundDays() != null) store.setPartialRefundDays(request.getPartialRefundDays());
+            if (request.getPartialRefundRate() != null) store.setPartialRefundRate(request.getPartialRefundRate());
+            
+            if (request.getKeywords() != null) {
+                store.setKeywordList(request.getKeywords());
             }
-            store.setMainImageUrl(fileStorageService.storeFile(request.getMainImage()));
-        } else if (request.getExistingMainImageUrl() != null && !request.getExistingMainImageUrl().isEmpty()) {
-            // 기존 이미지 URL 유지
-            store.setMainImageUrl(request.getExistingMainImageUrl());
-        }
-        // 둘 다 없으면 기존 이미지 그대로 유지 (아무 작업 안 함)
+            
+            // 메인 이미지 처리
+            log.info("🖼️ 메인 이미지 처리: newImage={}, existingUrl={}", 
+                request.getMainImage() != null && !request.getMainImage().isEmpty(),
+                request.getExistingMainImageUrl() != null);
+            
+            if (request.getMainImage() != null && !request.getMainImage().isEmpty()) {
+                // 새 이미지가 업로드된 경우: 기존 이미지 삭제 후 새 이미지 저장
+                if (store.getMainImageUrl() != null) {
+                    fileStorageService.deleteFile(store.getMainImageUrl());
+                }
+                String newMainImageUrl = fileStorageService.storeFile(request.getMainImage());
+                log.info("✅ 새 메인 이미지 저장: {}", newMainImageUrl);
+                store.setMainImageUrl(newMainImageUrl);
+            } else if (request.getExistingMainImageUrl() != null && !request.getExistingMainImageUrl().isEmpty()) {
+                // 기존 이미지 URL 유지
+                store.setMainImageUrl(request.getExistingMainImageUrl());
+            }
+            // 둘 다 없으면 기존 이미지 그대로 유지 (아무 작업 안 함)
 
-        // 상세 이미지 처리
-        List<String> finalDetailImages = new ArrayList<>();
+            // 상세 이미지 처리
+            log.info("🖼️ 상세 이미지 처리: existingUrls={}, newFiles={}", 
+                request.getExistingDetailImageUrls() != null ? request.getExistingDetailImageUrls().size() : 0,
+                request.getDetailImages() != null ? request.getDetailImages().size() : 0);
+            
+            List<String> finalDetailImages = new ArrayList<>();
 
-        // 1. 기존에 유지할 이미지들 추가
-        if (request.getExistingDetailImageUrls() != null && !request.getExistingDetailImageUrls().isEmpty()) {
-            finalDetailImages.addAll(request.getExistingDetailImageUrls());
-        }
+            // 1. 기존에 유지할 이미지들 추가
+            if (request.getExistingDetailImageUrls() != null && !request.getExistingDetailImageUrls().isEmpty()) {
+                finalDetailImages.addAll(request.getExistingDetailImageUrls());
+            }
 
-        // 2. 새로 업로드된 이미지들 추가
-        if (request.getDetailImages() != null && !request.getDetailImages().isEmpty()) {
-            for (MultipartFile file : request.getDetailImages()) {
-                if (file != null && !file.isEmpty()) {
-                    finalDetailImages.add(fileStorageService.storeFile(file));
+            // 2. 새로 업로드된 이미지들 추가
+            if (request.getDetailImages() != null && !request.getDetailImages().isEmpty()) {
+                for (MultipartFile file : request.getDetailImages()) {
+                    if (file != null && !file.isEmpty()) {
+                        String newDetailUrl = fileStorageService.storeFile(file);
+                        log.info("✅ 새 상세 이미지 저장: {}", newDetailUrl);
+                        finalDetailImages.add(newDetailUrl);
+                    }
                 }
             }
-        }
 
-        // 3. 삭제된 기존 이미지들 파일 삭제 (기존 목록에 있었으나 새 목록에 없는 것들)
-        List<String> currentDetailImages = store.getDetailImageList();
-        if (currentDetailImages != null) {
-            for (String existingUrl : currentDetailImages) {
-                if (!finalDetailImages.contains(existingUrl)) {
-                    fileStorageService.deleteFile(existingUrl);
+            // 3. 삭제된 기존 이미지들 파일 삭제 (기존 목록에 있었으나 새 목록에 없는 것들)
+            List<String> currentDetailImages = store.getDetailImageList();
+            if (currentDetailImages != null) {
+                for (String existingUrl : currentDetailImages) {
+                    if (!finalDetailImages.contains(existingUrl)) {
+                        log.info("🗑️ 상세 이미지 삭제: {}", existingUrl);
+                        fileStorageService.deleteFile(existingUrl);
+                    }
                 }
             }
-        }
 
-        // 4. 최종 상세 이미지 목록 설정
-        store.setDetailImageList(finalDetailImages);
-        
-        return StoreResponse.from(storeRepository.save(store));
+            // 4. 최종 상세 이미지 목록 설정
+            store.setDetailImageList(finalDetailImages);
+            
+            Store savedStore = storeRepository.save(store);
+            log.info("✅ 가게 수정 완료: storeId={}", savedStore.getId());
+            
+            return StoreResponse.from(savedStore);
+        } catch (Exception e) {
+            log.error("❌ 가게 수정 중 예외 발생: storeId={}", id, e);
+            throw e;
+        }
     }
 
     /**
