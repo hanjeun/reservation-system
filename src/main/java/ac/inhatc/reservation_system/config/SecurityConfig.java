@@ -42,21 +42,8 @@ public class SecurityConfig {
                 // 4. 폼 로그인 비활성화
                 .formLogin(form -> form.disable())
                 
-                // 5. 로그아웃
-                .logout(logout -> logout
-                        // 프론트엔드 handleLogout()에서 호출하는 URL과 일치하는지 확인해야 합니다.
-                        .logoutUrl("/api/auth/logout")
-
-                        // 로그아웃 성공 시 이동할 경로 (예: 메인 페이지)
-                        .logoutSuccessUrl("/main")
-
-                        // 서버 세션 무효화
-                        .invalidateHttpSession(true)
-
-                        // ⭐⭐ JSESSIONID 쿠키 명시적 제거 ⭐⭐
-                        .deleteCookies("JSESSIONID")
-                        .permitAll()
-                )
+                // 5. 로그아웃 비활성화
+                .logout(logout -> logout.disable())
                 
                 // 6. URL별 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
