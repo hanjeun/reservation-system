@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -25,7 +26,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final TokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
-    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -53,9 +53,19 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         log.info("🍪 JWT 쿠키 저장 완료");
 
-        // 4. OAuth2 인증에 사용된 쿠키 정리
-        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
-        log.info("🗑️ OAuth2 인증 쿠키 정리 완료");
+        // 4. OAuth2 로그인에 사용된 세션 무효화 + JSESSIONID 쿠키 삭제
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+            log.info("🗑️ OAuth2 세션 무효화 완료");
+        }
+        
+        // JSESSIONID 쿠키 삭제
+        Cookie jsessionCookie = new Cookie("JSESSIONID", "");
+        jsessionCookie.setPath("/");
+        jsessionCookie.setMaxAge(0);
+        response.addCookie(jsessionCookie);
+        log.info("🗑️ JSESSIONID 쿠키 삭제 완료");
 
         // 5. 메인 페이지로 리다이렉트
         String targetUrl = determineTargetUrl(request, response, authentication);
