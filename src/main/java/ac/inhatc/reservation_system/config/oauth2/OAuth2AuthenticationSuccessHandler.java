@@ -59,6 +59,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // 세션 정리 (OAuth 플로우 완료)
         clearAuthenticationAttributes(request);
 
+        // 세션 무효화 (JWT만 사용하므로 세션 불필요)
+        request.getSession().invalidate();
+
+        // JSESSIONID 쿠키 삭제
+        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+        jsessionCookie.setPath("/");
+        jsessionCookie.setMaxAge(0);
+        response.addCookie(jsessionCookie);
+        log.info("🗑️ 세션 및 JSESSIONID 쿠키 삭제 완료");
+
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
