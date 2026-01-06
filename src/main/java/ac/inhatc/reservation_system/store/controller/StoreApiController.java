@@ -75,7 +75,7 @@ public class StoreApiController {
         return ResponseEntity.ok(store);
     }
 
-    @PutMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = {RequestMethod.PUT, RequestMethod.POST})
     public ResponseEntity<StoreResponse> updateStore(
             @PathVariable Long id,
             @ModelAttribute StoreUpdateRequest request,
