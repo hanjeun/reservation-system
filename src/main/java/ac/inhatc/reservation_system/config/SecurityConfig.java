@@ -3,6 +3,7 @@ package ac.inhatc.reservation_system.config;
 import ac.inhatc.reservation_system.config.jwt.JwtAuthenticationFilter;
 import ac.inhatc.reservation_system.config.jwt.TokenProvider;
 import ac.inhatc.reservation_system.config.oauth2.CustomOAuth2UserService;
+import ac.inhatc.reservation_system.config.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import ac.inhatc.reservation_system.config.oauth2.OAuth2AuthenticationFailureHandler;
 import ac.inhatc.reservation_system.config.oauth2.OAuth2AuthenticationSuccessHandler;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.NullSecurityContextRepository;
 
 @RequiredArgsConstructor
 @Configuration
@@ -26,6 +26,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -36,14 +37,14 @@ public class SecurityConfig {
                 // 2. HTTP Basic 인증 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable())
                 
-                // 3. 세션 설정 - OAuth2 로그인을 위해 IF_REQUIRED로 변경
+                // 3. 세션 설정 - 완전 STATELESS (세션 생성 안함)
                 .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 
-                // 4. 폼 로그인 비활성화 (세션 생성 방지)
+                // 4. 폼 로그인 비활성화
                 .formLogin(form -> form.disable())
                 
-                // 5. 로그아웃 비활성화 (세션 기반 로그아웃 방지)
+                // 5. 로그아웃 비활성화
                 .logout(logout -> logout.disable())
                 
                 // 6. URL별 접근 권한 설정
@@ -57,10 +58,10 @@ public class SecurityConfig {
                         // OAuth2 로그인 관련 (누구나 접근 가능)
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         
-                        // 고객센터 - 정책 페이지만 공개 (공지사항, 문의하기는 로그인 필요)
+                        // 고객센터 - 정책 페이지만 공개
                         .requestMatchers("/customer-service/policy").permitAll()
                         
-                        // 인증 API (누구나 접근 가능) - 로그인/로그아웃
+                        // 인증 API (누구나 접근 가능)
                         .requestMatchers("/api/auth/**").permitAll()
                         
                         // 이메일 인증 API (누구나 접근 가능)
@@ -69,43 +70,44 @@ public class SecurityConfig {
                         // API 토큰 발급 (누구나 접근 가능)
                         .requestMatchers("/api/token").permitAll()
 
-                        // BLUE 서버와 GREEN 서버 확인창은 모두 사용가능
+                        // Health Check (누구나 접근 가능)
                         .requestMatchers("/hc", "/env").permitAll()
                         
-                        // 관리자 전용 페이지 및 API
+                        // 관리자 전용
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/business-verification/admin/**").hasRole("ADMIN")
                         
-                        // 사업자 인증 API - 신청은 로그인한 사용자, 관리는 관리자만
+                        // 사업자 인증 API
                         .requestMatchers("/api/business-verification/submit", "/api/business-verification/my-status", "/api/business-verification/cancel", "/api/business-verification/resign").authenticated()
                         
-                        // 홍보/추천 페이지 (인증 필요 - 일반 사용자는 "추천 가게", 사업자는 "홍보하기")
+                        // 홍보/추천 페이지
                         .requestMatchers("/store/promotion").authenticated()
                         
-                        // 가게 관련 (JWT 인증 필요)
+                        // 가게 관련
                         .requestMatchers("/store/**").authenticated()
                         
-                        // API (JWT 인증 필요)
+                        // API
                         .requestMatchers("/api/**").authenticated()
                         
-                        // 기타 모든 요청 (JWT 인증 필요)
+                        // 기타 모든 요청
                         .anyRequest().authenticated())
                 
-                // 7. OAuth2 로그인 설정
+                // 7. OAuth2 로그인 설정 - 쿠키 기반 Authorization Request Repository 사용
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/user/login")
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                         .failureHandler(oAuth2AuthenticationFailureHandler))
                 
-                // 8. JWT 인증 필터 등록 (가장 중요!)
+                // 8. JWT 인증 필터 등록
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 
                 // 9. 인증 실패 시 예외 처리
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // API 요청인 경우 JSON 응답
                             String requestURI = request.getRequestURI();
                             if (requestURI.startsWith("/api/")) {
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -113,12 +115,10 @@ public class SecurityConfig {
                                 response.getWriter().write("{\"error\":\"인증이 필요합니다\",\"message\":\"" 
                                     + authException.getMessage() + "\"}");
                             } else {
-                                // 일반 페이지 요청인 경우 로그인 페이지로 리다이렉트
                                 response.sendRedirect("/user/login");
                             }
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            // API 요청인 경우 JSON 응답
                             String requestURI = request.getRequestURI();
                             if (requestURI.startsWith("/api/")) {
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -126,7 +126,6 @@ public class SecurityConfig {
                                 response.getWriter().write("{\"error\":\"접근이 거부되었습니다\",\"message\":\"" 
                                     + accessDeniedException.getMessage() + "\"}");
                             } else {
-                                // 일반 페이지 요청인 경우 로그인 페이지로 리다이렉트
                                 response.sendRedirect("/user/login");
                             }
                         }))
@@ -134,18 +133,11 @@ public class SecurityConfig {
                 .build();
     }
 
-    /**
-     * JWT 인증 필터 Bean 등록
-     * 모든 요청에서 쿠키의 access_token을 검증합니다
-     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(tokenProvider);
     }
 
-    /**
-     * 비밀번호 암호화를 위한 Encoder
-     */
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();

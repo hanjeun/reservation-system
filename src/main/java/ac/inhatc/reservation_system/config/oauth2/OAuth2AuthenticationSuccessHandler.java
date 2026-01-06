@@ -25,6 +25,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final TokenProvider tokenProvider;
     private final JwtProperties jwtProperties;
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -36,38 +37,29 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         log.info("✅ OAuth2 로그인 성공 - Email: {}, Provider: {}",
                 member.getEmail(), member.getProvider());
 
-        // 1. Access Token 생성 (기존 메서드 사용)
+        // 1. Access Token 생성
         String accessToken = tokenProvider.generateAccessToken(member);
 
-        // 2. Refresh Token 생성 및 DB 저장 (기존 메서드 사용)
+        // 2. Refresh Token 생성 및 DB 저장
         String refreshToken = tokenProvider.generateRefreshToken(member);
 
         log.info("🎫 JWT 토큰 발급 완료 - Access Token 길이: {}", accessToken.length());
 
-        // 3. 쿠키에 토큰 저장
+        // 3. JWT 쿠키 저장
         addTokenCookie(response, "access_token", accessToken,
                 (int) jwtProperties.getAccessTokenExpiration().toSeconds());
         addTokenCookie(response, "refresh_token", refreshToken,
                 (int) jwtProperties.getRefreshTokenExpiration().toSeconds());
 
-        log.info("🍪 쿠키 저장 완료");
+        log.info("🍪 JWT 쿠키 저장 완료");
 
-        // 4. 메인 페이지로 리다이렉트
+        // 4. OAuth2 인증에 사용된 쿠키 정리
+        httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+        log.info("🗑️ OAuth2 인증 쿠키 정리 완료");
+
+        // 5. 메인 페이지로 리다이렉트
         String targetUrl = determineTargetUrl(request, response, authentication);
         log.info("🔀 리다이렉트: {}", targetUrl);
-
-        // 세션 정리 (OAuth 플로우 완료)
-        clearAuthenticationAttributes(request);
-
-        // 세션 무효화 (JWT만 사용하므로 세션 불필요)
-        request.getSession().invalidate();
-
-        // JSESSIONID 쿠키 삭제
-        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
-        jsessionCookie.setPath("/");
-        jsessionCookie.setMaxAge(0);
-        response.addCookie(jsessionCookie);
-        log.info("🗑️ 세션 및 JSESSIONID 쿠키 삭제 완료");
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
@@ -82,7 +74,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         cookie.setMaxAge(maxAge);
         cookie.setSecure(false);  // 개발환경: false, 프로덕션(HTTPS): true
         response.addCookie(cookie);
-        log.debug("🍪 쿠키 추가: {}={}", name, value.substring(0, Math.min(20, value.length())) + "...");
     }
 
     /**
