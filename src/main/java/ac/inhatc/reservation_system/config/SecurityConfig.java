@@ -42,7 +42,7 @@ public class SecurityConfig {
                 // 4. 폼 로그인 비활성화
                 .formLogin(form -> form.disable())
                 
-                // 5. 로그아웃 비활성화
+                // 5. 로그아웃 비활성화 (확인바람)
                 .logout(logout -> logout.disable())
                 
                 // 6. URL별 접근 권한 설정
