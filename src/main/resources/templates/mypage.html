@@ -7,6 +7,10 @@
     <meta charset="UTF-8">
     <th:block layout:fragment="custom-css">
         <style>
+            /* =====================================================
+               마이페이지 고유 스타일 (공통 스타일은 components.css)
+               ===================================================== */
+
             .mypage-wrapper {
                 background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
                 min-height: calc(100vh - 200px);
@@ -70,6 +74,7 @@
                 word-break: break-all;
             }
 
+            /* 탭 스타일 */
             .tabs-container {
                 background-color: white;
                 border-radius: 24px;
@@ -107,240 +112,14 @@
 
             .tab-content {
                 display: none;
-                padding: 48px;
+                padding: 32px;
             }
 
             .tab-content.active {
                 display: block;
             }
 
-            .stores-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 24px;
-            }
-
-            .store-card {
-                background: white;
-                border: 2px solid #e0e0e0;
-                border-radius: 16px;
-                padding: 20px;
-                transition: all 0.3s;
-            }
-
-            .store-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-                border-color: #667eea;
-            }
-
-            .store-image {
-                width: 100%;
-                height: 200px;
-                background: linear-gradient(135deg, #E3E3E3 0%, #F5F5F5 100%);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-bottom: 16px;
-                overflow: hidden;
-                font-size: 48px;
-            }
-
-            .store-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .store-name {
-                font-size: 18px;
-                font-weight: 600;
-                color: #1E1E1E;
-                margin-bottom: 8px;
-            }
-
-            .store-category {
-                font-size: 14px;
-                color: #666;
-                margin-bottom: 12px;
-            }
-
-            .store-actions {
-                display: flex;
-                gap: 12px;
-                margin-top: 16px;
-            }
-
-            .btn {
-                flex: 1;
-                padding: 10px;
-                border-radius: 8px;
-                border: none;
-                font-size: 14px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-
-            .btn-edit {
-                background: #667eea;
-                color: white;
-            }
-
-            .btn-edit:hover {
-                background: #5568d3;
-            }
-
-            .btn-delete {
-                background: #e53e3e;
-                color: white;
-            }
-
-            .btn-delete:hover {
-                background: #c53030;
-            }
-
-            .reservations-list {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 24px;
-            }
-
-            .reservation-card {
-                background: white;
-                border: 2px solid #e0e0e0;
-                border-radius: 16px;
-                padding: 24px;
-                transition: all 0.3s;
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-                min-height: 300px;
-                position: relative;
-                /* 한글 깨짐 방지 */
-                word-break: keep-all;
-                overflow-wrap: break-word;
-            }
-
-            .reservation-card:hover {
-                border-color: #667eea;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                transform: translateY(-4px);
-            }
-
-            .reservation-info {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                flex: 1;
-                overflow: visible;
-                min-height: 0;
-            }
-
-            .reservation-store {
-                font-size: 18px;
-                font-weight: 600;
-                color: #1E1E1E;
-                margin-bottom: 4px;
-                word-break: keep-all;
-                overflow-wrap: break-word;
-            }
-
-            .reservation-detail {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 14px;
-                color: #666;
-                word-break: keep-all;
-                overflow-wrap: break-word;
-                min-height: 1.5em;
-            }
-
-            .reservation-detail-icon {
-                font-size: 18px;
-                flex-shrink: 0;
-            }
-
-            .reservation-status {
-                display: inline-block;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: 600;
-                margin-top: 8px;
-                word-break: keep-all;
-                flex-shrink: 0;
-            }
-
-            .status-pending {
-                background: #fff3cd;
-                color: #856404;
-            }
-
-            .status-confirmed {
-                background: #d4edda;
-                color: #155724;
-            }
-
-            .status-cancelled {
-                background: #f8d7da;
-                color: #721c24;
-            }
-
-            .status-rejected {
-                background: #f5c6cb;
-                color: #721c24;
-            }
-
-            .status-completed {
-                background: #e3f2fd;
-                color: #1565c0;
-            }
-
-            .btn-complete {
-                background: #1565c0;
-                color: white;
-            }
-
-            .btn-complete:hover {
-                background: #0d47a1;
-            }
-
-            .btn-review {
-                background: #ff9800;
-                color: white;
-            }
-
-            .btn-review:hover {
-                background: #f57c00;
-            }
-
-            .btn-approve {
-                background: #28a745;
-                color: white;
-            }
-
-            .btn-approve:hover {
-                background: #218838;
-            }
-
-            .btn-reject {
-                background: #ffc107;
-                color: #000;
-            }
-
-            .btn-reject:hover {
-                background: #e0a800;
-            }
-
-            .reservation-actions {
-                display: flex;
-                gap: 8px;
-                margin-top: auto;
-            }
-
+            /* 예약 카드 버튼 스타일 */
             .btn-reservation {
                 flex: 1;
                 padding: 10px;
@@ -353,180 +132,27 @@
                 white-space: nowrap;
             }
 
-            .btn-edit-reservation {
-                background: #667eea;
-                color: white;
-            }
+            .btn-edit { background: #667eea; color: white; }
+            .btn-edit:hover { background: #5568d3; }
+            .btn-delete { background: #e53e3e; color: white; }
+            .btn-delete:hover { background: #c53030; }
+            .btn-complete { background: #1565c0; color: white; }
+            .btn-complete:hover { background: #0d47a1; }
+            .btn-review { background: #ff9800; color: white; }
+            .btn-review:hover { background: #f57c00; }
+            .btn-approve { background: #28a745; color: white; }
+            .btn-approve:hover { background: #218838; }
+            .btn-reject { background: #ffc107; color: #000; }
+            .btn-reject:hover { background: #e0a800; }
+            .btn-edit-reservation { background: #667eea; color: white; }
+            .btn-edit-reservation:hover { background: #5568d3; }
+            .btn-cancel-reservation { background: #e53e3e; color: white; }
+            .btn-cancel-reservation:hover { background: #c53030; }
+            .btn-cancel-reservation:disabled { background: #ccc; cursor: not-allowed; }
+            .btn-delete-reservation { background: #6c757d; color: white; }
+            .btn-delete-reservation:hover { background: #5a6268; }
 
-            .btn-edit-reservation:hover {
-                background: #5568d3;
-            }
-
-            .btn-cancel-reservation {
-                background: #e53e3e;
-                color: white;
-            }
-
-            .btn-cancel-reservation:hover {
-                background: #c53030;
-            }
-
-            .btn-cancel-reservation:disabled {
-                background: #ccc;
-                cursor: not-allowed;
-            }
-
-            .btn-delete-reservation {
-                background: #6c757d;
-                color: white;
-            }
-
-            .btn-delete-reservation:hover {
-                background: #5a6268;
-            }
-
-            .empty-state {
-                text-align: center;
-                padding: 20px;
-                color: #999;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .empty-icon {
-                font-size: 56px;
-                margin-bottom: 12px;
-                line-height: 1;
-            }
-
-            .empty-text {
-                font-size: 16px;
-                margin: 0;
-            }
-
-            .btn-add-store {
-                display: inline-block;
-                padding: 14px 28px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border-radius: 12px;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.3s;
-            }
-
-            .btn-add-store:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-                text-decoration: none;
-                color: white;
-            }
-
-            .danger-zone {
-                background: #fff5f5;
-                border: 2px solid #feb2b2;
-                border-radius: 16px;
-                padding: 32px;
-            }
-
-            .danger-title {
-                font-size: 20px;
-                font-weight: 600;
-                color: #e53e3e;
-                margin-bottom: 16px;
-            }
-
-            .danger-description {
-                font-size: 14px;
-                color: #666;
-                margin-bottom: 24px;
-                line-height: 1.6;
-            }
-
-            /* 계정 관리 그리드 */
-            .account-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 24px;
-            }
-
-            .account-card {
-                background: white;
-                border: 2px solid #e0e0e0;
-                border-radius: 16px;
-                padding: 24px;
-                transition: all 0.3s;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                gap: 12px;
-            }
-
-            .account-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-
-            .account-card.danger {
-                border-color: #ffebee;
-            }
-
-            .account-card.danger:hover {
-                border-color: #ffcdd2;
-            }
-
-            .account-card-icon {
-                font-size: 64px;
-            }
-
-            .account-card-title {
-                font-size: 20px;
-                font-weight: 600;
-                color: #1E1E1E;
-            }
-
-            .account-card-description {
-                font-size: 14px;
-                color: #666;
-                line-height: 1.5;
-            }
-
-            .account-card-button {
-                width: 100%;
-                padding: 12px 24px;
-                border-radius: 8px;
-                border: none;
-                font-size: 16px;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s;
-            }
-
-            .btn-primary {
-                background: #667eea;
-                color: white;
-            }
-
-            .btn-primary:hover {
-                background: #5568d3;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            }
-
-            .btn-danger {
-                background: #e53e3e;
-                color: white;
-            }
-
-            .btn-danger:hover {
-                background: #c53030;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
-            }
-
+            /* 모바일 반응형 */
             @media (max-width: 768px) {
                 .mypage-wrapper {
                     padding: 20px 12px;
@@ -543,32 +169,31 @@
                 }
 
                 .user-info-section {
-                    gap: 12px !important;
-                    padding: 0 4px 12px !important;
+                    gap: 12px;
+                    padding: 0 4px 12px;
                 }
 
                 .info-card {
-                    flex: 0 0 85% !important;
-                    min-width: 0 !important;
-                    padding: 24px !important;
+                    flex: 0 0 85%;
+                    min-width: 0;
+                    padding: 20px;
                 }
 
                 .info-label {
-                    font-size: 13px !important;
+                    font-size: 13px;
                 }
 
                 .info-value {
-                    font-size: 18px !important;
+                    font-size: 18px;
                 }
 
                 .tabs {
-                    display: flex !important;
-                    overflow-x: auto !important;
-                    flex-wrap: nowrap !important;
+                    display: flex;
+                    overflow-x: auto;
+                    flex-wrap: nowrap;
                     -webkit-overflow-scrolling: touch;
                     scrollbar-width: none;
                     scroll-snap-type: x mandatory;
-                    gap: 0;
                 }
 
                 .tabs::-webkit-scrollbar {
@@ -576,185 +201,29 @@
                 }
 
                 .tab {
-                    padding: 16px 20px !important;
-                    font-size: 15px !important;
-                    white-space: nowrap !important;
-                    flex: 0 0 auto !important;
+                    padding: 16px 20px;
+                    font-size: 15px;
+                    white-space: nowrap;
+                    flex: 0 0 auto;
                     scroll-snap-align: start;
                 }
 
                 .tab-content {
-                    padding: 16px !important;
+                    padding: 16px;
                 }
 
-                .stores-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .reservations-list {
-                    grid-template-columns: 1fr;
-                }
-
-                .account-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .account-card {
-                    min-height: auto;
-                    padding: 24px;
-                }
-
-                /* 모바일 empty-state 조정 */
-                .empty-state {
-                    padding: 30px 16px !important;
-                }
-
-                .empty-icon {
-                    font-size: 48px !important;
-                    margin-bottom: 10px !important;
-                }
-
-                .empty-text {
-                    font-size: 14px !important;
-                }
-
-                /* 모바일 계정관리 아이콘 조정 */
-                .account-card-icon {
-                    font-size: 48px !important;
-                }
-
-                /* 검색 필터 모바일 최적화 - 강제 적용 */
-                .search-section {
-                    margin-bottom: 16px !important;
-                }
-
+                /* 검색 필터 모바일 최적화 */
                 .search-section > div {
-                    display: flex !important;
-                    flex-direction: column !important;
-                    gap: 12px !important;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
                 }
 
                 .search-section > div > div {
-                    flex: none !important;
-                    width: 100% !important;
-                    min-width: 0 !important;
+                    flex: none;
+                    width: 100%;
+                    min-width: 0;
                 }
-
-                /* 날짜 + 버튼 행 */
-                .search-section > div:last-child {
-                    display: grid !important;
-                    grid-template-columns: 1fr 1fr !important;
-                    gap: 10px !important;
-                }
-
-                .search-section > div:last-child > div:last-child {
-                    grid-column: 1 / -1 !important;
-                    display: flex !important;
-                    flex-direction: row !important;
-                    gap: 8px !important;
-                }
-
-                .search-section > div:last-child > div:last-child button {
-                    flex: 1 !important;
-                }
-
-                .search-input,
-                .filter-input {
-                    padding: 12px !important;
-                    font-size: 16px !important;
-                }
-
-                .info-card {
-                    padding: 16px;
-                }
-
-                .info-label {
-                    font-size: 12px;
-                }
-
-                .info-value {
-                    font-size: 16px;
-                }
-
-                /* 버튼 모바일 최적화 */
-                .btn {
-                    padding: 8px 12px;
-                    font-size: 13px;
-                }
-
-                /* 모달 모바일 최적화 */
-                .modal-content {
-                    border-radius: 12px;
-                    margin: 10px;
-                }
-
-                .modal-header {
-                    padding: 16px;
-                }
-
-                .modal-body {
-                    padding: 16px;
-                }
-            }
-
-            /* 모달 스타일 */
-            .modal-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 9999;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 20px;
-            }
-
-            .modal-content {
-                background: white;
-                border-radius: 16px;
-                width: 100%;
-                max-height: 90vh;
-                overflow-y: auto;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            }
-
-            .modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 20px 24px;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            .modal-header h3 {
-                font-size: 20px;
-                font-weight: 600;
-                margin: 0;
-            }
-
-            .modal-close {
-                background: none;
-                border: none;
-                font-size: 28px;
-                cursor: pointer;
-                color: #666;
-                transition: all 0.3s;
-            }
-
-            .modal-close:hover {
-                color: #e53e3e;
-            }
-
-            .modal-body {
-                padding: 24px;
-            }
-
-            .modal-footer {
-                padding: 16px 24px;
-                border-top: 1px solid #e0e0e0;
             }
         </style>
     </th:block>
@@ -1115,7 +584,7 @@
                             <div class="empty-state">
                                 <div class="empty-icon">🏪</div>
                                 <div class="empty-text">등록한 가게가 없습니다</div>
-                                <a href="/store/register" class="btn-add-store">가게 등록하기</a>
+                                <a href="/store/register" class="btn btn-gradient">가게 등록하기</a>
                             </div>
                         `;
                     } else {
@@ -1181,7 +650,7 @@
                     <div class="empty-state">
                         <div class="empty-icon">❤️</div>
                         <div class="empty-text">찜한 가게가 없습니다</div>
-                        <a href="/store/list" class="btn-add-store">가게 둘러보기</a>
+                        <a href="/store/list" class="btn btn-gradient">가게 둘러보기</a>
                     </div>
                 `;
                 return;
