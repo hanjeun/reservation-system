@@ -104,6 +104,7 @@ public class AuthApiController {
             log.warn("로그아웃 중 토큰 삭제 실패: {}", e.getMessage());
         }
 
+        // JWT 토큰 쿠키 삭제
         Cookie accessCookie = new Cookie("access_token", null);
         accessCookie.setMaxAge(0);
         accessCookie.setPath("/");
@@ -115,6 +116,15 @@ public class AuthApiController {
         refreshCookie.setPath("/");
         refreshCookie.setHttpOnly(true);
         response.addCookie(refreshCookie);
+
+        // JSESSIONID 쿠키 삭제
+        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+        jsessionCookie.setMaxAge(0);
+        jsessionCookie.setPath("/");
+        jsessionCookie.setHttpOnly(true);
+        response.addCookie(jsessionCookie);
+
+        log.info("🚪 로그아웃 완료 - 모든 인증 쿠키 삭제됨");
 
         return ResponseEntity.ok(Map.of("success", true));
     }

@@ -387,17 +387,18 @@
 
             .empty-state {
                 text-align: center;
-                padding: 80px 20px;
+                padding: 40px 20px;
                 color: #999;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                min-height: 200px;
             }
 
             .empty-icon {
                 font-size: 64px;
-                margin-bottom: 20px;
+                margin-bottom: 16px;
             }
 
             .empty-text {
@@ -460,10 +461,10 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
                 text-align: center;
-                gap: 20px;
-                aspect-ratio: 1;
+                gap: 16px;
+                min-height: 280px;
             }
 
             .account-card:hover {
@@ -600,7 +601,7 @@
                 }
 
                 .account-card {
-                    aspect-ratio: auto;
+                    min-height: auto;
                     padding: 24px;
                 }
 
