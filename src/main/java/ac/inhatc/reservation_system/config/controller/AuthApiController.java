@@ -124,7 +124,17 @@ public class AuthApiController {
         jsessionCookie.setHttpOnly(true);
         response.addCookie(jsessionCookie);
 
-        log.info("🚪 로그아웃 완료 - 모든 인증 쿠키 삭제됨");
+        // 세션 무효화
+        try {
+            request.getSession(false);
+            if (request.getSession(false) != null) {
+                request.getSession().invalidate();
+            }
+        } catch (Exception e) {
+            log.warn("세션 무효화 실패: {}", e.getMessage());
+        }
+
+        log.info("🚪 로그아웃 완료 - 모든 인증 쿠키 및 세션 삭제됨");
 
         return ResponseEntity.ok(Map.of("success", true));
     }
