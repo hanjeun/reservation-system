@@ -440,41 +440,6 @@
                         showBrowserGuideModal(browserInfo.browser);
                     });
 
-                    // 구글 버튼에 시각적 경고 추가
-                    googleLoginBtn.style.opacity = '0.6';
-                    googleLoginBtn.style.position = 'relative';
-
-                    // 경고 배지 추가
-                    const warningBadge = document.createElement('div');
-                    warningBadge.innerHTML = '⚠️';
-                    warningBadge.style.cssText = `
-                        position: absolute;
-                        top: -5px;
-                        right: -5px;
-                        background: #ff5722;
-                        color: white;
-                        border-radius: 50%;
-                        width: 24px;
-                        height: 24px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 14px;
-                        animation: pulse 2s infinite;
-                    `;
-                    googleLoginBtn.style.position = 'relative';
-                    googleLoginBtn.appendChild(warningBadge);
-
-                    // 펄스 애니메이션 추가
-                    const style = document.createElement('style');
-                    style.textContent = `
-                        @keyframes pulse {
-                            0%, 100% { transform: scale(1); }
-                            50% { transform: scale(1.1); }
-                        }
-                    `;
-                    document.head.appendChild(style);
-
                     // 버튼 아래 경고 메시지 추가
                     const warningMsg = document.createElement('div');
                     warningMsg.className = 'alert alert-warning mt-2';
