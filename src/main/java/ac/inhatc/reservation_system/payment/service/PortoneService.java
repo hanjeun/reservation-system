@@ -97,13 +97,15 @@ public class PortoneService {
      * 결제 취소 (환불)
      */
     public PortonePaymentResponse.Response cancelPayment(String impUid, Integer amount, String reason) {
+        log.info("🔄 포트원 환불 요청 시작 - impUid: {}, amount: {}, reason: {}", impUid, amount, reason);
+
         String accessToken = getAccessToken();
         String url = PORTONE_API_URL + "/payments/cancel";
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("imp_uid", impUid);
         requestBody.put("reason", reason);
-        
+
         if (amount != null) {
             requestBody.put("amount", amount);  // 부분 취소 시
         }
@@ -115,18 +117,27 @@ public class PortoneService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         try {
+            log.info("📡 포트원 API 요청 - URL: {}, impUid: {}", url, impUid);
+
             ResponseEntity<PortonePaymentResponse> response = restTemplate.exchange(
                     url, HttpMethod.POST, entity, PortonePaymentResponse.class);
 
+            log.info("📨 포트원 API 응답 - status: {}, body: {}",
+                    response.getStatusCode(), response.getBody());
+
             if (response.getBody() != null && response.getBody().getCode() == 0) {
+                log.info("✅ 환불 성공 - impUid: {}, amount: {}", impUid, amount);
                 return response.getBody().getResponse();
             } else {
-                log.error("결제 취소 실패: {}", response.getBody() != null ? response.getBody().getMessage() : "Unknown error");
-                throw new RuntimeException("결제 취소 실패: " + (response.getBody() != null ? response.getBody().getMessage() : "Unknown error"));
+                String errorMsg = response.getBody() != null ? response.getBody().getMessage() : "Unknown error";
+                log.error("❌ 포트원 환불 실패 - code: {}, message: {}",
+                        response.getBody() != null ? response.getBody().getCode() : "null",
+                        errorMsg);
+                throw new RuntimeException("결제 취소 실패: " + errorMsg);
             }
         } catch (Exception e) {
-            log.error("결제 취소 오류: {}", e.getMessage());
-            throw new RuntimeException("결제 취소 오류", e);
+            log.error("❌ 포트원 API 호출 오류 - impUid: {}, error: {}", impUid, e.getMessage(), e);
+            throw new RuntimeException("결제 취소 오류: " + e.getMessage(), e);
         }
     }
 

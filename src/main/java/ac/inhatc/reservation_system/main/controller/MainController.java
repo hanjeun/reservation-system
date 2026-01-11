@@ -15,6 +15,13 @@ public class MainController {
     public String mainForm() {
         return "main-page.html";
     }
-}
 
+    /**
+     * 인앱 브라우저 안내 페이지
+     */
+    @GetMapping("/browser-guide")
+    public String browserGuide() {
+        return "browser-guide";
+    }
+}
 

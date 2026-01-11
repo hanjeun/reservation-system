@@ -282,6 +282,128 @@
     </div>
 
     <script>
+        // ========== 인앱 브라우저 감지 및 구글 로그인 차단 ==========
+        function isInAppBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+
+            // 카카오톡 인앱 브라우저
+            if (ua.match(/KAKAOTALK/i)) return { isInApp: true, browser: '카카오톡' };
+
+            // 네이버 앱 인앱 브라우저
+            if (ua.match(/NAVER/i)) return { isInApp: true, browser: '네이버' };
+
+            // 라인 인앱 브라우저
+            if (ua.match(/Line/i)) return { isInApp: true, browser: '라인' };
+
+            // 페이스북 인앱 브라우저
+            if (ua.match(/FBAN|FBAV/i)) return { isInApp: true, browser: '페이스북' };
+
+            // 인스타그램 인앱 브라우저
+            if (ua.match(/Instagram/i)) return { isInApp: true, browser: '인스타그램' };
+
+            return { isInApp: false, browser: null };
+        }
+
+        function showBrowserGuideModal(browserName) {
+            const modalHtml = `
+                <div id="browserGuideModal" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.85);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    animation: fadeIn 0.3s ease;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 35px;
+                        border-radius: 20px;
+                        max-width: 90%;
+                        width: 420px;
+                        text-align: center;
+                        animation: slideUp 0.4s ease;
+                    ">
+                        <div style="font-size: 56px; margin-bottom: 20px;">🌐</div>
+                        <h3 style="margin-bottom: 20px; color: #333; font-size: 22px; font-weight: 700;">
+                            외부 브라우저에서 열어주세요
+                        </h3>
+                        <div style="
+                            background: #fff3cd;
+                            border: 1px solid #ffc107;
+                            border-radius: 10px;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                        ">
+                            <p style="color: #856404; margin: 0; font-size: 14px; font-weight: 600;">
+                                ⚠️ ${browserName}에서는 구글 로그인이 제한됩니다
+                            </p>
+                        </div>
+                        <p style="color: #666; line-height: 1.7; margin-bottom: 25px; font-size: 15px;">
+                            보안 정책상 인앱 브라우저에서는<br>
+                            구글 로그인을 사용할 수 없습니다.
+                        </p>
+                        <div style="
+                            background: #f8f9fa;
+                            padding: 20px;
+                            border-radius: 12px;
+                            text-align: left;
+                            margin-bottom: 25px;
+                        ">
+                            <div style="margin: 12px 0; display: flex; align-items: flex-start;">
+                                <span style="color: #4CAF50; font-weight: bold; margin-right: 10px;">1.</span>
+                                <span style="flex: 1; font-size: 14px;">우측 상단 <strong>[⋯]</strong> 또는 <strong>[┇]</strong> 메뉴 클릭</span>
+                            </div>
+                            <div style="margin: 12px 0; display: flex; align-items: flex-start;">
+                                <span style="color: #4CAF50; font-weight: bold; margin-right: 10px;">2.</span>
+                                <span style="flex: 1; font-size: 14px;"><strong>[외부 브라우저에서 열기]</strong> 선택<br>
+                                <small style="color: #999;">(Safari/Chrome에서 열기)</small></span>
+                            </div>
+                            <div style="margin: 12px 0; display: flex; align-items: flex-start;">
+                                <span style="color: #4CAF50; font-weight: bold; margin-right: 10px;">3.</span>
+                                <span style="flex: 1; font-size: 14px;">다시 구글 로그인 시도</span>
+                            </div>
+                        </div>
+                        <button onclick="closeBrowserGuideModal()" style="
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            border: none;
+                            padding: 14px 40px;
+                            border-radius: 10px;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: transform 0.2s;
+                        " onmouseover="this.style.transform='translateY(-2px)'"
+                           onmouseout="this.style.transform='translateY(0)'">
+                            확인했습니다
+                        </button>
+                    </div>
+                </div>
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes slideUp {
+                        from { transform: translateY(30px); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                </style>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function closeBrowserGuideModal() {
+            const modal = document.getElementById('browserGuideModal');
+            if (modal) modal.remove();
+        }
+
         // OAuth2 에러 메시지 처리 및 애니메이션
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -304,6 +426,88 @@
                     btn.classList.add('animate');
                 });
             }, 300);
+
+            // ========== 인앱 브라우저에서 구글 로그인 차단 ==========
+            const browserInfo = isInAppBrowser();
+            if (browserInfo.isInApp) {
+                console.log(`${browserInfo.browser} 인앱 브라우저 감지됨`);
+
+                const googleLoginBtn = document.querySelector('a[href*="/oauth2/authorization/google"]');
+                if (googleLoginBtn) {
+                    // 구글 로그인 버튼 클릭 시 안내 모달 표시
+                    googleLoginBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showBrowserGuideModal(browserInfo.browser);
+                    });
+
+                    // 구글 버튼에 시각적 경고 추가
+                    googleLoginBtn.style.opacity = '0.6';
+                    googleLoginBtn.style.position = 'relative';
+
+                    // 경고 배지 추가
+                    const warningBadge = document.createElement('div');
+                    warningBadge.innerHTML = '⚠️';
+                    warningBadge.style.cssText = `
+                        position: absolute;
+                        top: -5px;
+                        right: -5px;
+                        background: #ff5722;
+                        color: white;
+                        border-radius: 50%;
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                        animation: pulse 2s infinite;
+                    `;
+                    googleLoginBtn.style.position = 'relative';
+                    googleLoginBtn.appendChild(warningBadge);
+
+                    // 펄스 애니메이션 추가
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes pulse {
+                            0%, 100% { transform: scale(1); }
+                            50% { transform: scale(1.1); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    // 버튼 아래 경고 메시지 추가
+                    const warningMsg = document.createElement('div');
+                    warningMsg.className = 'alert alert-warning mt-2';
+                    warningMsg.style.cssText = `
+                        font-size: 13px;
+                        padding: 10px 15px;
+                        margin-top: 10px;
+                        border-radius: 8px;
+                        animation: slideDown 0.5s ease;
+                    `;
+                    warningMsg.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">⚠️</span>
+                            <div style="flex: 1;">
+                                <strong>${browserInfo.browser}</strong>에서는 구글 로그인이 제한됩니다.<br>
+                                <small>클릭하여 해결 방법을 확인하세요.</small>
+                            </div>
+                        </div>
+                    `;
+
+                    // 슬라이드 다운 애니메이션
+                    const animStyle = document.createElement('style');
+                    animStyle.textContent = `
+                        @keyframes slideDown {
+                            from { opacity: 0; transform: translateY(-10px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    `;
+                    document.head.appendChild(animStyle);
+
+                    googleLoginBtn.parentElement.appendChild(warningMsg);
+                }
+            }
         });
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {

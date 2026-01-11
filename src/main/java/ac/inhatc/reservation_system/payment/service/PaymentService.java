@@ -357,9 +357,22 @@ public class PaymentService {
         Payment payment = paymentRepository.findByReservationId(reservationId)
                 .orElse(null);
 
-        if (payment == null || payment.getStatus() != Payment.PaymentStatus.PAID) {
-            log.info("환불할 결제 내역 없음 - reservationId: {}", reservationId);
+        // 결제 정보가 없으면
+        if (payment == null) {
+            log.warn("⚠️ 환불할 결제 내역 없음 (결제하지 않은 예약) - reservationId: {}", reservationId);
             return null;
+        }
+
+        // 결제 상태 확인
+        if (payment.getStatus() != Payment.PaymentStatus.PAID) {
+            log.warn("⚠️ 환불 불가능한 결제 상태 - reservationId: {}, status: {}", reservationId, payment.getStatus());
+            throw new IllegalStateException("환불 가능한 상태가 아닙니다. 현재 상태: " + payment.getStatus());
+        }
+
+        // impUid 확인 (포트원 결제번호)
+        if (payment.getImpUid() == null || payment.getImpUid().trim().isEmpty()) {
+            log.error("❌ impUid가 없음 - reservationId: {}, paymentId: {}", reservationId, payment.getId());
+            throw new IllegalStateException("결제 번호(impUid)가 없어 환불할 수 없습니다.");
         }
 
         int refundAmount = payment.getAmount();
@@ -367,6 +380,9 @@ public class PaymentService {
 
         // 포트원 API로 환불 요청
         try {
+            log.info("💳 환불 요청 시작 - reservationId: {}, impUid: {}, amount: {}", 
+                    reservationId, payment.getImpUid(), refundAmount);
+                    
             portoneService.cancelPayment(
                     payment.getImpUid(),
                     refundAmount,
@@ -383,12 +399,13 @@ public class PaymentService {
             reservation.setDepositAmount(0);
             reservationRepository.save(reservation);
 
-            log.info("사업자 취소 전액 환불 완료 - reservationId: {}, refundAmount: {}",
-                    reservationId, refundAmount);
+            log.info("✅ 사업자 취소 전액 환불 완료 - reservationId: {}, refundAmount: {}, impUid: {}",
+                    reservationId, refundAmount, payment.getImpUid());
 
             return PaymentResponseDto.fromEntity(payment);
         } catch (Exception e) {
-            log.error("사업자 취소 환불 처리 실패 - reservationId: {}, error: {}", reservationId, e.getMessage());
+            log.error("❌ 사업자 취소 환불 처리 실패 - reservationId: {}, impUid: {}, error: {}", 
+                    reservationId, payment.getImpUid(), e.getMessage(), e);
             throw new RuntimeException("환불 처리에 실패했습니다: " + e.getMessage());
         }
     }
